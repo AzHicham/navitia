@@ -35,12 +35,8 @@ jobs:
   static_analyse:
     runs-on: ubuntu-latest
 
-    strategy:
-        matrix:
-            docker_image: navitia/debian10_dev
-
     container:
-        image: ${{matrix.docker_image}}
+        image: navitia/debian10_dev
 
     steps:
     - uses: actions/checkout@v2
