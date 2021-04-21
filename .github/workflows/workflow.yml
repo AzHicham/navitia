@@ -44,10 +44,8 @@ jobs:
           submodules: 'recursive'
     - name: Install GCov and SonarCloud's dependencies for C++ analysis
       run : |
-        apt update -y
         echo 'deb http://deb.debian.org/debian testing main' >> /etc/apt/sources.list
         apt update -y
-        apt upgrade -y
         apt install -y gcc
         gcc --version
         apt install -y gcovr
