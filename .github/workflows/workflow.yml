@@ -70,7 +70,7 @@ jobs:
       run: pip install -r source/jormungandr/requirements_dev.txt
     - name: configure for Release
       if: ${{!matrix.run_sonarcloud}}
-      run: cmake -DSTRIP_SYMBOLS=ON source
+      run: cmake -GNinja -DSTRIP_SYMBOLS=ON source
     - name: configure for Profile
       if: ${{matrix.run_sonarcloud}}
       run: cmake -GNinja -DSTRIP_SYMBOLS=ON -DCMAKE_BUILD_TYPE=Profile source
