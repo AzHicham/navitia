@@ -73,7 +73,7 @@ jobs:
       run: cmake -GNinja -DSTRIP_SYMBOLS=ON source
     - name: configure for Profile
       if: ${{matrix.run_sonarcloud}}
-      run: cmake -GNinja -DSTRIP_SYMBOLS=ON -DCMAKE_BUILD_TYPE=Profile source
+      run: cmake -GNinja -DSTRIP_SYMBOLS=ON source
     - name:
       run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper-output-dir ninja
     - name: Tests python2
