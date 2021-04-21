@@ -67,10 +67,10 @@ jobs:
         unzip -u sonar-scanner-cli-4.6.0.2311-linux.zip
     - name: Install dependencies for python2
       run: pip install -r source/jormungandr/requirements_dev.txt
-    - name: configure
+    - name: configure for Release
       if: ${{!matrix.run_sonarcloud}}
       run: cmake -DSTRIP_SYMBOLS=ON source
-    - name: configure profile && github.event_name == 'push'
+    - name: configure for Profile
       if: ${{matrix.run_sonarcloud}}
       run: cmake -DSTRIP_SYMBOLS=ON -DCMAKE_BUILD_TYPE=Profile source
     - name:
