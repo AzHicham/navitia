@@ -46,7 +46,7 @@ jobs:
       run : |
         echo 'deb http://deb.debian.org/debian testing main' >> /etc/apt/sources.list
         apt update -y
-        apt install -y gcc
+        apt install -y gcc-9
         gcc --version
         apt install -y gcovr
         apt install -y unzip wget
