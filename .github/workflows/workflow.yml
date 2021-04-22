@@ -37,7 +37,12 @@ jobs:
 
     container:
         image: navitia/debian8_dev
-
+        
+    services:
+      rabbitmq:
+        image: rabbitmq:3-alpine
+        ports:
+          - 5672:5672
     steps:
     - uses: actions/checkout@v2
       with:
