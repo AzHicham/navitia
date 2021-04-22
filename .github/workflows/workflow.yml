@@ -49,6 +49,9 @@ jobs:
           submodules: 'recursive'
     - name: Install GCov and SonarCloud's dependencies for C++ analysis
       run : |
+        du -h
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+        du -h
         apt update -y
         apt install -y gcovr
         apt install -y unzip wget
