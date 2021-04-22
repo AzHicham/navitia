@@ -53,7 +53,7 @@ jobs:
     - name: Install dependencies for python2
       run: pip install -r source/jormungandr/requirements_dev.txt
     - name: configure for Profile
-      run: cmake -DCMAKE_BUILD_TYPE=Profile -DSTRIP_SYMBOLS=ON source
+      run: cmake -DCMAKE_BUILD_TYPE=Release  -DSTRIP_SYMBOLS=ON source
     - name: run
       run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper-output-dir make -j $(nproc)
     - name: Tests python2
