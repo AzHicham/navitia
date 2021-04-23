@@ -91,9 +91,6 @@ jobs:
                 -Dsonar.python.coverage.reportPaths=jormungandr_serpy_integration_coverage.xml,jormungandr_coverage_serpy.xml \
                 -Dsonar.cfamily.gcov.reportsPath=. \
                 -Dsonar.cfamily.build-wrapper-output=build-wrapper-output-dir \
-                -Dsonar.pullrequest.key=${{ github.event.number }} \
-                -Dsonar.pullrequest.branch=$GITHUB_HEAD_REF \
-                -Dsonar.pullrequest.base=$GITHUB_BASE_REF \
                 -Dsonar.cfamily.cache.enabled=false \
                 -Dsonar.cfamily.threads=$(nproc)
   build:
