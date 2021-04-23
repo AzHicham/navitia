@@ -58,6 +58,7 @@ jobs:
 
   static_analyse:
     runs-on: ubuntu-latest
+    needs: clean-build
 
     container:
         image: navitia/debian8_dev
