@@ -42,10 +42,10 @@ jobs:
     
     steps:
     - name: dock1
-      run : rm -f /etc/localtime && ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
+      run : sudo rm -f /etc/localtime && ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
     - name: dock1
       run : |
-        apt-get update \
+        sudo apt-get update \
         && apt-get install -y \
           build-essential \
           git \
@@ -72,13 +72,13 @@ jobs:
          && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
     - name: dock2
       run : |
-        curl -q https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py \
+        sudo curl -q https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py \
         && python /tmp/get-pip.py               \
         && pip install -U virtualenv pipenv     \
         && pip install ujson==1.33 numpy==1.9	\
         && rm -rf /tmp/* /var/tmp/* ~/.cache/pip/*
     - name: dock3
-      run : /usr/sbin/rabbitmq-server &
+      run : sudo /usr/sbin/rabbitmq-server &
       
     - uses: actions/checkout@v2
       with:
