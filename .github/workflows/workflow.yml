@@ -49,26 +49,6 @@ jobs:
         ports:
           - 5672:5672
     steps:
-    - name: Disk Space before clean
-      run: |
-        echo "Available storage:"
-        df -h
-        cd /dev/root/
-        echo
-        ls
-        echo
-        df -h
-        echo
-    - name: clean 
-      shell: bash
-      run: |
-        rm -rf /dev/root
-    - name: Disk Space after clean
-      shell: bash
-      run: |
-        echo "Available storage:"
-        df -h
-        echo
     - uses: actions/checkout@v2
       with:
           submodules: 'recursive'
