@@ -55,7 +55,7 @@ jobs:
         echo "Available storage:"
         df -h
         echo
-        ls
+        ll
         echo
     - name: clean 
       shell: bash
