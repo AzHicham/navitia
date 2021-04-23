@@ -38,46 +38,17 @@ jobs:
       run: ./source/scripts/check_submodules.sh
 
   static_analyse:
-    runs-on: ubuntu-18.04       
-    
+    runs-on: ubuntu-latest
+
+    container:
+        image: navitia/debian8_dev
+        
+    services:
+      rabbitmq:
+        image: rabbitmq:3-alpine
+        ports:
+          - 5672:5672
     steps:
-    - name: dock1
-      run : |
-        sudo apt-get update \
-        && sudo apt-get install -y \
-          build-essential \
-          git \
-          gcc \
-          g++ \
-          cmake \
-          protobuf-compiler \
-          libosmpbf-dev \
-          libboost-all-dev \
-          libgoogle-perftools-dev \
-          libprotobuf-dev \
-          libproj-dev \
-          libzmq3-dev \
-          libpqxx-dev \
-          libssl-dev \
-          liblog4cplus-dev \
-          libgeos-dev \
-          python \
-          python-pip \
-          rabbitmq-server \
-          clang-format-6.0 \
-          curl 	\
-         && sudo apt-get clean \
-         && sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-    - name: dock2
-      run : |
-        sudo curl -q https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py \
-        && python /tmp/get-pip.py               \
-        && pip install -U virtualenv pipenv     \
-        && pip install ujson==1.33 numpy==1.9	\
-        && rsudo m -rf /tmp/* /var/tmp/* ~/.cache/pip/*
-    - name: dock3
-      run : sudo /usr/sbin/rabbitmq-server &
-      
     - uses: actions/checkout@v2
       with:
           submodules: 'recursive'
@@ -95,14 +66,14 @@ jobs:
     - name: configure for Profile
       run: cmake -DCMAKE_BUILD_TYPE=Profile  -DSTRIP_SYMBOLS=ON source
     - name: run
-      run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper-output-dir make -j 1
+      run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper-output-dir make -j $(nproc)
     - name: Tests python2
       run: |
         export JORMUNGANDR_BROKER_URL='amqp://guest:guest@rabbitmq:5672//'
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
         ctest --output-on-failure
     - name: GCov
-      run: gcovr -k -r . -f source -e source/third_party --sonarqube coverage.xml
+      run: gcovr -k -r . -f source -e source/third_party --xml coverage.xml
     - name: SonarCloud Scan
       # We only want 1 scan as it would bloat sonarcube otherwise
       # And only on an internal merge (to dev/master) as SonarCloud's token uses Secrets that not available from a fork :( (eg. https://docs.github.com/en/actions/reference/encrypted-secrets#using-encrypted-secrets-in-a-workflow)
@@ -125,8 +96,6 @@ jobs:
                 -Dsonar.pullrequest.base=$GITHUB_BASE_REF \
                 -Dsonar.cfamily.cache.enabled=false \
                 -Dsonar.cfamily.threads=$(nproc)
-
-
   build:
     runs-on: ubuntu-latest
 
@@ -226,8 +195,6 @@ jobs:
       run: |
         pre-commit install --install-hooks
         pre-commit run --all --show-diff-on-failure
-
-
   release_script_tests:
     runs-on: ubuntu-latest
     steps:
@@ -244,5 +211,3 @@ jobs:
         pipenv install --dev
         pipenv run pytest
         pipenv --rm
-
-
