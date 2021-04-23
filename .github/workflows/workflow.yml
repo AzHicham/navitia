@@ -51,9 +51,9 @@ jobs:
         echo
     - name: clean 
       run: |
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
+        rm -rf /usr/share/dotnet
+        rm -rf /usr/local/lib/android
+        rm -rf /opt/ghc
     - name: Disk Space after clean
       run: |
         echo "Available storage:"
