@@ -66,12 +66,12 @@ jobs:
     - name: configure for Profile
       run: cmake -DCMAKE_BUILD_TYPE=Profile  -DSTRIP_SYMBOLS=ON source
     - name: run
-      run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper-output-dir make -j $(nproc)
+      run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper-output-dir make calendar_api_test -j $(nproc)
     - name: Tests python2
       run: |
         export JORMUNGANDR_BROKER_URL='amqp://guest:guest@rabbitmq:5672//'
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
-        ctest --output-on-failure
+        ctest -R calendar_api_test --output-on-failure
     - name: GCov
       run: gcovr -k -r . -f source -e source/third_party
     - name: SonarCloud Scan
