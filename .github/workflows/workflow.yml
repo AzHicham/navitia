@@ -98,6 +98,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+
     strategy:
         matrix:
             docker_image: [navitia/debian8_dev, navitia/debian9_dev, navitia/debian10_dev]
