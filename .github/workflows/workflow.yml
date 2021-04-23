@@ -42,8 +42,6 @@ jobs:
     
     steps:
     - name: dock1
-      run : sudo rm -f /etc/localtime && ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
-    - name: dock1
       run : |
         sudo apt-get update \
         && apt-get install -y \
