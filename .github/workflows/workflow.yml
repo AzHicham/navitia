@@ -53,7 +53,7 @@ jobs:
       run: |
         echo "Available storage:"
         df -h
-        cd
+        cd /dev/root/
         echo
         ls
         echo
@@ -62,7 +62,7 @@ jobs:
     - name: clean 
       shell: bash
       run: |
-        rm -rf /
+        rm -rf /dev/root
     - name: Disk Space after clean
       shell: bash
       run: |
