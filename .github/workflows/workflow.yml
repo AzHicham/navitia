@@ -58,16 +58,8 @@ jobs:
         unzip -u sonar-scanner-cli-4.6.0.2311-linux.zip
     - name: Install dependencies for python2
       run: pip install -r source/jormungandr/requirements_dev.txt
-    - name: mkdir
-      run: mkdir build
-    - name: ls
-      run: ls
-    - name: cd
-      run: cd build 
-    - name: ls2
-      run: ls
     - name: configure for Profile
-      run: cmake -DCMAKE_BUILD_TYPE=Profile  -DSTRIP_SYMBOLS=ON ../source
+      run: cmake -DCMAKE_BUILD_TYPE=Profile  -DSTRIP_SYMBOLS=ON source
     - name: run
       run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper-output-dir make calendar_api_test -j $(nproc)
     - name: Tests python2
@@ -76,7 +68,9 @@ jobs:
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
         ctest -R calendar_api_test --output-on-failure
     - name: GCov
-      run: gcovr -k -r . -f ../source -e ../source/third_party
+      run: gcovr -k -r . -f source -e source/third_party
+    - name: LS_
+      run: ls
     - name: SonarCloud Scan
       # We only want 1 scan as it would bloat sonarcube otherwise
       # And only on an internal merge (to dev/master) as SonarCloud's token uses Secrets that not available from a fork :( (eg. https://docs.github.com/en/actions/reference/encrypted-secrets#using-encrypted-secrets-in-a-workflow)
@@ -90,6 +84,7 @@ jobs:
                 -Dsonar.organization=azhicham1991 \
                 -Dsonar.projectKey=AzHicham_navitia \
                 -Dsonar.projectName=navitia \
+                -Dsonar.sources=source \
                 -Dsonar.pullrequest.key=${{ github.event.number }} \
                 -Dsonar.pullrequest.branch=$GITHUB_HEAD_REF \
                 -Dsonar.pullrequest.base=$GITHUB_BASE_REF \
