@@ -60,8 +60,12 @@ jobs:
       run: pip install -r source/jormungandr/requirements_dev.txt
     - name: mkdir
       run: mkdir build
+    - name: ls
+      run: ll
     - name: cd
       run: cd build 
+    - name: ls2
+      run: ll
     - name: configure for Profile
       run: cmake -DCMAKE_BUILD_TYPE=Profile  -DSTRIP_SYMBOLS=ON ../source
     - name: run
