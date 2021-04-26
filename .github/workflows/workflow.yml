@@ -37,7 +37,7 @@ jobs:
 
     container:
         image: navitia/debian10_dev
-        
+
     services:
       rabbitmq:
         image: rabbitmq:3-alpine
@@ -69,7 +69,7 @@ jobs:
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
         ctest --output-on-failure
     - name: GCov
-      run: gcovr -k -r . -f source -e source/third_party --sonarqube cov_out.xml
+      run: gcovr -k -r . -f source -e source/third_party --sonarqube cov.xml
     - name: LS_
       run: ls
     - name: SonarCloud Scan
@@ -80,20 +80,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
           sonar-scanner-4.6.0.2311-linux/bin/sonar-scanner \
-                -Dsonar.host.url=https://sonarcloud.io \
                 -Dsonar.login=$SONAR_TOKEN \
-                -Dsonar.organization=azhicham1991 \
-                -Dsonar.projectKey=AzHicham_navitia \
-                -Dsonar.projectName=navitia \
-                -Dsonar.sources=source \
-                -Dsonar.pullrequest.key=${{ github.event.number }} \
-                -Dsonar.pullrequest.branch=$GITHUB_HEAD_REF \
-                -Dsonar.pullrequest.base=$GITHUB_BASE_REF \
-                -Dsonar.python.coverage.reportPaths=jormungandr_serpy_integration_coverage.xml,jormungandr_coverage_serpy.xml \
-                -Dsonar.cfamily.gcov.reportsPath=. \
-                -Dsonar.coverageReportPaths=cov_out.xml \
-                -Dsonar.cfamily.build-wrapper-output=build-wrapper-output-dir \
-                -Dsonar.cfamily.cache.enabled=false \
                 -Dsonar.cfamily.threads=$(nproc)
   build:
     runs-on: ubuntu-latest
