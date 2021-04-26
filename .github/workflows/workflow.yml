@@ -51,7 +51,7 @@ jobs:
       run : |
         rm -rf "$AGENT_TOOLSDIRECTORY"
         apt update -y
-        apt install -y gcovr
+        pip install gcovr
         gcovr --version
         apt install -y unzip wget
         wget 'https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip' 'https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.0.2311-linux.zip'
