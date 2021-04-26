@@ -81,7 +81,10 @@ jobs:
       run: |
           sonar-scanner-4.6.0.2311-linux/bin/sonar-scanner \
                 -Dsonar.login=$SONAR_TOKEN \
-                -Dsonar.cfamily.threads=$(nproc)
+                -Dsonar.cfamily.threads=$(nproc) \
+                -Dsonar.pullrequest.key=1 \
+                -Dsonar.pullrequest.branch=$GITHUB_HEAD_REF \
+                -Dsonar.pullrequest.base=$GITHUB_BASE_REF
   build:
     runs-on: ubuntu-latest
 
