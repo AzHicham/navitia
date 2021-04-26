@@ -69,7 +69,7 @@ jobs:
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
         ctest --output-on-failure
     - name: GCov
-      run: gcovr -k -r . -f source -e source/third_party
+      run: gcovr -k -r . -f source -e source/third_party --sonarqube cov_out.xml
     - name: LS_
       run: ls
     - name: SonarCloud Scan
@@ -91,6 +91,7 @@ jobs:
                 -Dsonar.pullrequest.base=$GITHUB_BASE_REF \
                 -Dsonar.python.coverage.reportPaths=jormungandr_serpy_integration_coverage.xml,jormungandr_coverage_serpy.xml \
                 -Dsonar.cfamily.gcov.reportsPath=. \
+                -Dsonar.coverageReportPaths=cov_out.xml \
                 -Dsonar.cfamily.build-wrapper-output=build-wrapper-output-dir \
                 -Dsonar.cfamily.cache.enabled=false \
                 -Dsonar.cfamily.threads=$(nproc)
