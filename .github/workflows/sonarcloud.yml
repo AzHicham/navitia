@@ -8,7 +8,6 @@ on:
   release:
     types:
       - created
-
 jobs:
   info:
     runs-on: ubuntu-latest
@@ -18,23 +17,11 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo "$GITHUB_CONTEXT"
 
-  checks:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: checkout submodules
-      shell: bash
-      run: |
-        sed -i 's,git\@github.com:\([^/]*\)/\(.*\).git,https://github.com/\1/\2,' .gitmodules
-        git submodule update --init --recursive
-    - name: check submodules
-      run: ./source/scripts/check_submodules.sh
-
   static_analyse:
     runs-on: ubuntu-latest
 
     container:
-        image: navitia/debian10_dev
+        image: navitia/debian8_dev
 
     services:
       rabbitmq:
@@ -48,7 +35,6 @@ jobs:
           submodules: 'recursive'
     - name: Install Gcov and SonarCloud's dependencies for C++ analysis
       run : |
-        rm -rf "$AGENT_TOOLSDIRECTORY"
         apt update -y
         pip install gcovr
         gcovr --version
