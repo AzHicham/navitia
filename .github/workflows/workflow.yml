@@ -60,12 +60,12 @@ jobs:
         apt update && apt install -y clang-6.0 clang-tools-6.0
     - name: Install dependencies for python2
       run: pip install -r source/jormungandr/requirements_dev.txt
-    - name: configure for Release
+    - name: configure cmake build
       env:
         CC: ${{ matrix.compiler.CC }}
         CXX: ${{ matrix.compiler.CXX }}
-      run: cmake -DSTRIP_SYMBOLS=ON source
-    - name: run
+      run: cmake -DSTRIP_SYMBOLS=ON -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} source
+    - name: run buil
       run: make -j $(nproc)
     - name: Tests python2
       run: |
