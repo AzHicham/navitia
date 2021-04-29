@@ -37,6 +37,10 @@ jobs:
     strategy:
         matrix:
             docker_image: [navitia/debian8_dev, navitia/debian9_dev, navitia/debian10_dev]
+            compiler:
+                - { compiler: GNU,  CC: gcc,   CXX: g++ }
+                - { compiler: LLVM, CC: clang, CXX: clang++}
+            build_type: [Release, Debug]
 
     container:
         image: ${{matrix.docker_image}}
@@ -54,6 +58,9 @@ jobs:
     - name: Install dependencies for python2
       run: pip install -r source/jormungandr/requirements_dev.txt
     - name: configure for Release
+      env:
+        CC: ${{ matrix.compiler.CC }}
+        CXX: ${{ matrix.compiler.CXX }}
       run: cmake -DSTRIP_SYMBOLS=ON source
     - name: run
       run: make -j $(nproc)
