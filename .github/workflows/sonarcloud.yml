@@ -35,6 +35,12 @@ jobs:
         unzip -u sonar-scanner-cli-4.6.0.2311-linux.zip
     - name: Install dependencies for python2
       run: pip install -r source/jormungandr/requirements_dev.txt
+    - name: Cache Sonar
+      id: cache-sonar
+      uses: actions/cache@v2
+      with:
+        path: sonar_cache
+        key: sonar-cache
     - name: Configure
       run: cmake -DCMAKE_BUILD_TYPE=Profile -DSTRIP_SYMBOLS=ON source
     - name: Build
@@ -46,12 +52,6 @@ jobs:
         ctest --output-on-failure
     - name: Coverage
       run: gcovr -k -r . -f source -e source/third_party --sonarqube cov.xml
-    - name: Cache Sonar
-      id: cache-sonar
-      uses: actions/cache@v2
-      with:
-        path: sonar_cache
-        key: sonar-cache
     - name: SonarCloud Scan
       # We only want 1 scan as it would bloat sonarcube otherwise
       # And only on an internal merge (to dev/master) as SonarCloud's token uses Secrets that not available from a fork :( (eg. https://docs.github.com/en/actions/reference/encrypted-secrets#using-encrypted-secrets-in-a-workflow)
