@@ -16,7 +16,8 @@ jobs:
       run: rm -rf /usr/share/dotnet
     - uses: actions/checkout@v2
       with:
-        repository: CanalTP/artemis
+        repository: AzHicham/artemis
+        ref: benchmark_test_artemisNG
     - uses: actions/setup-python@v2
       with:
           python-version: '3.7'
@@ -42,6 +43,7 @@ jobs:
       run: make start TAG=local || exit 0
     - name: Run Artemis Test
       env:
+        PYTEST: "idfm_test.py"
         PYTEST_ARGS: "--benchmark-json output.json"
       run: make test
     - name: Aggregate logs
@@ -74,3 +76,4 @@ jobs:
         fail-on-alert: true
         alert-threshold: '50%'
         comment-on-alert: true
+        skip-fetch-gh-pages: true
