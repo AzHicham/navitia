@@ -1,0 +1,76 @@
+name: Artemis
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Make some space
+      run: rm -rf /usr/share/dotnet
+    - uses: actions/checkout@v2
+      with:
+        repository: CanalTP/artemis
+    - uses: actions/setup-python@v2
+      with:
+          python-version: '3.7'
+    - name: Remove some folders
+      run: |
+        rm -rf navitia-docker-compose
+        rm -rf artemis_data
+        rm -rf artemis_references
+    - name: Pull sub-repos
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git clone https://$GITHUB_TOKEN@github.com/CanalTP/navitia-docker-compose.git --branch master ./navitia-docker-compose
+        git clone https://$GITHUB_TOKEN@github.com/CanalTP/artemis_data.git --branch master ./artemis_data
+        git clone https://$GITHUB_TOKEN@github.com/AzHicham/artemis_references.git --branch artemis_ng_ga ./artemis_references
+    - name: Build docker image
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: cd navitia-docker-compose/builder_from_package && ./build.sh -o $GITHUB_TOKEN -t local -e push -f CanalTP -b dev
+    - name: Pull remaining images
+      run: make pull_available TAG=local || exit 0
+    - name: Start dockers
+      run: make start TAG=local || exit 0
+    - name: Run Artemis Test
+      env:
+        PYTEST_ARGS: "--benchmark-json output.json"
+      run: make test
+    - name: Aggregate logs
+      if: ${{ always() }}
+      run: make logs TAG=local > logs || exit 0
+    - name: Archive Artemis artifacts (logs + ref)
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: logs-and-ref
+        path: |
+            output/**/*
+            junit/*.xml
+            logs
+    - name: Download previous benchmark data
+      uses: actions/cache@v2
+      with:
+        path: ./cache
+        key: cache-benchmark
+    - name: Store benchmark result
+      uses: rhysd/github-action-benchmark@v1
+      with:
+        # What benchmark tool the output.txt came from
+        tool: 'pytest'
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        auto-push: true
+        # Where the output from the benchmark tool is stored
+        output-file-path: output.json
+        # Workflow will fail when an alert happens
+        fail-on-alert: true
+        alert-threshold: '50%'
+        comment-on-alert: true
