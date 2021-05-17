@@ -57,6 +57,11 @@ jobs:
             output/**/*
             junit/*.xml
             logs
+    - name: Save previous data.js
+      run: |
+        git fetch origin gh-pages
+        git checkout gh-pages
+        git checkout -
     - name: Download previous benchmark data
       uses: actions/cache@v2
       with:
@@ -68,15 +73,12 @@ jobs:
         # What benchmark tool the output.txt came from
         tool: 'pytest'
         github-token: ${{ secrets.ARTEMIS_GITHUB_TOKEN }}
-        auto-push: false
+        auto-push: true
+        gh-pages-branch: 'dev'
+        benchmark-data-dir-path: 'dev/bench'
         # Where the output from the benchmark tool is stored
         output-file-path: output.json
         # Workflow will fail when an alert happens
         fail-on-alert: true
         alert-threshold: '50%'
         comment-on-alert: true
-        skip-fetch-gh-pages: true
-    - name: Push benchmark result
-      env:
-        ARTEMIS_GITHUB_TOKEN: ${{ secrets.ARTEMIS_GITHUB_TOKEN }}
-      run: git push 'https://AzHicham:${{ secrets.ARTEMIS_GITHUB_TOKEN }}@github.com/AzHicham/navitia.git' dev:dev
