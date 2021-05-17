@@ -74,7 +74,7 @@ jobs:
         tool: 'pytest'
         github-token: ${{ secrets.ARTEMIS_GITHUB_TOKEN }}
         auto-push: true
-        gh-pages-branch: 'dev'
+        gh-pages-branch: 'gh-pages'
         benchmark-data-dir-path: 'dev/bench'
         # Where the output from the benchmark tool is stored
         output-file-path: output.json
