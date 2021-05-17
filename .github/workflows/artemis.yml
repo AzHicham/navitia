@@ -36,7 +36,7 @@ jobs:
     - name: Build docker image
       env:
         ARTEMIS_GITHUB_TOKEN: ${{ secrets.ARTEMIS_GITHUB_TOKEN }}
-      run: cd navitia-docker-compose/builder_from_package && ./build.sh -o $ARTEMIS_GITHUB_TOKEN -t local -e push -f CanalTP -b dev
+      run: cd navitia-docker-compose/builder_from_package && ./build.sh -o $ARTEMIS_GITHUB_TOKEN -t local -e push -f CanalTP -b master
     - name: Pull remaining images
       run: make pull_available TAG=local || exit 0
     - name: Start dockers
