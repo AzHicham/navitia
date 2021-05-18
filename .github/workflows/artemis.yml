@@ -43,6 +43,7 @@ jobs:
       run: make start TAG=local || exit 0
     - name: Run Artemis Test
       env:
+        PYTEST: 'idfm_test.py'
         PYTEST_ARGS: "--benchmark-json output.json"
       run: make test
     - name: Aggregate logs
@@ -59,6 +60,7 @@ jobs:
             logs
     - name: Save previous data.js
       run: |
+        git remote -v
         git fetch origin gh-pages
         git checkout gh-pages
         git checkout -
