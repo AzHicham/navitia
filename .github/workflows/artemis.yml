@@ -58,6 +58,10 @@ jobs:
             output/**/*
             junit/*.xml
             logs
+    - uses: actions/checkout@v2
+      with:
+        repository: AzHicham/navitia
+        ref: benchmark_test_artemisNG
     - name: Save previous data.js
       run: |
         git remote -v
