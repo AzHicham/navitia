@@ -18,7 +18,7 @@ jobs:
       uses: mvasigh/dispatch-action@1.1.6
       with:
         token: ${{ secrets.ARTEMIS_GITHUB_TOKEN }}
-        repo: AzHicham/artemis
+        repo: artemis
         event_type: run_artemis_ng
 
   info:
