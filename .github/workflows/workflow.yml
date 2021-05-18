@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Emit repository_dispatch
-    - uses: mvasigh/dispatch-action@v1
+      uses: mvasigh/dispatch-action@v1
       with:
         token: ${{ secrets.ARTEMIS_GITHUB_TOKEN }}
         repo: AzHicham/artemis
