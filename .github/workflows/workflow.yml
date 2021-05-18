@@ -16,10 +16,10 @@ jobs:
     steps:
     - name: Emit repository_dispatch
     - uses: mvasigh/dispatch-action@v1
-        with:
-          token: ${{ secrets.ARTEMIS_GITHUB_TOKEN }}
-          repo: AzHicham/artemis
-          event_type: run_artemis_ng
+      with:
+        token: ${{ secrets.ARTEMIS_GITHUB_TOKEN }}
+        repo: AzHicham/artemis
+        event_type: run_artemis_ng
 
   info:
     runs-on: ubuntu-latest
