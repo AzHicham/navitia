@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from copy import deepcopy
 from jormungandr.scenarios import journey_filter as jf
 from jormungandr.scenarios.utils import DepartureJourneySorter, ArrivalJourneySorter

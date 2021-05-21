@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 from jormungandr.exceptions import TechnicalError
 from jormungandr import app

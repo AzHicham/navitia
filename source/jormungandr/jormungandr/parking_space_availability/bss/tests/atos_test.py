@@ -28,7 +28,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import pytest
 from contextlib import contextmanager
 from jormungandr.parking_space_availability.bss.atos import AtosProvider
@@ -36,7 +36,7 @@ from jormungandr.parking_space_availability.bss.stands import Stands, StandsStat
 from mock import MagicMock
 
 poi = {
-    'properties': {'network': u'Vélitul', 'operator': 'Keolis', 'ref': '2'},
+    'properties': {'network': 'Vélitul', 'operator': 'Keolis', 'ref': '2'},
     'poi_type': {'name': 'station vls', 'id': 'poi_type:amenity:bicycle_rental'},
 }
 
@@ -46,7 +46,7 @@ def parking_space_availability_atos_support_poi_test():
     Atos bss provider support
     """
     provider = AtosProvider(
-        u'10', u'vélitul', u'https://webservice.atos.com?wsdl', {'KEOLIS', 'effia', 'effia transport', u'kéolis'}
+        '10', 'vélitul', 'https://webservice.atos.com?wsdl', {'KEOLIS', 'effia', 'effia transport', 'kéolis'}
     )
     assert provider.support_poi(poi)
     poi['properties']['operator'] = 'EFFIA'
@@ -55,7 +55,7 @@ def parking_space_availability_atos_support_poi_test():
     assert provider.support_poi(poi)
     poi['properties']['operator'] = 'EFFIA Transport'
     assert provider.support_poi(poi)
-    poi['properties']['operator'] = u'KÉOLIS'
+    poi['properties']['operator'] = 'KÉOLIS'
     assert provider.support_poi(poi)
     poi['properties']['operator'] = 'Bad_operator'
     assert not provider.support_poi(poi)
@@ -77,7 +77,7 @@ def parking_space_availability_atos_get_informations_test():
     """
     stand_2 = Stands(5, 9, StandsStatus.open)
     all_stands = {'1': Stands(4, 8, StandsStatus.open), '2': stand_2}
-    provider = AtosProvider(u'10', u'vélitul', u'https://webservice.atos.com?wsdl', {'keolis'})
+    provider = AtosProvider('10', 'vélitul', 'https://webservice.atos.com?wsdl', {'keolis'})
     provider._get_all_stands = MagicMock(return_value=all_stands)
     assert provider.get_informations(poi) == stand_2
     invalid_poi = {}
@@ -97,7 +97,7 @@ def parking_space_availability_atos_get_informations_with_closed_status_test():
 
     stand_2 = Stands(5, 9, StandsStatus.closed)
     all_stands = {'1': Stands(4, 8, StandsStatus.open), '2': stand_2}
-    provider = AtosProvider(u'10', u'vélitul', u'https://webservice.atos.com?wsdl', {'keolis'})
+    provider = AtosProvider('10', 'vélitul', 'https://webservice.atos.com?wsdl', {'keolis'})
     provider._get_all_stands = MagicMock(return_value=all_stands)
     assert provider.get_informations(poi) == Stands(0, 0, StandsStatus.closed)
     invalid_poi = {}
@@ -128,7 +128,7 @@ def parking_space_availability_atos_get_all_stands_test():
     stands3.etatConnexion = 'DECONNECTEE'
     all_stands_list.append(stands3)
 
-    provider = AtosProvider(u'10', u'vélitul', u'https://webservice.atos.com?wsdl', {'keolis'})
+    provider = AtosProvider('10', 'vélitul', 'https://webservice.atos.com?wsdl', {'keolis'})
     client = lambda: None
     client.service = lambda: None
     client.service.getSummaryInformationTerminals = MagicMock(return_value=all_stands_list)
@@ -153,7 +153,7 @@ def parking_space_availability_atos_get_all_stands_urlerror_test():
     """
     Atos webservice error should raise an URLError exception
     """
-    provider = AtosProvider(u'10', u'vélitul', u'https://error.fake.com?wsdl', {'keolis'})
+    provider = AtosProvider('10', 'vélitul', 'https://error.fake.com?wsdl', {'keolis'})
 
     with pytest.raises(Exception):
         provider._get_all_stands()

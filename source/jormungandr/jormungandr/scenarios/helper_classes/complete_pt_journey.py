@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import
+
 import logging
 from .helper_utils import complete_pt_journey, compute_fallback, _build_crowflies, timed_logger
 from .helper_exceptions import InvalidDateBoundException

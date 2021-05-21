@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import calendar
 from collections import deque, namedtuple
 from datetime import datetime
@@ -220,7 +220,7 @@ def walk_dict(tree, visitor):
             for val in elt:
                 queue.append((name, val))
         elif hasattr(elt, 'items'):
-            for k, v in elt.items():
+            for k, v in list(elt.items()):
                 queue.append((k, v))
         elif first:  # for the first elt, we add it even if it is no collection
             queue.append((name, elt))
@@ -308,7 +308,7 @@ def realtime_level_to_pbf(level):
 # we can't use reverse(enumerate(list)) without creating a temporary
 # list, so we define our own reverse enumerate
 def reverse_enumerate(l):
-    return zip(range(len(l) - 1, -1, -1), reversed(l))
+    return list(zip(list(range(len(l) - 1, -1, -1)), reversed(l)))
 
 
 def pb_del_if(l, pred):

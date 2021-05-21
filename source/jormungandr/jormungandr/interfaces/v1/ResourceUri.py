@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from flask_restful import abort
 from jormungandr.interfaces.v1.converters_collection_type import collections_to_resource_type
 from jormungandr.interfaces.v1.converters_collection_type import resource_type_to_collection
@@ -67,7 +67,7 @@ class ResourceUri(StatedResource):
 
         # handle headsign
         if args.get("headsign"):
-            f = u"vehicle_journey.has_headsign({})".format(protect(args["headsign"]))
+            f = "vehicle_journey.has_headsign({})".format(protect(args["headsign"]))
             if args.get("filter"):
                 args["filter"] = '({}) and {}'.format(args["filter"], f)
             else:

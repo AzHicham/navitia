@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from . import gtfs_realtime_pb2
 from .tests_mechanism import dataset
 from .check_utils import *
@@ -1200,8 +1200,8 @@ def make_mock_chaos_item(
     impact = disruption.impacts.add()
     impact.id = "impact_" + disruption_name + "_1"
     enums_impact = gtfs_realtime_pb2.Alert.DESCRIPTOR.enum_values_by_name
-    impact.created_at = utils.str_to_time_stamp(u'20160405T150623')
-    impact.updated_at = utils.str_to_time_stamp(u'20160405T150733')
+    impact.created_at = utils.str_to_time_stamp('20160405T150623')
+    impact.updated_at = utils.str_to_time_stamp('20160405T150733')
     if blocking:
         impact.severity.effect = enums_impact["NO_SERVICE"].number
         impact.severity.id = 'blocking'

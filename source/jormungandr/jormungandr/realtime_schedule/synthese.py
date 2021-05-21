@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import itertools
 
 from jormungandr.realtime_schedule.realtime_proxy import RealtimeProxy, RealtimeProxyError
@@ -296,7 +296,7 @@ class Synthese(RealtimeProxy):
         is_same_route = lambda syn_rp: syn_rp.syn_route_id in route_point.fetch_all_route_id(self.object_id_tag)
         route_passages = [
             p
-            for syn_rp, p in passages.items()
+            for syn_rp, p in list(passages.items())
             if is_same_route(syn_rp) and stop_point_id == syn_rp.syn_stop_point_id
         ]
 
@@ -322,7 +322,7 @@ class Synthese(RealtimeProxy):
             # we can concatenate all synthese's route of this line
             line_passages = [
                 p
-                for syn_rp, p in passages.items()
+                for syn_rp, p in list(passages.items())
                 if syn_rp.syn_line_id == route_point.fetch_line_id(self.object_id_tag)
             ]
 
@@ -337,7 +337,7 @@ class Synthese(RealtimeProxy):
                     l=route_point.fetch_line_uri(),
                     l_codes=route_point.fetch_line_id(self.object_id_tag),
                     nb_syn_r=len(passages),
-                    syn_lines=[l.syn_line_id for l in passages.keys()],
+                    syn_lines=[l.syn_line_id for l in list(passages.keys())],
                 )
             )
 

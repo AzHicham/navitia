@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import navitiacommon.type_pb2 as type_pb2
 import navitiacommon.response_pb2 as response_pb2
 from future.moves.itertools import zip_longest
@@ -169,7 +169,7 @@ def build_pagination(request, resp):
     pagination = resp.pagination
     if pagination.totalResult > 0:
         query_args = ""
-        for key, value in request.items():
+        for key, value in list(request.items()):
             if key != "startPage":
                 if isinstance(value, type([])):
                     for v in value:
@@ -369,7 +369,7 @@ def gen_all_combin(n, t):
 def add_link(resp, rel, **kwargs):
     """ create and add a protobuf link to a protobuff response"""
     link = resp.links.add(rel=rel, is_templated=False, ressource_name='journeys')
-    for k, v in kwargs.items():
+    for k, v in list(kwargs.items()):
         if k is None or v is None:
             continue
         args = link.kwargs.add(key=k)

@@ -28,7 +28,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 import pytest
 from six.moves.urllib.parse import quote
@@ -519,8 +518,8 @@ class JourneyCommon(object):
         check_best(response)
         self.is_valid_journey_response(response, query)
         assert len(response['journeys']) == 1
-        assert response['journeys'][0]['departure_date_time'] == u'20120615T080100'
-        assert response['journeys'][0]['arrival_date_time'] == u'20120615T080102'
+        assert response['journeys'][0]['departure_date_time'] == '20120615T080100'
+        assert response['journeys'][0]['arrival_date_time'] == '20120615T080102'
 
     @mock.patch.object(i_manager, 'dispatch')
     def test_max_duration_to_pt(self, mock):
@@ -825,8 +824,8 @@ class JourneyCommon(object):
         )
         response = self.query_region(query, check=False)
         assert response[1] == 404
-        assert response[0]['error']['message'] == u'The entry point: stop_area:non_valid is not valid'
-        assert response[0]['error']['id'] == u'unknown_object'
+        assert response[0]['error']['message'] == 'The entry point: stop_area:non_valid is not valid'
+        assert response[0]['error']['id'] == 'unknown_object'
 
     def test_crow_fly_sections(self):
         """
@@ -1048,8 +1047,8 @@ class JourneyCommon(object):
         )
         response, status = self.query_region(query, check=False)
         assert status == 404
-        assert response['error']['id'] == u'unknown_object'
-        assert response['error']['message'] == u'The entry point: vehicle_journey:SNC is not valid'
+        assert response['error']['id'] == 'unknown_object'
+        assert response['error']['message'] == 'The entry point: vehicle_journey:SNC is not valid'
 
     def test_free_radius_from(self):
         # The coordinates of departure and the stop point are separated by 20m
@@ -1574,7 +1573,7 @@ class OnBasicRouting:
         check_best(response)
         self.is_valid_journey_response(response, query)
         assert len(response['journeys']) == 1
-        assert response['journeys'][0]['arrival_date_time'] == u'20120615T151000'
+        assert response['journeys'][0]['arrival_date_time'] == '20120615T151000'
         assert response['journeys'][0]['type'] == "best"
 
     def test_max_attemps(self):
@@ -2094,8 +2093,8 @@ class JourneysTimeFrameDuration:
         response = self.query_region(query)
         assert 2 <= len(response['journeys'])
 
-        assert response['journeys'][0]['departure_date_time'] == u'20180315T083000'
-        assert response['journeys'][1]['departure_date_time'] == u'20180315T082000'
+        assert response['journeys'][0]['departure_date_time'] == '20180315T083000'
+        assert response['journeys'][1]['departure_date_time'] == '20180315T082000'
 
     def test_timeframe_duration_with_minimum_value(self):
         """

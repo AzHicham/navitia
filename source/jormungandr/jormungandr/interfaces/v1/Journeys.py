@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging, json, hashlib, datetime
 from flask import request, g
 from flask_restful import abort
@@ -99,7 +99,7 @@ class add_debug_info(object):
 
             if hasattr(g, 'errors_by_region'):
                 get_debug()['errors_by_region'] = {}
-                for region, er in g.errors_by_region.items():
+                for region, er in list(g.errors_by_region.items()):
                     get_debug()['errors_by_region'][region] = er.message
 
             if hasattr(g, 'regions_called'):
@@ -855,14 +855,14 @@ class Journeys(JourneyCommon):
 
             return response
 
-        for response in responses.values():
+        for response in list(responses.values()):
             if not response.HasField(str("error")):
                 return response
 
         # if no response have been found for all the possible regions, we have a problem
         # if all response had the same error we give it, else we give a generic 'no solution' error
         first_response = list(responses.values())[0]
-        if all(r.error.id == first_response.error.id for r in responses.values()):
+        if all(r.error.id == first_response.error.id for r in list(responses.values())):
             return first_response
 
         resp = response_pb2.Response()

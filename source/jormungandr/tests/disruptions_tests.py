@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from .tests_mechanism import AbstractTestFixture, dataset
 from .check_utils import (
     get_not_null,
@@ -875,7 +875,7 @@ class TestDisruptions(AbstractTestFixture):
         )
 
         assert code == 400
-        assert response["message"] == u'until must be >= since'
+        assert response["message"] == 'until must be >= since'
 
 
 @dataset({"line_sections_test": {}})

@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import
+
 import copy
 import re
 import serpy
@@ -165,7 +165,7 @@ class SwaggerParam(object):
     @classmethod
     def make_from_flask_route(cls, rule_converters):
         args = []
-        for name, converter in (rule_converters or {}).items():
+        for name, converter in list((rule_converters or {}).items()):
             swagger_type, swagger_format = convert_to_swagger_type(converter.type_)
             custom_format = getattr(converter, 'regex', None)
             if custom_format:
@@ -197,7 +197,7 @@ def _from_nested_schema(field):
 def get_schema(serializer):
     properties_schema, definitions = get_schema_properties(serializer)
     required_properties = [
-        field.label or field_name for field_name, field in serializer._field_map.items() if field.required
+        field.label or field_name for field_name, field in list(serializer._field_map.items()) if field.required
     ]
     schema = {"type": "object", "properties": properties_schema}
     if required_properties:  # swagger is a bit rigid not to have empty required properties
@@ -215,7 +215,7 @@ def get_schema_properties(serializer):
     """
     external_definitions = []
     properties = {}
-    for field_name, field in serializer._field_map.items():
+    for field_name, field in list(serializer._field_map.items()):
         schema = {}
         schema_type = getattr(field, 'schema_type', None)
         # schema_metadata are additional information blindly added to the schema

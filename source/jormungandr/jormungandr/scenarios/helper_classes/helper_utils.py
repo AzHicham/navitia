@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
 
 from jormungandr.street_network.street_network import StreetNetworkPathType
 from jormungandr.utils import (

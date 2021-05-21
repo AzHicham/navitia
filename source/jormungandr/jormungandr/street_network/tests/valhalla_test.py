@@ -27,7 +27,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import
+
 import pytest
 
 from jormungandr.street_network.street_network import StreetNetworkPathType
@@ -117,7 +117,7 @@ def format_coord_func_valid_coord_sources_to_targets_test():
     coord = Valhalla._format_coord(pt_object, 'sources_to_targets')
     coord_res = {'lat': pt_object.address.coord.lat, 'lon': pt_object.address.coord.lon}
     assert len(coord) == 2
-    for key, value in coord_res.items():
+    for key, value in list(coord_res.items()):
         assert coord[key] == value
 
 
@@ -127,7 +127,7 @@ def format_coord_func_valid_coord_test():
     coord = Valhalla._format_coord(pt_object)
     coord_res = {'lat': pt_object.address.coord.lat, 'type': 'break', 'lon': pt_object.address.coord.lon}
     assert len(coord) == 3
-    for key, value in coord_res.items():
+    for key, value in list(coord_res.items()):
         assert coord[key] == value
 
 
@@ -509,7 +509,7 @@ def get_valhalla_mode_invalid_mode_test():
 
 def get_valhalla_mode_valid_mode_test():
     map_mode = {"walking": "pedestrian", "car": "auto", "bike": "bicycle"}
-    for kraken_mode, valhalla_mode in map_mode.items():
+    for kraken_mode, valhalla_mode in list(map_mode.items()):
         assert Valhalla._get_valhalla_mode(kraken_mode) == valhalla_mode
 
 
@@ -611,13 +611,13 @@ def status_test():
     valhalla = Valhalla(
         instance=None,
         service_url='http://bob.com',
-        id=u"tata-é$~#@\"*!'`§èû",
+        id="tata-é$~#@\"*!'`§èû",
         modes=["walking", "bike", "car"],
         timeout=23,
     )
     status = valhalla.status()
     assert len(status) == 5
-    assert status['id'] == u'tata-é$~#@"*!\'`§èû'
+    assert status['id'] == 'tata-é$~#@"*!\'`§èû'
     assert status['class'] == "Valhalla"
     assert status['modes'] == ["walking", "bike", "car"]
     assert status['timeout'] == 23

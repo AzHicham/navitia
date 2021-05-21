@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from collections import defaultdict, namedtuple
 from functools import partial
 from future.moves.itertools import zip_longest
@@ -287,7 +287,7 @@ def check_links(object, tester, href_mandatory=True):
     """
     links = get_links_dict(object)
 
-    for link_name, link in links.items():
+    for link_name, link in list(links.items()):
 
         def get_bool(name):
             """ give boolean if in dict, else False"""
@@ -462,7 +462,7 @@ def is_valid_isochrone(journey, tester, query):
     assert 'journeys' in journey_links
 
     additional_args = query_from_str(journey_links['journeys']['href'])
-    for k, v in query.items():
+    for k, v in list(query.items()):
         assert additional_args[k] == v
 
 

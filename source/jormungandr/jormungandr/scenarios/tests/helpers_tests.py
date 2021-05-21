@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from navitiacommon import type_pb2, response_pb2
 from jormungandr.scenarios.helpers import is_car_direct_path
 from jormungandr.scenarios.new_default import _is_bike_in_pt_journey

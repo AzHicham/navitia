@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from .tests_mechanism import AbstractTestFixture, dataset
 from .check_utils import *
@@ -152,7 +151,7 @@ class TestHeatMap(AbstractTestFixture):
         excepted_context = {'current_datetime': current_datetime, 'timezone': 'UTC'}
         self.check_context(response_no_dt)
 
-        for key, value in excepted_context.items():
+        for key, value in list(excepted_context.items()):
             assert response_no_dt['context'][key] == value
 
     def test_heat_maps_no_seconds_in_datetime(self):

@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr.resources_utils import DocumentedResource
 from jormungandr.stat_manager import manage_stat_caller
 from jormungandr import stat_manager

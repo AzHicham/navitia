@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import datetime
 import navitiacommon.response_pb2 as response_pb2
 from jormungandr.utils import str_to_time_stamp, date_to_timestamp
@@ -80,7 +80,7 @@ class ResponseBuilder(object):
             pb_section.type = response_pb2.PUBLIC_TRANSPORT
         elif _type is not None:
             pb_section.type = getattr(response_pb2, _type)
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             setattr(pb_section, k, v)
 
     def journey(self, uri=None, sections=[], **kwargs):
@@ -98,7 +98,7 @@ class ResponseBuilder(object):
         departure = kwargs.pop('departure', None)
         if departure is not None:
             j.departure_date_time = self.__to_timestamp(departure)
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             setattr(j, k, v)
         self.__compute_values(j)
         return self

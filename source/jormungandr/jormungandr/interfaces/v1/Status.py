@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr import i_manager, travelers_profile
 from jormungandr.protobuf_to_dict import protobuf_to_dict
 from jormungandr.interfaces.v1.serializer.api import StatusSerializer

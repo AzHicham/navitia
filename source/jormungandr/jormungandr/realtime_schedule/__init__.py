@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 
 from jormungandr.realtime_schedule.timeo import Timeo
 from jormungandr.realtime_schedule.realtime_proxy_manager import RealtimeProxyManager

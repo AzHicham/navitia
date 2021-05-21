@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 from navitiacommon import models
 
@@ -70,7 +70,7 @@ class TestOverlappingCoverage(AbstractTestFixture):
         self.is_valid_journey_response(response, journey_basic_query)
 
         assert len(response['feed_publishers']) == 1
-        assert response['feed_publishers'][0]['name'] == u'routing api data'
+        assert response['feed_publishers'][0]['name'] == 'routing api data'
 
         # with the initial response we cannot specifically check that the empty_routing_test region
         # has been called, so we call it back with debug and then we can check the region called field

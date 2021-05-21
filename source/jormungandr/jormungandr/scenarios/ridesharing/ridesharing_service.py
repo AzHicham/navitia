@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 import abc
 import six
@@ -77,7 +76,7 @@ class AbstractRidesharingService(object):
 
         # Format call_params from parameters
         self.call_params = ''
-        for key, value in params.items():
+        for key, value in list(params.items()):
             self.call_params += '{}={}&'.format(key, value)
 
         try:

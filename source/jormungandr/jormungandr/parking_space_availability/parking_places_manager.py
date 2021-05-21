@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from flask_restful.utils import unpack
 from jormungandr import i_manager, bss_provider_manager, car_park_provider_manager
 from functools import wraps

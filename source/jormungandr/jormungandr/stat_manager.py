@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from flask import request, g
 from functools import wraps
 from navitiacommon import stat_pb2
@@ -244,7 +244,7 @@ class StatManager(object):
                 stat_parameter.value = six.text_type(value)
 
         if hasattr(g, 'stat_interpreted_parameters'):
-            for item in g.stat_interpreted_parameters.items():
+            for item in list(g.stat_interpreted_parameters.items()):
                 if isinstance(item[1], list):
                     for value in item[1]:
                         stat_parameter = stat_request.interpreted_parameters.add()

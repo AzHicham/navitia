@@ -27,7 +27,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, division
+
 import datetime
 from dateutil.parser import parse
 import mock
@@ -160,6 +160,6 @@ def next_passage_for_route_point_failure_test():
 
 
 def status_test():
-    synthese = Synthese(id=u'tata-é$~#@"*!\'`§èû', timezone='UTC', service_url='http://bob.com/')
+    synthese = Synthese(id='tata-é$~#@"*!\'`§èû', timezone='UTC', service_url='http://bob.com/')
     status = synthese.status()
-    assert status['id'] == u"tata-é$~#@\"*!'`§èû"
+    assert status['id'] == "tata-é$~#@\"*!'`§èû"

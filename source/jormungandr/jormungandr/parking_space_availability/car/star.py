@@ -28,7 +28,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import jmespath
 
 from jormungandr.parking_space_availability.car.common_car_park_provider import CommonCarParkProvider

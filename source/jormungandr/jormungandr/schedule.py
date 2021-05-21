@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from typing import Text, List, Optional, Any
 import six
 
@@ -315,7 +315,7 @@ class MixedSchedule(object):
                     self._get_next_realtime_passages(rt_proxy, route_point, request),
                 )
 
-        for route_point, template in route_points.items():
+        for route_point, template in list(route_points.items()):
             rt_proxy = self._get_realtime_proxy(route_point)
             if rt_proxy:
                 futures.append(pool.spawn(worker, rt_proxy, route_point, template, request, resp))

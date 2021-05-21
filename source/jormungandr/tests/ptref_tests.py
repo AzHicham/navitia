@@ -28,7 +28,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from six.moves.urllib.parse import quote, quote_plus
 from six.moves.urllib.parse import urlencode
 from .tests_mechanism import dataset, AbstractTestFixture
@@ -586,7 +586,7 @@ class TestPtRef(AbstractTestFixture):
         assert get_not_null(pt_objs[0], 'name') == 'network:CaRoule line:Ça roule'
 
     def test_query_with_strange_char(self):
-        q = u'stop_points/stop_point:stop_with name bob \" , é'.encode('utf-8')
+        q = 'stop_points/stop_point:stop_with name bob \" , é'.encode('utf-8')
         encoded_q = quote(q)
         response = self.query_region(encoded_q)
 
@@ -595,7 +595,7 @@ class TestPtRef(AbstractTestFixture):
         assert len(stops) == 1
 
         is_valid_stop_point(stops[0], depth_check=1)
-        assert stops[0]["id"] == u'stop_point:stop_with name bob \" , é'
+        assert stops[0]["id"] == 'stop_point:stop_with name bob \" , é'
 
     def test_filter_query_with_strange_char(self):
         """test that the ptref mechanism works an object with a weird id"""
@@ -618,8 +618,8 @@ class TestPtRef(AbstractTestFixture):
     def test_journey_with_strange_char(self):
         # we use an encoded url to be able to check the links
         query = 'journeys?from={}&to={}&datetime=20140105T070000'.format(
-            quote_plus(u'stop_with name bob \" , é'.encode('utf-8')),
-            quote_plus(u'stop_area:stop1'.encode('utf-8')),
+            quote_plus('stop_with name bob \" , é'.encode('utf-8')),
+            quote_plus('stop_area:stop1'.encode('utf-8')),
         )
         response = self.query_region(query, display=True)
 

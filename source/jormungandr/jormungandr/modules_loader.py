@@ -29,7 +29,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 try:
     from typing import Dict, Text, Any, Union
@@ -56,7 +55,7 @@ class ModulesLoader(object):
         """
             Init all modules
         """
-        for module_inst in self.modules.values():
+        for module_inst in list(self.modules.values()):
             if isinstance(module_inst, AModule):
                 module_inst.setup()
             elif isinstance(module_inst, ABlueprint):

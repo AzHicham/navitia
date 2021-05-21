@@ -28,7 +28,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, unicode_literals
+
 from contextlib import contextmanager
 from flask import appcontext_pushed, g
 from jormungandr.utils import timestamp_to_datetime, make_namedtuple, walk_dict
@@ -226,4 +226,4 @@ def compare_list_of_dicts(sorting_key, first_list, second_list):
     first_list.sort(key=itemgetter(sorting_key))
     second_list.sort(key=itemgetter(sorting_key))
     assert len(first_list) == len(second_list)
-    return all(x == y for x, y in (zip(first_list, second_list)))
+    return all(x == y for x, y in (list(zip(first_list, second_list))))

@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import navitiacommon.response_pb2 as response_pb2
 import jormungandr.scenarios.tests.helpers_tests as helpers_tests
 from jormungandr.scenarios import new_default, journey_filter
@@ -248,13 +248,13 @@ def culling_journeys_3_test():
     assert len(mocked_pb_response.journeys) == 6
 
     journey_uris = {
-        ((u'uri_1', u'uri_2', u'uri_5', u'uri_6', u'walking'), 1444905300),
-        ((u'uri_2', u'uri_3', u'uri_4', u'walking'), 1444905600),
-        ((u'bike', u'uri_2', u'uri_7', u'walking'), 1444907700),
-        ((u'bike', u'uri_9'), 1444905000),
-        ((u'bike', u'uri_8', u'uri_9'), 1444903680),
-        ((u'bike',), 1444903680),
-        ((u'walking',), 1444903500),
+        (('uri_1', 'uri_2', 'uri_5', 'uri_6', 'walking'), 1444905300),
+        (('uri_2', 'uri_3', 'uri_4', 'walking'), 1444905600),
+        (('bike', 'uri_2', 'uri_7', 'walking'), 1444907700),
+        (('bike', 'uri_9'), 1444905000),
+        (('bike', 'uri_8', 'uri_9'), 1444903680),
+        (('bike',), 1444903680),
+        (('walking',), 1444903500),
     }
     for j in mocked_pb_response.journeys:
         assert (tuple(s.uris.line for s in j.sections), j.arrival_date_time) in journey_uris

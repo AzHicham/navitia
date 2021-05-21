@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 import itertools
 import datetime
@@ -571,7 +571,7 @@ def _debug_journey(journey):
     for s in journey.sections:
         if s.type == response_pb2.PUBLIC_TRANSPORT:
             sections.append(
-                u"{line} ({vj})".format(
+                "{line} ({vj})".format(
                     line=s.pt_display_informations.uris.line, vj=s.pt_display_informations.uris.vehicle_journey
                 )
             )
@@ -586,7 +586,7 @@ def _debug_journey(journey):
         return dt.strftime("%dT%H:%M:%S")
 
     logger.debug(
-        u"journey {id}: {dep} -> {arr} - {duration} ({fallback} map) | ({sec})".format(
+        "journey {id}: {dep} -> {arr} - {duration} ({fallback} map) | ({sec})".format(
             id=journey.internal_id,
             dep=_datetime_to_str(journey.departure_date_time),
             arr=_datetime_to_str(journey.arrival_date_time),

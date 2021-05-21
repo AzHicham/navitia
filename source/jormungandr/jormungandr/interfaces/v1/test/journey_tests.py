@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import pytest
 from jormungandr import i_manager
 from jormungandr.exceptions import RegionNotFound
@@ -203,7 +203,7 @@ class TestMultiCoverage:
         self.regions.pop('peru')
         self.regions.pop('bolivia')
 
-        regions = sort_regions(self.regions.values())
+        regions = sort_regions(list(self.regions.values()))
         assert len(regions) == 5
         assert regions[0].name == self.regions['brazil'].name
         assert regions[1].name == self.regions['germany'].name

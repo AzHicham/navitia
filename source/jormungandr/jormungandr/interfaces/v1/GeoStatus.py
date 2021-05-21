@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr import i_manager
 from jormungandr.interfaces.v1.serializer.api import GeoStatusSerializer
 from jormungandr.interfaces.v1.decorators import get_serializer

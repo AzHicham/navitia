@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr import i_manager
 from jormungandr.interfaces.v1.ResourceUri import ResourceUri
 from navitiacommon.type_pb2 import _NAVITIATYPE

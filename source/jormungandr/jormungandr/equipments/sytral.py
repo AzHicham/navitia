@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from jormungandr import cache, app, new_relic
 from navitiacommon import type_pb2
@@ -174,7 +173,7 @@ class SytralProvider(object):
             """
 
             unique_codes = {six.text_type(code): code for st in sae.stop_area.stop_points for code in st.codes}
-            for code in unique_codes.values():
+            for code in list(unique_codes.values()):
                 if code.type in self.code_types:
                     equipments_list = jmespath.search("equipments_details[?id=='{}']".format(code.value), data)
 

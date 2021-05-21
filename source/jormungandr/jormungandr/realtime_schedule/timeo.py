@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 import pybreaker
 import pytz
@@ -264,7 +264,7 @@ class Timeo(RealtimeProxy):
          requests
          """
 
-        base_params = '&'.join([k + '=' + v for k, v in self.service_args.items()])
+        base_params = '&'.join([k + '=' + v for k, v in list(self.service_args.items())])
 
         stop = route_point.fetch_stop_id(self.object_id_tag)
         line = route_point.fetch_line_id(self.object_id_tag)

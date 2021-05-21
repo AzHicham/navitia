@@ -28,7 +28,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr.ptref import FeedPublisher
 from jormungandr.parking_space_availability.bss.stands import Stands, StandsStatus
 from jormungandr.parking_space_availability.bss.common_bss_provider import CommonBssProvider
@@ -80,7 +80,7 @@ class DummyProvider(CommonBssProvider):
         import hashlib
 
         m = hashlib.md5()
-        for k, v in poi.get('properties', {}).items():
+        for k, v in list(poi.get('properties', {}).items()):
             m.update(v.encode('utf-8', errors='ignore'))
         s = int(bytearray(str(m.hexdigest()))[0])
         return Stands(int(s / 2), s, StandsStatus.closed if int(ref) % 2 else StandsStatus.open)

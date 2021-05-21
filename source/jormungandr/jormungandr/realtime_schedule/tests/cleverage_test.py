@@ -27,7 +27,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, division
+
 import mock
 from jormungandr.realtime_schedule.cleverage import Cleverage
 import validators
@@ -493,10 +493,10 @@ def next_passage_with_theoric_time_response_test(mock_theoric_response):
 
 def status_test():
     cleverage = Cleverage(
-        id=u'tata-é$~#@"*!\'`§èû',
+        id='tata-é$~#@"*!\'`§èû',
         timezone='Europe/Paris',
         service_url='http://bob.com/',
         service_args={'a': 'bobette', 'b': '12'},
     )
     status = cleverage.status()
-    assert status['id'] == u"tata-é$~#@\"*!'`§èû"
+    assert status['id'] == "tata-é$~#@\"*!'`§èû"

@@ -25,7 +25,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
+
 import serpy
 import logging
 from jormungandr.interfaces.v1.serializer import jsonschema
@@ -122,7 +122,7 @@ class AdministrativeRegionsSerializer(serpy.Field):
                 "id": None,
                 "zip_code": None,
             }
-            for level, name in admins.items()
+            for level, name in list(admins.items())
         ]
 
 

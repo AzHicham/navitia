@@ -29,7 +29,7 @@
 
 # Note: the tests_mechanism should be the first
 # import for the conf to be loaded correctly when only this test is ran
-from __future__ import absolute_import
+
 
 from copy import deepcopy
 

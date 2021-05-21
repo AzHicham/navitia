@@ -190,7 +190,7 @@ class StreetNetworkBackendManager(object):
                 continue
             all_street_networks_with_modes[sn].append(mode)
 
-        for sn, modes in all_street_networks_with_modes.items():
+        for sn, modes in list(all_street_networks_with_modes.items()):
             sn.modes = modes
 
         return [sn for sn in all_street_networks_with_modes]

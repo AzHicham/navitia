@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from importlib import import_module
 from itertools import chain
@@ -149,7 +148,7 @@ class EquipmentProviderManager(object):
 
         stop_points = get_from_to_stop_points_of_journeys(response.journeys)
 
-        for provider in self._get_providers().values():
+        for provider in list(self._get_providers().values()):
             provider.get_informations_for_journeys(stop_points)
 
         return response
@@ -162,7 +161,7 @@ class EquipmentProviderManager(object):
         """
         stop_area_equipments = (sae for er in response.equipment_reports for sae in er.stop_area_equipments)
 
-        for provider in self._get_providers().values():
+        for provider in list(self._get_providers().values()):
             provider.get_informations_for_equipment_reports(stop_area_equipments)
 
         return response

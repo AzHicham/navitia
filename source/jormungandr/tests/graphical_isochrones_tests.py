@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from .tests_mechanism import AbstractTestFixture, dataset, config, NewDefaultScenarioAbstractTestFixture
 from .check_utils import *
@@ -105,7 +104,7 @@ class TestGraphicalIsochrone(AbstractTestFixture):
         excepted_context = {'current_datetime': current_datetime, 'timezone': 'UTC'}
         self.check_context(response_no_dt)
 
-        for key, value in excepted_context.items():
+        for key, value in list(excepted_context.items()):
             assert response_no_dt['context'][key] == value
 
         q_dt = "v1/coverage/main_routing_test/isochrones?from={}&datetime={}&max_duration={}"

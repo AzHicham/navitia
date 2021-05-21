@@ -28,7 +28,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from .tests_mechanism import AbstractTestFixture, dataset, mock_equipment_providers
 from .equipment_mock import *
 from tests.check_utils import get_not_null, is_valid_equipment_report

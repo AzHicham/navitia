@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import json
 from flask import render_template, abort, make_response, url_for
 from jinja2 import TemplateNotFound

@@ -29,7 +29,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from navitiacommon.parser_args_type import BooleanType, DateTimeFormat, DepthArgument
 from jormungandr import i_manager, timezone

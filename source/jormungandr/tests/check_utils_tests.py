@@ -27,13 +27,13 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from . import check_utils
 
 
 def test_query_from_str():
     r = check_utils.query_from_str("toto/tata?bob=toto&bobette=tata&bobinos=tutu")
-    assert r == {'bobette': 'tata', 'bobinos': 'tutu', 'bob': u'toto'}
+    assert r == {'bobette': 'tata', 'bobinos': 'tutu', 'bob': 'toto'}
     r = check_utils.query_from_str("toto/tata?bob=toto&bob=tata&bob=titi&bob=tata&bobinos=tutu")
     assert r == {'bobinos': 'tutu', 'bob': ['toto', 'tata', 'titi', 'tata']}
     r = check_utils.query_from_str("?bob%5B%5D=toto titi&bob[]=tata%2Btutu")

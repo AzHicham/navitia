@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import
+
 from .places_free_access import PlacesFreeAccess
 from .streetnetwork_path import StreetNetworkPathPool
 from .fallback_durations import FallbackDurationsPool

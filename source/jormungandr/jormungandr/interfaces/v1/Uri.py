@@ -29,7 +29,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from flask_restful import abort
 
@@ -206,7 +205,7 @@ class Uri(ResourceUri, ResourceUtc):
         args["filter"] = self.get_filter(uris, args)
 
         if self.collection and id:
-            f = u'{o}.uri={v}'.format(o=collections_to_resource_type[self.collection], v=protect(id))
+            f = '{o}.uri={v}'.format(o=collections_to_resource_type[self.collection], v=protect(id))
             if args.get("filter"):
                 args["filter"] = '({}) and {}'.format(args["filter"], f)
             else:

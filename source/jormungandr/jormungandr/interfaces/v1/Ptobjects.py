@@ -29,7 +29,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from flask_restful import abort
 from flask.globals import g

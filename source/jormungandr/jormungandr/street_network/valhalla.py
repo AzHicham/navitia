@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from navitiacommon import response_pb2
 import logging
 import pybreaker
@@ -268,7 +268,7 @@ class Valhalla(AbstractStreetNetworkService):
             args['sources'] = [self._format_coord(origin, api) for origin in pt_object_origins]
             args['targets'] = [self._format_coord(destination, api) for destination in pt_object_destinations]
 
-            for key, value in self.directions_options.items():
+            for key, value in list(self.directions_options.items()):
                 args[key] = value
         return json.dumps(args)
 

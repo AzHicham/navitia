@@ -107,7 +107,7 @@ class CarWithPark(AbstractStreetNetworkService):
                 return routing_response[i].duration
             return float('inf')
 
-        best_ind = min(range(len(routing_response)), key=key)
+        best_ind = min(list(range(len(routing_response))), key=key)
         best_car_park = park_ride_car_parks[best_ind]
 
         if direct_path_extremity.represents_start:

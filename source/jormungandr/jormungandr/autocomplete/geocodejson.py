@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 
 from jormungandr.autocomplete.abstract_autocomplete import (
@@ -54,7 +54,7 @@ def create_admin_field(geocoding):
         return None
     admin_list = geocoding.get('admin', {})
     response = []
-    for level, name in admin_list.items():
+    for level, name in list(admin_list.items()):
         response.append(
             {
                 "insee": None,
@@ -238,7 +238,7 @@ class GeocodeJson(AbstractAutocomplete):
             if is_deleteable(_key, _value, _depth):
                 _clear_object(_value)
             elif isinstance(_value, dict):
-                for k, v in _value.items():
+                for k, v in list(_value.items()):
                     _manage_depth(k, v, _depth - 1)
 
         features = response.get('features')

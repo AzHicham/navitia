@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 import unittest
 from copy import deepcopy
@@ -103,7 +102,7 @@ class AbstractTestFixture(unittest.TestCase):
     def launch_all_krakens(cls):
         # Kraken doesn't handle amqp url :(
         rabbitmq = os.getenv('KRAKEN_RABBITMQ_HOST', 'localhost')
-        for (kraken_name, conf) in cls.data_sets.items():
+        for (kraken_name, conf) in list(cls.data_sets.items()):
             exe = os.path.join(krakens_dir, kraken_name)
             assert os.path.exists(exe), "cannot find the kraken {}".format(exe)
 
@@ -125,7 +124,7 @@ class AbstractTestFixture(unittest.TestCase):
 
     @classmethod
     def kill_all_krakens(cls):
-        for name, kraken_process in cls.krakens_pool.items():
+        for name, kraken_process in list(cls.krakens_pool.items()):
             logging.debug("killing " + name)
             if cls.data_sets[name].get('check_killed', True):
                 kraken_process.poll()
@@ -337,7 +336,7 @@ class AbstractTestFixture(unittest.TestCase):
             url = journeys_links[l]['href']
 
             additional_args = query_from_str(url)
-            for k, v in additional_args.items():
+            for k, v in list(additional_args.items()):
                 if k == 'datetime':
                     if l == 'next':
                         self.check_next_datetime_link(get_valid_datetime(v), response, clockwise)

@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr.tests.utils_test import user_set, FakeUser
 from navitiacommon import models
 import requests_mock
@@ -107,15 +107,15 @@ class FakeUserAuth(FakeUser):
 
     def _get_all_explicitly_authorized_instances(self):
         """mocked to avoid using the db"""
-        authorized_instance_names = [i for i, a in authorizations[self.login].items() if a['ALL']]
+        authorized_instance_names = [i for i, a in list(authorizations[self.login].items()) if a['ALL']]
         return [mock_instances[n] for n in authorized_instance_names]
 
     def _get_all_free_instances(self):
         """mocked to avoid using the db"""
-        return [i for i in mock_instances.values() if i.is_free]
+        return [i for i in list(mock_instances.values()) if i.is_free]
 
     def _get_all_instances(self):
-        return mock_instances.values()
+        return list(mock_instances.values())
 
 
 multipolygon = (

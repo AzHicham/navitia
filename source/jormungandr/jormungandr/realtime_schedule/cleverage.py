@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, division
+
 from jormungandr.realtime_schedule.realtime_proxy import RealtimeProxy, RealtimeProxyError
 import logging
 import pybreaker
@@ -70,7 +70,7 @@ class Cleverage(RealtimeProxy):
         timeout=10,
         **kwargs
     ):
-        self.service_url = service_url if (service_url[-1] == u'/') else (service_url + '/')
+        self.service_url = service_url if (service_url[-1] == '/') else (service_url + '/')
         self.service_args = service_args
         self.timeout = timeout  # timeout in seconds
         self.rt_system_id = id

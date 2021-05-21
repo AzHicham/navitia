@@ -32,10 +32,10 @@ from jormungandr.street_network.kraken import Kraken
 
 
 def status_test():
-    kraken = Kraken(instance=None, service_url=None, id=u"tata-é$~#@\"*!'`§èû", modes=["walking", "bike", "car"])
+    kraken = Kraken(instance=None, service_url=None, id="tata-é$~#@\"*!'`§èû", modes=["walking", "bike", "car"])
 
     status = kraken.status()
     assert len(status) == 3
-    assert status['id'] == u'tata-é$~#@"*!\'`§èû'
+    assert status['id'] == 'tata-é$~#@"*!\'`§èû'
     assert status['class'] == "Kraken"
     assert status['modes'] == ["walking", "bike", "car"]

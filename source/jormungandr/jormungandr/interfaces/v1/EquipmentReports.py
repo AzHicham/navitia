@@ -29,7 +29,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from navitiacommon.parser_args_type import DepthArgument
 from flask_restful import abort
@@ -78,7 +77,7 @@ class EquipmentReports(ResourceUri, ResourceUtc):
         code_types = ",".join(
             [
                 code
-                for provider in instance.equipment_provider_manager._get_providers().values()
+                for provider in list(instance.equipment_provider_manager._get_providers().values())
                 for code in provider.code_types
             ]
         )

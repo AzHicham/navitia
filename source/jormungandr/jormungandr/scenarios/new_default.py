@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from copy import deepcopy
 import itertools
@@ -434,7 +433,17 @@ def _get_sorted_solutions_indexes(selected_sections_matrix, nb_journeys_to_find,
         selected_journeys_matrix[i] = c
 
     collections.deque(
-        map(f, zip(range(shape[0]), gen_all_combin(selected_sections_matrix.shape[0], nb_journeys_to_find))),
+        list(
+            map(
+                f,
+                list(
+                    zip(
+                        list(range(shape[0])),
+                        gen_all_combin(selected_sections_matrix.shape[0], nb_journeys_to_find),
+                    )
+                ),
+            )
+        ),
         maxlen=0,
     )
     """
@@ -846,7 +855,7 @@ def merge_responses(responses, debug):
         elif len(errors) > 1:
             merged_response.error.id = response_pb2.Error.no_solution
             merged_response.error.message = "several errors occured: \n * {}".format(
-                "\n * ".join([m.message for m in errors.values()])
+                "\n * ".join([m.message for m in list(errors.values())])
             )
 
     return merged_response
@@ -1267,7 +1276,9 @@ class Scenario(simple.Scenario):
 
     @staticmethod
     def __get_best_for_criteria(journeys, criteria):
-        return min_from_criteria(filter(has_pt, journeys), [criteria, duration_crit, transfers_crit, nonTC_crit])
+        return min_from_criteria(
+            list(filter(has_pt, journeys)), [criteria, duration_crit, transfers_crit, nonTC_crit]
+        )
 
     def get_best(self, journeys, clockwise):
         if clockwise:

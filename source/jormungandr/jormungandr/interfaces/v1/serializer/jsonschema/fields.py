@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
+
 import serpy
 from navitiacommon.parser_args_type import TypeSchema, CustomSchemaType
 
@@ -43,8 +43,8 @@ def _init(self, parent_class, schema_type=None, schema_metadata=None, **kwargs):
         kwargs['display_none'] = False
     self.many = kwargs.pop('many', False)
     parent_vars = set(parent_class.__init__.__code__.co_names)
-    parent_kwargs = {k: v for k, v in kwargs.items() if k in parent_vars}
-    remaining_kwargs = {k: v for k, v in kwargs.items() if k not in parent_vars}
+    parent_kwargs = {k: v for k, v in list(kwargs.items()) if k in parent_vars}
+    remaining_kwargs = {k: v for k, v in list(kwargs.items()) if k not in parent_vars}
     parent_class.__init__(self, **parent_kwargs)
     self.schema_type = schema_type
     self.schema_metadata = schema_metadata or {}

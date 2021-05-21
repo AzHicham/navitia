@@ -27,7 +27,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, division
+
 import mock
 from jormungandr.realtime_schedule.sytral import Sytral
 from jormungandr.tests.utils_test import MockRequests
@@ -502,10 +502,10 @@ def next_passage_with_theoric_time_response_test(mock_theoric_response):
 
 def status_test():
     sytral = Sytral(
-        id=u'tata-é$~#@"*!\'`§èû', service_url='http://bob.com/', service_args={'a': 'bobette', 'b': '12'}
+        id='tata-é$~#@"*!\'`§èû', service_url='http://bob.com/', service_args={'a': 'bobette', 'b': '12'}
     )
     status = sytral.status()
-    assert status['id'] == u"tata-é$~#@\"*!'`§èû"
+    assert status['id'] == "tata-é$~#@\"*!'`§èû"
 
 
 def next_passage_for_route_point_multiline_test(mock_multiline_response):

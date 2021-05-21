@@ -28,7 +28,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import mock
 from pytest import raises
 
@@ -684,12 +684,12 @@ BRAGI_MOCK_RESPONSE_STOP_AREA_WITHOUT_COMMENTS = {
 def mock_bragi_autocomplete_call(bragi_response, limite=10, http_response_code=200, method='POST'):
     url = 'https://host_of_bragi/autocomplete'
     params = [
-        ('q', u'bob'),
-        ('type[]', u'public_transport:stop_area'),
-        ('type[]', u'street'),
-        ('type[]', u'house'),
-        ('type[]', u'poi'),
-        ('type[]', u'city'),
+        ('q', 'bob'),
+        ('type[]', 'public_transport:stop_area'),
+        ('type[]', 'street'),
+        ('type[]', 'house'),
+        ('type[]', 'poi'),
+        ('type[]', 'city'),
         ('limit', limite),
         ('pt_dataset[]', 'main_routing_test'),
         ('timeout', 2000),
@@ -731,7 +731,7 @@ class TestBragiAutocomplete(AbstractTestFixture):
             assert r[0]['address']['label'] == '20 Rue Bob (Bobtown)'
             assert r[0]['distance'] == '400'
             fbs = response['feed_publishers']
-            assert {fb['id'] for fb in fbs} >= {u'osm', u'bano'}
+            assert {fb['id'] for fb in fbs} >= {'osm', 'bano'}
             assert len(r[0]['address'].get('administrative_regions')) == 1
 
     def test_autocomplete_call_depth_zero(self):
@@ -749,7 +749,7 @@ class TestBragiAutocomplete(AbstractTestFixture):
             assert r[0]['address']['name'] == 'Rue Bob'
             assert r[0]['address']['label'] == '20 Rue Bob (Bobtown)'
             fbs = response['feed_publishers']
-            assert {fb['id'] for fb in fbs} >= {u'osm', u'bano'}
+            assert {fb['id'] for fb in fbs} >= {'osm', 'bano'}
             assert 'administrative_regions' not in r[0]['address']
 
     def test_autocomplete_call_with_param_from(self):
@@ -1303,7 +1303,7 @@ class TestBragiAutocomplete(AbstractTestFixture):
             # the first comment element.
             assert stop_area['comment'] == 'comment1'
             comments = stop_area['comments']
-            assert {comment['value'] for comment in comments} >= {u'comment1', u'comment2'}
+            assert {comment['value'] for comment in comments} >= {'comment1', 'comment2'}
 
     def test_autocomplete_call_without_comments_on_stop_area(self):
         with mock_bragi_autocomplete_call(BRAGI_MOCK_RESPONSE_STOP_AREA_WITHOUT_COMMENTS):
@@ -1511,13 +1511,13 @@ class AbstractAutocompleteAndRouting:
          - an adresse in bob's street that is not in the dataset
         """
         args = [
-            (u'pt_dataset[]', 'main_routing_test'),
-            (u'type[]', u'public_transport:stop_area'),
-            (u'type[]', u'street'),
-            (u'type[]', u'house'),
-            (u'type[]', u'poi'),
-            (u'type[]', u'city'),
-            (u'limit', 10),
+            ('pt_dataset[]', 'main_routing_test'),
+            ('type[]', 'public_transport:stop_area'),
+            ('type[]', 'street'),
+            ('type[]', 'house'),
+            ('type[]', 'poi'),
+            ('type[]', 'city'),
+            ('limit', 10),
             ('timeout', 2000),
         ]
         args.sort()

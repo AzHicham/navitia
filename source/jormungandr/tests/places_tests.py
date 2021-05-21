@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 
 from .tests_mechanism import AbstractTestFixture, dataset
@@ -61,7 +61,7 @@ class TestPlaces(AbstractTestFixture):
         assert response['places'][0]['name'] == "Condom (03430)"
 
     def test_places_invalid_encoding(self):
-        _, status = self.query_no_assert(u'/v1/coverage/main_routing_test/places/?q=ch\xe2teau'.encode('utf-8'))
+        _, status = self.query_no_assert('/v1/coverage/main_routing_test/places/?q=ch\xe2teau'.encode('utf-8'))
         assert status != 500
 
     def test_places_do_not_loose_precision(self):
@@ -284,7 +284,7 @@ class TestPlaces(AbstractTestFixture):
         """test that a non existent addresse"""
         place_id = "-1.5348252000000002;47.2554241"
         response, status = self.query_region("places/{}".format(place_id), check=False)
-        assert response["error"]["message"] == u'Unable to find place: -1.5348252000000002;47.2554241'
+        assert response["error"]["message"] == 'Unable to find place: -1.5348252000000002;47.2554241'
 
     def test_line_forbidden(self):
         """ test that line is not an allowed type """
@@ -391,13 +391,13 @@ class TestPlaces(AbstractTestFixture):
     def test_places_with_empty_q(self):
         response, status = self.query_region("places?q=", check=False)
         assert status == 400
-        assert response["message"] == u'Search word absent'
+        assert response["message"] == 'Search word absent'
 
     def test_places_with_1025_char(self):
         q = "K" * 1025
         response, status = self.query_region("places?q={q}".format(q=q), check=False)
         assert status == 413
-        assert response["message"] == u'Number of characters allowed for the search is 1024'
+        assert response["message"] == 'Number of characters allowed for the search is 1024'
 
     def test_places_with_1024_char(self):
         q = "K" * 1024

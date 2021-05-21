@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
+
 from flask import current_app
 import flask_restful
 from flask_restful import reqparse
@@ -78,13 +78,13 @@ class ArgumentDoc(reqparse.Argument):
         Override method to output message from exception and from argument's help
         """
         error_str = six.text_type(error)
-        error_msg = u'parameter "{}" invalid: '.format(self.name)
+        error_msg = 'parameter "{}" invalid: '.format(self.name)
         if error_str:
             error_msg += error_str
         if self.help:
             if error_msg:
-                error_msg += u'\n'
-            error_msg += u'{} description: {}'.format(self.name, self.help)
+                error_msg += '\n'
+            error_msg += '{} description: {}'.format(self.name, self.help)
         msg = {self.name: error_msg}
 
         if current_app.config.get("BUNDLE_ERRORS", False) or bundle_errors:

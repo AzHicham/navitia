@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, unicode_literals
+
 import mock
 from jormungandr.autocomplete.geocodejson import GeocodeJson
 from jormungandr.interfaces.v1.serializer.geocode_json import GeocodePlacesSerializer

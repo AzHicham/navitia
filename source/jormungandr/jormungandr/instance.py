@@ -29,7 +29,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 try:
     from typing import Dict, Text, Deque, List, Tuple
@@ -51,7 +50,7 @@ from navitiacommon import models
 from importlib import import_module
 from jormungandr import cache, memory_cache, app, global_autocomplete
 from shapely import wkt, geometry
-from shapely.geos import PredicateError, ReadingError, TopologicalError
+from shapely.errors import PredicateError, TopologicalError, ReadingError
 from flask import g
 import flask
 import pybreaker
@@ -229,7 +228,7 @@ class Instance(object):
         return backend
 
     def stop_point_fallbacks(self):
-        return [a for a in global_autocomplete.values() if a.is_handling_stop_points()]
+        return [a for a in list(global_autocomplete.values()) if a.is_handling_stop_points()]
 
     def get_models(self):
         if self.name not in g.instances_model:
@@ -563,7 +562,7 @@ class Instance(object):
         d = copy.deepcopy(get_value_or_default('max_nb_crowfly_by_mode', instance_db, self.name))
         # In case we add a new max_nb_crowfly for an other mode than
         # the ones already present in the database.
-        for mode, duration in default_values.max_nb_crowfly_by_mode.items():
+        for mode, duration in list(default_values.max_nb_crowfly_by_mode.items()):
             if mode not in d:
                 d[mode] = duration
 

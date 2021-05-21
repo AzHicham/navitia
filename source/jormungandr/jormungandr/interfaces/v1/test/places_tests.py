@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
+
 from jormungandr.autocomplete.geocodejson import format_zip_code
 from jormungandr.interfaces.common import handle_poi_infos
 

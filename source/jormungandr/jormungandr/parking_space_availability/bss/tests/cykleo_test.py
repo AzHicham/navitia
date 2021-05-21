@@ -28,13 +28,13 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from copy import deepcopy
 from jormungandr.parking_space_availability.bss.cykleo import CykleoProvider
 from jormungandr.parking_space_availability.bss.stands import Stands, StandsStatus
 from mock import MagicMock
 
-network = u'DiviaVélodi'
+network = 'DiviaVélodi'
 poi = {
     'properties': {'network': network, 'operator': 'CYKLEO', 'ref': '2'},
     'poi_type': {'name': 'station vls', 'id': 'poi_type:amenity:bicycle_rental'},
