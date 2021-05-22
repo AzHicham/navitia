@@ -58,9 +58,55 @@ jobs:
     - name: run deploy on artemis machine https://jenkins-core.canaltp.fr/job/deploy-navitia
       if: ${{ github.event_name == 'push' }}
       run: http --ignore-stdin -v -f POST https://${{secrets.JENKINS_NG_TOKEN}}@jenkins-core.canaltp.fr/job/deploy-navitia/buildWithParameters PLATFORM=artemis_debian8
-    - name: run artemis on github action
-      uses: mvasigh/dispatch-action@1.1.6
+  artemisNG:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Make some space
+      run: rm -rf /usr/share/dotnet
+    - name: checkout navitia
+      uses: actions/checkout@v2
+    - name: checkout artemis
+      uses: actions/checkout@v2
       with:
-        token: ${{ secrets.ARTEMIS_GITHUB_TOKEN }}
-        repo: artemis
-        event_type: run_artemis_ng
+        repository: CanalTP/artemis
+        path: artemis
+    - uses: actions/setup-python@v2
+      with:
+          python-version: '3.7'
+    - name: Pull sub-repos
+      env:
+        ARTEMIS_GITHUB_TOKEN: ${{ secrets.ARTEMIS_GITHUB_TOKEN }}
+      run: |
+        rm -rf artemis/navitia-docker-compose && git clone https://$ARTEMIS_GITHUB_TOKEN@github.com/CanalTP/navitia-docker-compose.git --branch master ./artemis/navitia-docker-compose
+        rm -rf artemis/artemis_data && git clone https://$ARTEMIS_GITHUB_TOKEN@github.com/CanalTP/artemis_data.git --branch master ./artemis/artemis_data
+        rm -rf artemis/artemis_references && git clone https://$ARTEMIS_GITHUB_TOKEN@github.com/AzHicham/artemis_references.git --branch artemis_ng_ga ./artemis/artemis_references
+    - name: Build docker image
+      env:
+        ARTEMIS_GITHUB_TOKEN: ${{ secrets.ARTEMIS_GITHUB_TOKEN }}
+      run: cd artemis/navitia-docker-compose/builder_from_package && ./build.sh -o $ARTEMIS_GITHUB_TOKEN -t local -e push -f CanalTP -b dev
+    - name: Pull remaining images
+      run: cd artemis && make pull_available TAG=local || exit 0
+    - name: Start dockers
+      run: cd artemis && make start TAG=local || exit 0
+    - name: Run Test
+      env:
+        PYTEST: ''
+        PYTEST_ARGS: "--benchmark-json output.json"
+      run: cd artemis && make test
+    - name: Store benchmark result
+      uses: rhysd/github-action-benchmark@v1
+      with:
+        # What benchmark tool the output.txt came from
+        tool: 'pytest'
+        github-token: ${{ secrets.ARTEMIS_GITHUB_TOKEN }}
+        auto-push: true
+        gh-pages-branch: 'gh-pages'
+        benchmark-data-dir-path: 'dev/bench'
+        # Where the output from the benchmark tool is stored
+        output-file-path: artemis/output.json
+        # Workflow will fail when an alert happens
+        fail-on-alert: true
+        alert-threshold: '150%'
+        comment-on-alert: true
+
