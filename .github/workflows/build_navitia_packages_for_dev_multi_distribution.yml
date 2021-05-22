@@ -94,6 +94,18 @@ jobs:
         PYTEST: ''
         PYTEST_ARGS: "--benchmark-json output.json"
       run: cd artemis && make test
+    - name: Aggregate logs
+      if: ${{ always() }}
+      run: cd artemis && make logs TAG=local > logs || exit 0
+    - name: Archive Artemis artifacts (logs + ref)
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: logs-and-ref
+        path: |
+            artemis/output/**/*
+            artemis/junit/*.xml
+            artemis/logs
     - name: Store benchmark result
       uses: rhysd/github-action-benchmark@v1
       with:
