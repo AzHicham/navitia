@@ -45,7 +45,7 @@ jobs:
       run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper-output-dir make -j $(nproc)
     - name: Tests python3
       run: |
-        apt update && apt install -y python3.8 python3.8-dev python3.8-distutils python3.8-venv python3-pip clang-format-6.0 git 2to3 protobuf-compiler
+        apt update && apt install -y libpq-dev python3.8 python3.8-dev python3.8-distutils python3.8-venv python3-pip clang-format-6.0 git 2to3 protobuf-compiler
         pip3 install virtualenv -U
         virtualenv -p python3.8 navitia_py3
         . navitia_py3/bin/activate
