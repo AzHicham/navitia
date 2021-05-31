@@ -35,9 +35,9 @@ from six.moves import map
 
 def test_get_traveler_profile_and_override():
     """
-     Test traveler profile's factory method make_traveler_profile and override_params
+    Test traveler profile's factory method make_traveler_profile and override_params
 
-     when overriding args, only non-defined args will be overrided.
+    when overriding args, only non-defined args will be overrided.
 
     """
     region = 'default'

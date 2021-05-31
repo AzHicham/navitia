@@ -53,7 +53,7 @@ class ModulesLoader(object):
 
     def run(self):
         """
-            Init all modules
+        Init all modules
         """
         for module_inst in list(self.modules.values()):
             if isinstance(module_inst, AModule):
@@ -100,7 +100,7 @@ class ABlueprint(Blueprint):
 
 class AModule(object):
     """
-        Abstract class for routing modules.
+    Abstract class for routing modules.
     """
 
     def __init__(self, api, name, description=None, status=None, index_endpoint=None):
