@@ -58,11 +58,11 @@ jobs:
     - name: Tests python3
       run: |
         apt update && apt install -y python3.8 python3.8-dev python3.8-distutils python3.8-venv python3-pip clang-format-6.0 git 2to3 protobuf-compiler
-        pip install virtualenv -U
+        pip3 install virtualenv -U
         virtualenv -p /usr/local/bin/python3.8 navitia_py3
         . navitia_py3/bin/activate
         python -V
-        pip install -r source/jormungandr/requirements_dev.txt
+        pip3 install -r source/jormungandr/requirements_dev.txt
         export JORMUNGANDR_BROKER_URL='amqp://guest:guest@rabbitmq:5672//'
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
         ctest --output-on-failure
@@ -96,12 +96,12 @@ jobs:
     - name: install dependencies
       run: |
         apt update && apt install -y python3.8 python3.8-dev python3.8-distutils python3.8-venv python3-pip clang-format-6.0 git 2to3 protobuf-compiler
-        pip install virtualenv -U
+        pip3 install virtualenv -U
         virtualenv -p /usr/local/bin/python3.8 navitia_py3
         . navitia_py3/bin/activate
         python -V
-        pip install -r source/jormungandr/requirements_dev.txt
-        pip install -r requirements_pre-commit.txt --upgrade
+        pip3 install -r source/jormungandr/requirements_dev.txt
+        pip3 install -r requirements_pre-commit.txt --upgrade
     - name: get submodule
       run: |
         sed -i 's,git\@github.com:\([^/]*\)/\(.*\).git,https://github.com/\1/\2,' .gitmodules
