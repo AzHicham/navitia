@@ -571,6 +571,7 @@ class Journeys(JourneyCommon):
                 type=int,
                 help=f"limit duration of direct path in {mode}, used ONLY in distributed scenario",
             )
+
         parser_get.add_argument("depth", type=DepthArgument(), default=1, help="The depth of your object")
         args = self.parsers["get"].parse_args()
 
@@ -707,6 +708,11 @@ class Journeys(JourneyCommon):
             # activated only for distributed
             for mode in FallbackModes.modes_str():
                 tmp = f'max_{mode}_direct_path_duration'
+                if args.get(tmp) is None:
+                    args[tmp] = getattr(mod, tmp)
+
+            for mode in FallbackModes.modes_str():
+                tmp = 'max_{}_direct_path_distance'.format(mode)
                 if args.get(tmp) is None:
                     args[tmp] = getattr(mod, tmp)
 

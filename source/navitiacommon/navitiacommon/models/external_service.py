@@ -33,6 +33,7 @@
 from sqlalchemy.dialects.postgresql.json import JSONB
 from navitiacommon.models import db, TimestampMixin
 from navitiacommon import default_values
+from navitiacommon.constants import ENUM_EXTERNAL_SERVICE
 
 
 class ExternalService(db.Model, TimestampMixin):  # type: ignore
@@ -40,7 +41,7 @@ class ExternalService(db.Model, TimestampMixin):  # type: ignore
     klass = db.Column(db.Text, unique=False, nullable=False)
     discarded = db.Column(db.Boolean, nullable=False, default=False)
     navitia_service = db.Column(
-        db.Enum('free_floatings', 'vehicle_occupancies', name='navitia_service_type'),
+        db.Enum(*ENUM_EXTERNAL_SERVICE, name='navitia_service_type'),
         default=default_values.external_service,
         nullable=False,
     )
