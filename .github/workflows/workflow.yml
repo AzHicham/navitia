@@ -66,16 +66,11 @@ jobs:
         export JORMUNGANDR_BROKER_URL='amqp://guest:guest@rabbitmq:5672//'
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
         ctest --output-on-failure
-        deactivate
     - name: remove useless tests
       run: |
         rm -rf tests/mock_kraken kraken/tests ed/tests fare/tests routing/tests calendar/tests
         rm -rf georef/tests proximity_list/tests time_tables/tests equipment/tests
         rm -rf ptreferential/tests
-    - name: install Tyr dependencies for python2
-      run: |
-        pip3 install -r source/tyr/requirements_dev.txt
-        pip3 install -r source/sql/requirements.txt
     - name: docker_test for python3
       run: |
         . navitia_py3/bin/activate
@@ -119,7 +114,6 @@ jobs:
         LANG: C.UTF-8
       run: |
         pre-commit install --install-hooks
-        pre-commit run --all --show-diff-on-failure
   release_script_tests:
     runs-on: ubuntu-latest
     steps:
