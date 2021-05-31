@@ -59,7 +59,7 @@ jobs:
       run: |
         apt update && apt install -y python3.8 python3.8-dev python3.8-distutils python3.8-venv python3-pip clang-format-6.0 git 2to3 protobuf-compiler
         pip3 install virtualenv -U
-        virtualenv -p /usr/local/bin/python3.8 navitia_py3
+        virtualenv -p python3.8 navitia_py3
         . navitia_py3/bin/activate
         python -V
         pip3 install -r source/jormungandr/requirements_dev.txt
@@ -97,7 +97,7 @@ jobs:
       run: |
         apt update && apt install -y python3.8 python3.8-dev python3.8-distutils python3.8-venv python3-pip clang-format-6.0 git 2to3 protobuf-compiler
         pip3 install virtualenv -U
-        virtualenv -p /usr/local/bin/python3.8 navitia_py3
+        virtualenv -p python3.8 navitia_py3
         . navitia_py3/bin/activate
         python -V
         pip3 install -r source/jormungandr/requirements_dev.txt
