@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division
+
 import os
 from tyr import app, db
 import pytest
@@ -61,7 +61,7 @@ def clean_db():
     """
     with app.app_context():
         tables = [
-            '"{}"'.format(table)
+            f'"{table}"'
             for table in [
                 'user',
                 'instance',
@@ -73,5 +73,5 @@ def clean_db():
                 'autocomplete_parameter',
             ]
         ]
-        db.session.execute('TRUNCATE {} CASCADE;'.format(', '.join(tables)))
+        db.session.execute(f"TRUNCATE {', '.join(tables)} CASCADE;")
         db.session.commit()

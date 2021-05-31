@@ -34,7 +34,7 @@ def upgrade():
         "INSERT INTO billing_plan (name, max_request_count, max_object_count, \"default\", end_point_id) VALUES ('nav_dev',3000,NULL,false,1),('nav_ent',NULL,NULL,false,1),('nav_ctp',NULL,NULL,true,1),('sncf_dev',3000,60000,true,(SELECT id FROM end_point WHERE name='sncf')),('sncf_ent',NULL,NULL,false,(SELECT id FROM end_point WHERE name='sncf'));"
     )
 
-    op.add_column(u'user', sa.Column('billing_plan_id', sa.Integer(), nullable=True))
+    op.add_column('user', sa.Column('billing_plan_id', sa.Integer(), nullable=True))
     op.create_foreign_key("fk_user_billing_plan", "user", "billing_plan", ["billing_plan_id"], ["id"])
 
     op.execute(

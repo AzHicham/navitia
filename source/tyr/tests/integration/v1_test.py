@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division
+
 from tests.check_utils import api_get, api_post, api_put, api_delete
 from tyr import app
 from navitiacommon import models
@@ -45,7 +45,7 @@ def create_5_users():
     with app.app_context():
         for i in range(5):
             user_name = 'user{}'.format(str(i))
-            user = models.User(user_name, '{}@example.com'.format(user_name))
+            user = models.User(user_name, f'{user_name}@example.com')
             models.db.session.add(user)
         models.db.session.commit()
 
@@ -104,16 +104,16 @@ def compare_responses(v1_resp, v0_resp):
     v0_resp.sort(key=operator.itemgetter('id'))
     v1_resp.sort(key=operator.itemgetter('id'))
     assert len(v0_resp) == len(v1_resp)
-    return all(x == y for x, y in (zip(v0_resp, v1_resp)))
+    return all(x == y for x, y in (list(zip(v0_resp, v1_resp))))
 
 
 def check_v1_response(endpoint, request=None):
     if not request:
         request = endpoint
-    resp_v0 = api_get('/v0/{}'.format(request))
+    resp_v0 = api_get(f'/v0/{request}')
     assert endpoint not in resp_v0
 
-    resp_v1 = api_get('/v1/{}'.format(request))
+    resp_v1 = api_get(f'/v1/{request}')
     assert type(resp_v1) == dict
     assert endpoint in resp_v1
     if isinstance(resp_v0, list) and isinstance(resp_v1[endpoint], list):
@@ -128,7 +128,7 @@ def test_api():
 
 def test_users(create_5_users):
     check_v1_response('users')
-    check_v1_response('users', 'users/{}'.format(create_5_users))
+    check_v1_response('users', f'users/{create_5_users}')
 
 
 def test_users_methods():
@@ -141,16 +141,16 @@ def test_users_methods():
 
     user_data_update = {'type': 'super_user'}
     resp_put = api_put(
-        '/v1/users/{}'.format(user_id), data=json.dumps(user_data_update), content_type='application/json'
+        f'/v1/users/{user_id}', data=json.dumps(user_data_update), content_type='application/json'
     )
     assert 'user' in resp_put
     assert resp_put['user']['login'] == 'user1'
     assert resp_put['user']['type'] == 'super_user'
 
-    resp_delete, status_delete = api_delete('/v1/users/{}'.format(user_id), check=False, no_json=True)
+    resp_delete, status_delete = api_delete(f'/v1/users/{user_id}', check=False, no_json=True)
     assert status_delete == 204
 
-    resp_get, status_get = api_get('/v1/users/{}'.format(user_id), check=False)
+    resp_get, status_get = api_get(f'/v1/users/{user_id}', check=False)
     assert status_get == 404
 
 
@@ -180,13 +180,13 @@ def test_users_pagination(create_5_users):
 
 
 def test_keys(create_5_users):
-    check_v1_response('keys', 'users/{}/keys'.format(create_5_users))
+    check_v1_response('keys', f'users/{create_5_users}/keys')
 
 
 def test_keys_methods(create_5_users):
     user_id = create_5_users
     resp_post = api_post(
-        '/v1/users/{}/keys'.format(create_5_users),
+        f'/v1/users/{create_5_users}/keys',
         data=json.dumps({'app_name': 'testApp', 'valid_until': '2020-01-01'}),
         content_type='application/json',
     )
@@ -197,7 +197,7 @@ def test_keys_methods(create_5_users):
 
     key_id = resp_post['user']['keys'][0]['id']
     resp_put = api_put(
-        '/v1/users/{}/keys/{}'.format(user_id, key_id),
+        f'/v1/users/{user_id}/keys/{key_id}',
         data=json.dumps({'app_name': 'testApp', 'valid_until': '2021-01-01'}),
         content_type='application/json',
     )
@@ -205,17 +205,17 @@ def test_keys_methods(create_5_users):
     assert resp_put['user']['keys'][0]['app_name'] == 'testApp'
     assert resp_put['user']['keys'][0]['valid_until'] == '2021-01-01'
 
-    resp_delete = api_delete('/v1/users/{}/keys/{}'.format(user_id, key_id))
+    resp_delete = api_delete(f'/v1/users/{user_id}/keys/{key_id}')
     assert len(resp_delete['user']['keys']) == 0
 
 
 def test_authorization_methods(create_5_users, create_instance, create_api):
     user_id = create_5_users
-    full_user = api_get('/v1/users/{}'.format(user_id))
+    full_user = api_get(f'/v1/users/{user_id}')
     assert len(full_user['users']['authorizations']) == 0
     auth = {'instance_id': create_instance, 'api_id': create_api}
     resp_post = api_post(
-        '/v1/users/{}/authorizations'.format(user_id), data=json.dumps(auth), content_type='application/json'
+        f'/v1/users/{user_id}/authorizations', data=json.dumps(auth), content_type='application/json'
     )
     assert len(resp_post['user']['authorizations']) == 1
 
@@ -223,16 +223,14 @@ def test_authorization_methods(create_5_users, create_instance, create_api):
     assert resp_post['user']['authorizations'][0]['instance']['name'] == 'test_instance'
 
     resp_delete = api_delete(
-        '/v1/users/{}/authorizations'.format(user_id), data=json.dumps(auth), content_type='application/json'
+        f'/v1/users/{user_id}/authorizations', data=json.dumps(auth), content_type='application/json'
     )
     assert len(resp_delete['user']['authorizations']) == 0
 
 
 def test_autocomplete_parameters(create_autocomplete_parameters):
     check_v1_response('autocomplete_parameters')
-    check_v1_response(
-        'autocomplete_parameters', 'autocomplete_parameters/{}'.format(create_autocomplete_parameters)
-    )
+    check_v1_response('autocomplete_parameters', f'autocomplete_parameters/{create_autocomplete_parameters}')
 
 
 def test_autocomplete_parameters_methods():
@@ -257,7 +255,7 @@ def test_autocomplete_parameters_methods():
     assert status_post == 201
     assert 'autocomplete_parameters' in resp_post
     assert len(resp_post['autocomplete_parameters']) == 1
-    for key in autocomplete_data.keys():
+    for key in list(autocomplete_data.keys()):
         assert resp_post['autocomplete_parameters'][0][key] == autocomplete_data[key]
     autocomplete_name = resp_post['autocomplete_parameters'][0]['name']
 
@@ -265,12 +263,12 @@ def test_autocomplete_parameters_methods():
     assert 'autocomplete_parameters' in resp_get
     assert len(resp_get['autocomplete_parameters']) == initial_num + 1
     assert resp_get['autocomplete_parameters'][0]['name'] == autocomplete_name
-    for key in autocomplete_data.keys():
+    for key in list(autocomplete_data.keys()):
         assert resp_get['autocomplete_parameters'][0][key] == autocomplete_data[key]
 
     autocomplete_data_update = {'address': 'OA'}
     resp_put = api_put(
-        '/v1/autocomplete_parameters/{}'.format(autocomplete_name),
+        f'/v1/autocomplete_parameters/{autocomplete_name}',
         data=json.dumps(autocomplete_data_update),
         content_type='application/json',
     )
@@ -284,7 +282,7 @@ def test_autocomplete_parameters_methods():
     assert resp_get['autocomplete_parameters'][0]['address'] == autocomplete_data_update['address']
 
     resp_delete, status_delete = api_delete(
-        '/v1/autocomplete_parameters/{}'.format(autocomplete_name), check=False, no_json=True
+        f'/v1/autocomplete_parameters/{autocomplete_name}', check=False, no_json=True
     )
     assert status_delete == 204
 
@@ -317,7 +315,7 @@ def test_billing_plans_methods():
 
     billing_plan_data_update = {'max_object_count': 1000}
     resp_put = api_put(
-        '/v1/billing_plans/{}'.format(billing_plan_id),
+        f'/v1/billing_plans/{billing_plan_id}',
         data=json.dumps(billing_plan_data_update),
         content_type='application/json',
     )
@@ -325,9 +323,7 @@ def test_billing_plans_methods():
     assert len(resp_put['billing_plan']) == 1
     assert resp_put['billing_plan'][0]['max_object_count'] == billing_plan_data_update['max_object_count']
 
-    resp_delete, status_delete = api_delete(
-        '/v1/billing_plans/{}'.format(billing_plan_id), check=False, no_json=True
-    )
+    resp_delete, status_delete = api_delete(f'/v1/billing_plans/{billing_plan_id}', check=False, no_json=True)
     assert status_delete == 204
 
     resp_get = api_get('/v1/billing_plans')
@@ -360,7 +356,7 @@ def test_end_points_methods():
 
     endpoint_data_update = {'name': 'Tyr_v1_update'}
     resp_put = api_put(
-        '/v1/end_points/{}'.format(endpoint_id),
+        f'/v1/end_points/{endpoint_id}',
         data=json.dumps(endpoint_data_update),
         content_type='application/json',
     )
@@ -368,7 +364,7 @@ def test_end_points_methods():
     assert len(resp_put['end_point']) == 1
     assert resp_put['end_point'][0]['name'] == endpoint_data_update['name']
 
-    resp_delete, status_delete = api_delete('/v1/end_points/{}'.format(endpoint_id), check=False, no_json=True)
+    resp_delete, status_delete = api_delete(f'/v1/end_points/{endpoint_id}', check=False, no_json=True)
     assert status_delete == 204
 
     resp_get = api_get('/v1/end_points')

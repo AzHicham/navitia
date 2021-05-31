@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division, unicode_literals
+
 from tyr import app
 from navitiacommon import models
 from tests.check_utils import api_get, api_delete, api_put
@@ -141,7 +141,7 @@ def test_ridesharing_service_put(default_ridesharing_service_config):
     assert status == 201
     assert 'ridesharing_services' in resp
     assert len(resp['ridesharing_services']) == 1
-    for key in service.keys():
+    for key in list(service.keys()):
         assert resp['ridesharing_services'][0][key] == service[key]
 
     resp = api_get('/v0/ridesharing_services')
@@ -155,7 +155,7 @@ def test_ridesharing_service_put(default_ridesharing_service_config):
     )
     assert 'ridesharing_services' in resp
     assert len(resp['ridesharing_services']) == 1
-    for key in service.keys():
+    for key in list(service.keys()):
         assert resp['ridesharing_services'][0][key] == service[key]
 
     resp = api_get('/v0/ridesharing_services/TestCovoiturage3')
@@ -207,12 +207,12 @@ def test_associate_instance_ridesharing_service(default_ridesharing_service_conf
     instance, ridesharing0, ridesharing1 = default_ridesharing_service_config
 
     # Associate one ridesharing service
-    resp = api_put('/v1/instances/{}?ridesharing_services={}'.format(instance.name, ridesharing0.id))
+    resp = api_put(f'/v1/instances/{instance.name}?ridesharing_services={ridesharing0.id}')
     assert len(resp["ridesharing_services"]) == 1
     assert resp["ridesharing_services"][0]["id"] == ridesharing0.id
 
     # Update associate ridesharing service
-    resp = api_put('/v1/instances/{}?ridesharing_services={}'.format(instance.name, ridesharing1.id))
+    resp = api_put(f'/v1/instances/{instance.name}?ridesharing_services={ridesharing1.id}')
     assert len(resp["ridesharing_services"]) == 1
     assert resp["ridesharing_services"][0]["id"] == ridesharing1.id
 
@@ -232,14 +232,14 @@ def test_ridesharing_service_schema():
 
     def send_and_check(serive_id, json_data, missing_param):
         resp, status = api_put(
-            url='v0/ridesharing_services/{}'.format(serive_id),
+            url=f'v0/ridesharing_services/{serive_id}',
             data=ujson.dumps(json_data),
             content_type='application/json',
             check=False,
         )
         assert status == 400
         assert 'message' in resp
-        assert resp['message'] == "'{}' is a required property".format(missing_param)
+        assert resp['message'] == f"'{missing_param}' is a required property"
         assert 'status' in resp
         assert resp['status'] == "invalid data"
 

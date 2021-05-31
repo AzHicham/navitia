@@ -23,7 +23,7 @@ def upgrade():
             'bss_rent_duration',
             sa.Integer(),
             nullable=False,
-            server_default='{}'.format(default_values.bss_rent_duration),
+            server_default=f'{default_values.bss_rent_duration}',
         ),
     )
     op.add_column(
@@ -32,7 +32,7 @@ def upgrade():
             'bss_rent_penalty',
             sa.Integer(),
             nullable=False,
-            server_default='{}'.format(default_values.bss_rent_penalty),
+            server_default=f'{default_values.bss_rent_penalty}',
         ),
     )
     op.add_column(
@@ -41,7 +41,7 @@ def upgrade():
             'bss_return_duration',
             sa.Integer(),
             nullable=False,
-            server_default='{}'.format(default_values.bss_return_duration),
+            server_default=f'{default_values.bss_return_duration}',
         ),
     )
     op.add_column(
@@ -50,7 +50,7 @@ def upgrade():
             'bss_return_penalty',
             sa.Integer(),
             nullable=False,
-            server_default='{}'.format(default_values.bss_return_penalty),
+            server_default=f'{default_values.bss_return_penalty}',
         ),
     )
     # ### end Alembic commands ###

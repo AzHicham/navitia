@@ -51,7 +51,7 @@ def downgrade():
         'instance',
         sa.Column(
             'max_duration_fallback_mode',
-            postgresql.ENUM(u'walking', u'bss', u'bike', u'car', name='max_duration_fallback_mode'),
+            postgresql.ENUM('walking', 'bss', 'bike', 'car', name='max_duration_fallback_mode'),
             server_default="walking",
             nullable=False,
         ),
@@ -60,7 +60,7 @@ def downgrade():
         'instance',
         sa.Column(
             'max_duration_criteria',
-            postgresql.ENUM(u'time', u'duration', name='max_duration_criteria'),
+            postgresql.ENUM('time', 'duration', name='max_duration_criteria'),
             server_default="time",
             nullable=False,
         ),

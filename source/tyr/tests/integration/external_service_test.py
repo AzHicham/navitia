@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division, unicode_literals
+
 from tyr import app
 from navitiacommon import models
 from tests.check_utils import api_get, api_delete, api_put
@@ -130,7 +130,7 @@ def test_external_service_put(default_external_service_config):
     assert status == 201
     assert 'external_services' in resp
     assert len(resp['external_services']) == 1
-    for key in service.keys():
+    for key in list(service.keys()):
         assert resp['external_services'][0][key] == service[key]
 
     resp = api_get('/v0/external_services')
@@ -146,7 +146,7 @@ def test_external_service_put(default_external_service_config):
     )
     assert 'external_services' in resp
     assert len(resp['external_services']) == 1
-    for key in service.keys():
+    for key in list(service.keys()):
         assert resp['external_services'][0][key] == service[key]
 
     resp = api_get('/v0/external_services/forseti_free_floatings_paris')
@@ -202,7 +202,7 @@ def test_associate_instance_external_service(default_external_service_config):
     instance, external_service_1, external_service_2 = default_external_service_config
 
     # Associate one external service
-    resp = api_put('/v1/instances/{}?external_services={}'.format(instance.name, external_service_1.id))
+    resp = api_put(f'/v1/instances/{instance.name}?external_services={external_service_1.id}')
     assert len(resp["external_services"]) == 1
     assert resp["external_services"][0]["id"] == external_service_1.id
 
@@ -213,7 +213,7 @@ def test_associate_instance_external_service(default_external_service_config):
     assert resp['instances'][0]['external_services'][0]['id'] == external_service_1.id
 
     # Update associated external service by external_service_2
-    resp = api_put('/v1/instances/{}?external_services={}'.format(instance.name, external_service_2.id))
+    resp = api_put(f'/v1/instances/{instance.name}?external_services={external_service_2.id}')
     assert len(resp["external_services"]) == 1
     assert resp["external_services"][0]["id"] == external_service_2.id
 
@@ -232,7 +232,7 @@ def test_associate_instance_external_service(default_external_service_config):
 
     # An update with one external service deletes all existing associations and
     # re associates this external service to the instance
-    resp = api_put('/v1/instances/{}?external_services={}'.format(instance.name, external_service_1.id))
+    resp = api_put(f'/v1/instances/{instance.name}?external_services={external_service_1.id}')
     assert len(resp["external_services"]) == 1
     assert resp["external_services"][0]["id"] == external_service_1.id
 
@@ -250,7 +250,7 @@ def test_external_service_schema():
 
     def send_and_check(serive_id, json_data, missing_param=None):
         resp, status = api_put(
-            url='v0/external_services/{}'.format(serive_id),
+            url=f'v0/external_services/{serive_id}',
             data=ujson.dumps(json_data),
             content_type='application/json',
             check=False,
@@ -261,7 +261,7 @@ def test_external_service_schema():
         assert resp['status'] == "invalid data"
         if missing_param is None:
             return resp['message']
-        assert resp['message'] == "'{}' is a required property".format(missing_param)
+        assert resp['message'] == f"'{missing_param}' is a required property"
 
     # 'klass' is missing
     corrupted_provider = {
@@ -292,4 +292,4 @@ def test_external_service_schema():
         "navitia_service": "navitia_service",
     }
     massage = send_and_check('external_service_1', corrupted_provider)
-    assert "'{}' is not one of ['free_floatings', 'vehicle_occupancies']".format('navitia_service') in massage
+    assert "'navitia_service' is not one of ['free_floatings', 'vehicle_occupancies']" in massage

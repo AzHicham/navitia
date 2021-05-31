@@ -54,7 +54,7 @@ def import_last_dataset(
     skip_mimir = not allow_mimir
 
     if not instance:
-        raise Exception("cannot find instance {}".format(instance_name))
+        raise Exception(f"cannot find instance {instance_name}")
 
     files = [d.name for d in instance.last_datasets(1)]
     logger = get_instance_logger(instance)

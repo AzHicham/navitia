@@ -33,15 +33,15 @@ def upgrade():
         sa.PrimaryKeyConstraint('id'),
     )
 
-    op.add_column(u'user', sa.Column('end_point_id', sa.Integer(), nullable=True))
+    op.add_column('user', sa.Column('end_point_id', sa.Integer(), nullable=True))
     op.create_unique_constraint('user_email_end_point_idx', 'user', ['email', 'end_point_id'])
     op.create_unique_constraint('user_login_end_point_idx', 'user', ['login', 'end_point_id'])
-    op.drop_constraint(u'user_email_key', 'user')
-    op.drop_constraint(u'user_login_key', 'user')
+    op.drop_constraint('user_email_key', 'user')
+    op.drop_constraint('user_login_key', 'user')
 
     op.execute("INSERT INTO end_point VALUES (DEFAULT, 'navitia.io', true);")
     op.execute('UPDATE "user" set end_point_id=(select id from end_point);')
-    op.alter_column(u'user', 'end_point_id', nullable=True)
+    op.alter_column('user', 'end_point_id', nullable=True)
 
     ### end Alembic commands ###
 
@@ -49,11 +49,11 @@ def upgrade():
 def downgrade():
     # remove old user affected to another endpoint
     op.execute('delete from "user" where end_point_id != 1;')
-    op.create_unique_constraint(u'user_login_key', 'user', ['login'])
-    op.create_unique_constraint(u'user_email_key', 'user', ['email'])
+    op.create_unique_constraint('user_login_key', 'user', ['login'])
+    op.create_unique_constraint('user_email_key', 'user', ['email'])
     op.drop_constraint('user_login_end_point_idx', 'user')
     op.drop_constraint('user_email_end_point_idx', 'user')
-    op.drop_column(u'user', 'end_point_id')
+    op.drop_column('user', 'end_point_id')
     op.drop_table('host')
     op.drop_table('end_point')
     ### end Alembic commands ###

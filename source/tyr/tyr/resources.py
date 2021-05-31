@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division, unicode_literals
+
 from flask import current_app, request
 import flask_restful
 from flask_restful import marshal_with, marshal, reqparse, inputs, abort
@@ -105,7 +105,7 @@ class Status(flask_restful.Resource):
             try:
                 return db.engine.scalar('select version_num from alembic_version;')
             except Exception as e:
-                logging.exception("Tyr db not reachable : {}".format(e.message))
+                logging.exception(f"Tyr db not reachable : {e.message}")
                 raise
 
         return {'db version': check_db()}
@@ -137,7 +137,7 @@ class Job(flask_restful.Resource):
         if utils.filename_has_valid_extension(content.filename) == False:
             return (
                 {
-                    'message': "Filename has invalid extension :'{}'".format(content.filename),
+                    'message': f"Filename has invalid extension :'{content.filename}'",
                     'valid_extensions': utils.get_valid_extensions(),
                 },
                 400,
@@ -175,7 +175,7 @@ class Job(flask_restful.Resource):
                 try:
                     db.session.delete(job)
                 except Exception:
-                    logging.exception("Failed to delete Job {} - Operation aborted".format(job.id))
+                    logging.exception(f"Failed to delete Job {job.id} - Operation aborted")
                     raise
 
             db.session.commit()
@@ -200,7 +200,7 @@ def _validate_poi_types_json(poi_types_json):
     poi_types_map = {}
     for p in poi_types_json.get('poi_types', []):
         if p.get('id') in poi_types_map:
-            abort(400, status="error", message='POI type id {} is defined multiple times'.format(p.get('id')))
+            abort(400, status="error", message=f"POI type id {p.get('id')} is defined multiple times")
         poi_types_map[p.get('id')] = p.get('name')
 
     # Check that poi_type.id 'amenity:parking' and 'amenity:bicycle_rental' are defined.
@@ -219,7 +219,7 @@ def _validate_poi_types_json(poi_types_json):
             abort(
                 400,
                 status="error",
-                message='Using an undefined POI type id ({}) forbidden in rules'.format(pt_id),
+                message=f'Using an undefined POI type id ({pt_id}) forbidden in rules',
             )
 
 
@@ -319,10 +319,10 @@ class Instance(flask_restful.Resource):
         )
         args = parser.parse_args()
         args.update({'id': id, 'name': name})
-        if any(v is not None for v in args.values()):
+        if any(v is not None for v in list(args.values())):
             return (
                 models.Instance.query_existing()
-                .filter_by(**{k: v for k, v in args.items() if v is not None})
+                .filter_by(**{k: v for k, v in list(args.items()) if v is not None})
                 .all()
             )
         else:
@@ -731,18 +731,18 @@ class Instance(flask_restful.Resource):
         list_modes = ["car", "car_no_park", "walking", "bike", "bss", "ridesharing", "taxi"]
         for mode in list_modes:
             parser.add_argument(
-                'street_network_{}'.format(mode),
+                f'street_network_{mode}',
                 type=str,
-                help='the backend to use for the mode {}'.format(mode),
+                help=f'the backend to use for the mode {mode}',
                 location=('json', 'values'),
-                default=getattr(instance, "street_network_{}".format(mode)),
+                default=getattr(instance, f"street_network_{mode}"),
             )
             parser.add_argument(
-                'max_{}_direct_path_duration'.format(mode),
+                f'max_{mode}_direct_path_duration',
                 type=int,
-                help='maximum duration of direct path for the mode {}'.format(mode),
+                help=f'maximum duration of direct path for the mode {mode}',
                 location=('json', 'values'),
-                default=getattr(instance, "max_{}_direct_path_duration".format(mode)),
+                default=getattr(instance, f"max_{mode}_direct_path_duration"),
             )
 
         parser.add_argument(
@@ -818,77 +818,79 @@ class Instance(flask_restful.Resource):
                 setattr(instance, attr_name, args[attr_name])
 
             deque(
-                map(
-                    map_args_to_instance,
-                    [
-                        'scenario',
-                        'journey_order',
-                        'max_walking_duration_to_pt',
-                        'max_bike_duration_to_pt',
-                        'max_bss_duration_to_pt',
-                        'max_car_duration_to_pt',
-                        'max_car_no_park_duration_to_pt',
-                        'max_nb_transfers',
-                        'walking_speed',
-                        'bike_speed',
-                        'bss_speed',
-                        'car_speed',
-                        'car_no_park_speed',
-                        'taxi_speed',
-                        'min_bike',
-                        'min_bss',
-                        'min_car',
-                        'min_ridesharing',
-                        'min_taxi',
-                        'max_duration',
-                        'walking_transfer_penalty',
-                        'arrival_transfer_penalty',
-                        'night_bus_filter_max_factor',
-                        'night_bus_filter_base_factor',
-                        'successive_physical_mode_to_limit_id',
-                        'priority',
-                        'bss_provider',
-                        'full_sn_geometries',
-                        'is_free',
-                        'is_open_data',
-                        'import_stops_in_mimir',
-                        'import_ntfs_in_mimir',
-                        'admins_from_cities_db',
-                        'min_nb_journeys',
-                        'max_nb_journeys',
-                        'min_journeys_calls',
-                        'max_successive_physical_mode',
-                        'final_line_filter',
-                        'max_extra_second_pass',
-                        'autocomplete_backend',
-                        'additional_time_after_first_section_taxi',
-                        'additional_time_before_last_section_taxi',
-                        'max_additional_connections',
-                        'car_park_provider',
-                        'street_network_car',
-                        'street_network_car_no_park',
-                        'street_network_walking',
-                        'street_network_bike',
-                        'street_network_bss',
-                        'street_network_ridesharing',
-                        'street_network_taxi',
-                        'max_walking_direct_path_duration',
-                        'max_bike_direct_path_duration',
-                        'max_bss_direct_path_duration',
-                        'max_car_direct_path_duration',
-                        'max_taxi_direct_path_duration',
-                        'max_ridesharing_direct_path_duration',
-                        'poi_dataset',
-                        'max_taxi_duration_to_pt',
-                        'max_car_no_park_direct_path_duration',
-                        'ridesharing_speed',
-                        'stop_points_nearby_duration',
-                        'max_ridesharing_duration_to_pt',
-                        'asynchronous_ridesharing',
-                        'greenlet_pool_for_ridesharing_services',
-                        'ridesharing_greenlet_pool_size',
-                        'max_waiting_duration',
-                    ],
+                list(
+                    map(
+                        map_args_to_instance,
+                        [
+                            'scenario',
+                            'journey_order',
+                            'max_walking_duration_to_pt',
+                            'max_bike_duration_to_pt',
+                            'max_bss_duration_to_pt',
+                            'max_car_duration_to_pt',
+                            'max_car_no_park_duration_to_pt',
+                            'max_nb_transfers',
+                            'walking_speed',
+                            'bike_speed',
+                            'bss_speed',
+                            'car_speed',
+                            'car_no_park_speed',
+                            'taxi_speed',
+                            'min_bike',
+                            'min_bss',
+                            'min_car',
+                            'min_ridesharing',
+                            'min_taxi',
+                            'max_duration',
+                            'walking_transfer_penalty',
+                            'arrival_transfer_penalty',
+                            'night_bus_filter_max_factor',
+                            'night_bus_filter_base_factor',
+                            'successive_physical_mode_to_limit_id',
+                            'priority',
+                            'bss_provider',
+                            'full_sn_geometries',
+                            'is_free',
+                            'is_open_data',
+                            'import_stops_in_mimir',
+                            'import_ntfs_in_mimir',
+                            'admins_from_cities_db',
+                            'min_nb_journeys',
+                            'max_nb_journeys',
+                            'min_journeys_calls',
+                            'max_successive_physical_mode',
+                            'final_line_filter',
+                            'max_extra_second_pass',
+                            'autocomplete_backend',
+                            'additional_time_after_first_section_taxi',
+                            'additional_time_before_last_section_taxi',
+                            'max_additional_connections',
+                            'car_park_provider',
+                            'street_network_car',
+                            'street_network_car_no_park',
+                            'street_network_walking',
+                            'street_network_bike',
+                            'street_network_bss',
+                            'street_network_ridesharing',
+                            'street_network_taxi',
+                            'max_walking_direct_path_duration',
+                            'max_bike_direct_path_duration',
+                            'max_bss_direct_path_duration',
+                            'max_car_direct_path_duration',
+                            'max_taxi_direct_path_duration',
+                            'max_ridesharing_direct_path_duration',
+                            'poi_dataset',
+                            'max_taxi_duration_to_pt',
+                            'max_car_no_park_direct_path_duration',
+                            'ridesharing_speed',
+                            'stop_points_nearby_duration',
+                            'max_ridesharing_duration_to_pt',
+                            'asynchronous_ridesharing',
+                            'greenlet_pool_for_ridesharing_services',
+                            'ridesharing_greenlet_pool_size',
+                            'max_waiting_duration',
+                        ],
+                    )
                 ),
                 maxlen=0,
             )
@@ -927,7 +929,7 @@ class Instance(flask_restful.Resource):
                 if external_service:
                     instance.external_services.append(external_service)
                 else:
-                    msg = "Couldn't set external services - '{}' isn't present in db".format(external_service_id)
+                    msg = f"Couldn't set external services - '{external_service_id}' isn't present in db"
                     return {"message": msg}, 400
 
             db.session.commit()
@@ -980,7 +982,7 @@ class User(flask_restful.Resource):
 
     def _get_all_users(self, args):
         del args['disable_geojson']
-        filter_params = {k: v for k, v in args.items() if v}
+        filter_params = {k: v for k, v in list(args.items()) if v}
         if filter_params:
             users = models.User.query.filter_by(**filter_params).all()
             return marshal(users, user_fields)
@@ -1237,7 +1239,7 @@ class UserV1(User):
 
     def _get_all_users(self, args):
         del args['disable_geojson']
-        filter_params = {k: v for k, v in args.items() if v and k != 'page'}
+        filter_params = {k: v for k, v in list(args.items()) if v and k != 'page'}
 
         pagination = models.User.query.filter_by(**filter_params).paginate(
             args['page'], current_app.config.get('MAX_ITEMS_PER_PAGE', 5)
@@ -1599,7 +1601,7 @@ class TravelerProfile(flask_restful.Resource):
             if tp in acceptable_traveler_types or tp is None:
                 return f(*args, **kwds)
             return (
-                {'error': 'traveler profile: {0} is not one of in {1}'.format(tp, acceptable_traveler_types)},
+                {'error': f'traveler profile: {tp} is not one of in {acceptable_traveler_types}'},
                 400,
             )
 
@@ -1635,10 +1637,10 @@ class TravelerProfile(flask_restful.Resource):
         try:
             instance = models.Instance.get_by_name(name)
             if instance is None:
-                return {'error': "Coverage: {0} doesn't exist".format(name)}
+                return {'error': f"Coverage: {name} doesn't exist"}
             profile = models.TravelerProfile()
             profile.coverage_id = instance.id
-            for (attr, default_value) in default_traveler_profile_params[traveler_type].items():
+            for (attr, default_value) in list(default_traveler_profile_params[traveler_type].items()):
                 # override hardcoded values by args if args are not None
                 value = default_value if self.args.get(attr) is None else self.args.get(attr)
                 setattr(profile, attr, value)
@@ -1658,7 +1660,7 @@ class TravelerProfile(flask_restful.Resource):
         if profile is None:
             return {'error': 'Non profile is found to update'}, 404
         try:
-            for (attr, args_value) in self.args.items():
+            for (attr, args_value) in list(self.args.items()):
                 # override hardcoded values by args if args are not None
                 if args_value is not None:
                     setattr(profile, attr, args_value)
@@ -1675,7 +1677,7 @@ class TravelerProfile(flask_restful.Resource):
         profile = models.TravelerProfile.get_by_coverage_and_type(name, traveler_type)
         if profile is None:
             return (
-                {'error': 'Instance: {0} has no such profile: {1} in db to delete'.format(name, traveler_type)},
+                {'error': f'Instance: {name} has no such profile: {traveler_type} in db to delete'},
                 400,
             )
         try:
@@ -1879,7 +1881,7 @@ class AutocompleteParameter(flask_restful.Resource):
             type=str,
             required=False,
             default='BANO',
-            help='source for address: {}'.format(utils.address_source_types),
+            help=f'source for address: {utils.address_source_types}',
             location=('json', 'values'),
             choices=utils.address_source_types,
         )
@@ -1897,7 +1899,7 @@ class AutocompleteParameter(flask_restful.Resource):
             type=str,
             required=False,
             default='OSM',
-            help='source for admin: {}'.format(utils.admin_source_types),
+            help=f'source for admin: {utils.admin_source_types}',
             location=('json', 'values'),
             choices=utils.admin_source_types,
         )
@@ -1940,7 +1942,7 @@ class AutocompleteParameter(flask_restful.Resource):
         autocomplete_param = models.AutocompleteParameter.query.filter_by(name=name).first()
         status = 200
         if not autocomplete_param:
-            logging.info('Create new autocomplete "{}"'.format(name))
+            logging.info(f'Create new autocomplete "{name}"')
             autocomplete_param = models.AutocompleteParameter(name=name)
             db.session.add(autocomplete_param)
             status = 201
@@ -1950,7 +1952,7 @@ class AutocompleteParameter(flask_restful.Resource):
             type=str,
             required=False,
             default=autocomplete_param.street,
-            help='source for street: {}'.format(utils.street_source_types),
+            help=f'source for street: {utils.street_source_types}',
             location=('json', 'values'),
             choices=utils.street_source_types,
         )
@@ -1959,7 +1961,7 @@ class AutocompleteParameter(flask_restful.Resource):
             type=str,
             required=False,
             default=autocomplete_param.address,
-            help='source for address: {}'.format(utils.address_source_types),
+            help=f'source for address: {utils.address_source_types}',
             location=('json', 'values'),
             choices=utils.address_source_types,
         )
@@ -1968,7 +1970,7 @@ class AutocompleteParameter(flask_restful.Resource):
             type=str,
             required=False,
             default=autocomplete_param.poi,
-            help='source for poi: {}'.format(utils.poi_source_types),
+            help=f'source for poi: {utils.poi_source_types}',
             location=('json', 'values'),
             choices=utils.poi_source_types,
         )
@@ -1977,7 +1979,7 @@ class AutocompleteParameter(flask_restful.Resource):
             type=str,
             required=False,
             default=autocomplete_param.admin,
-            help='source for admin: {}'.format(utils.admin_source_types),
+            help=f'source for admin: {utils.admin_source_types}',
             location=('json', 'values'),
             choices=utils.admin_source_types,
         )
@@ -2081,12 +2083,12 @@ class DeleteDataset(flask_restful.Resource):
         if instance:
             res = instance.delete_dataset(_type=type)
             if res:
-                return_msg = 'All {} datasets deleted for instance {}'.format(type, instance_name)
+                return_msg = f'All {type} datasets deleted for instance {instance_name}'
             else:
-                return_msg = 'No {} dataset to be deleted for instance {}'.format(type, instance_name)
+                return_msg = f'No {type} dataset to be deleted for instance {instance_name}'
             return_status = 200
         else:
-            return_msg = "No instance found for : {}".format(instance_name)
+            return_msg = f"No instance found for : {instance_name}"
             return_status = 404
 
         return {'action': return_msg}, return_status
@@ -2113,7 +2115,7 @@ class MigrateFromPoiToOsm(flask_restful.Resource):
             return_msg = 'Parameter parse_pois_from_osm activated'
             return_status = 200
         else:
-            return_msg = "No instance found for : {}".format(instance_name)
+            return_msg = f"No instance found for : {instance_name}"
             return_status = 404
 
         return {'action': return_msg}, return_status
@@ -2131,7 +2133,7 @@ def check_cities_db():
         for row in result:
             return row['version_num']
     except Exception as e:
-        logging.exception("cities db not created : {}".format(e.message))
+        logging.exception(f"cities db not created : {e.message}")
         return None
     finally:
         cities_db.dispose()
@@ -2158,7 +2160,7 @@ class CitiesStatus(flask_restful.Resource):
             return {'message': 'cities db not configured'}, 404
         cities_version = check_cities_db()
         if cities_version:
-            response['cities db version'] = '{}'.format(cities_version)
+            response['cities db version'] = f'{cities_version}'
         else:
             return {'message': 'cities db not reachable'}, 404
 
@@ -2188,7 +2190,7 @@ class Cities(flask_restful.Resource):
         file_name = f.filename
         file_path = str(os.path.join(os.path.abspath(current_app.config['CITIES_OSM_FILE_PATH']), file_name))
         f.save(file_path)
-        logging.info("file received: {}".format(f))
+        logging.info(f"file received: {f}")
 
         # Create Job and Dataset in db to track progress
         job = models.Job()

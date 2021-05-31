@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division
+
 from contextlib import closing
 from tyr import app, db
 import os
@@ -37,7 +37,7 @@ import shutil
 
 # TODO : need to clean that after full migration to python3
 try:
-    import ConfigParser
+    import configparser
 except:
     import configparser as ConfigParser  # type: ignore
 
@@ -74,7 +74,7 @@ def create_instance_config_file(instance_dir, backup_dir, name='default'):
     :param backup_dir: dir to store datasets backup
     :param name: instance name
     """
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.add_section('instance')
     config.set('instance', 'name', name)
     config.set('instance', 'source-directory', '/tmp')
@@ -88,7 +88,7 @@ def create_instance_config_file(instance_dir, backup_dir, name='default'):
     config.set('database', 'username', 'navitia')
     config.set('database', 'password', 'navitia')
 
-    with open(os.path.join(instance_dir, '{}.ini'.format(name)), 'w') as configfile:
+    with open(os.path.join(instance_dir, f'{name}.ini'), 'w') as configfile:
         config.write(configfile)
 
 

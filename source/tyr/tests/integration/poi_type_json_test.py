@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division, unicode_literals
+
 from tests.check_utils import api_get, api_post, api_delete, api_put
 import json
 import pytest
@@ -58,7 +58,7 @@ def create_poi_type_json_obj(poi_types_json):
 
 
 def check_traveler_profile(profile, params):
-    for key, param in params.iteritems():
+    for key, param in params.items():
         assert profile[key] == param
 
 
@@ -67,7 +67,7 @@ def poi_types_json():
     return {
         "poi_types": [
             {"id": "pdv", "name": "Point de vente"},
-            {"id": "mairie", "name": u"Hôtel de ville"},
+            {"id": "mairie", "name": "Hôtel de ville"},
             {"id": "amenity:bicycle_rental", "name": "Station VLS"},
             {"id": "amenity:parking", "name": "Parking"},
         ],
@@ -103,7 +103,7 @@ def test_post_and_get_poi_type_json(create_instance, poi_types_json):
     # check special characters correctly handled
     with app.app_context():
         ptp = models.PoiTypeJson.query.all()
-        assert u'Hôtel de ville' in ptp[0].poi_types_json
+        assert 'Hôtel de ville' in ptp[0].poi_types_json
 
 
 def test_get_poi_type_json(create_poi_type_json_obj, poi_types_json):

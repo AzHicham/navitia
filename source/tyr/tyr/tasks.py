@@ -128,7 +128,7 @@ def import_data(
             if backup_file:
                 move_to_backupdirectory(_file, instance_config.backup_directory)
             current_app.logger.debug(
-                "Corrupted source file : {} moved to {}".format(_file, instance_config.backup_directory)
+                f"Corrupted source file : {_file} moved to {instance_config.backup_directory}"
             )
             continue
 
@@ -140,7 +140,7 @@ def import_data(
             actions.append(task[dataset.type].si(instance_config, filename, dataset_uid=dataset.uid))
         else:
             # unknown type, we skip it
-            current_app.logger.debug("unknown file type: {} for file {}".format(dataset.type, _file))
+            current_app.logger.debug(f"unknown file type: {dataset.type} for file {_file}")
             continue
 
         # currently the name of a dataset is the path to it
@@ -240,7 +240,7 @@ def send_to_mimir(instance, filename, family_type):
 @celery.task()
 def update_data():
     for instance in models.Instance.query_existing().all():
-        current_app.logger.debug("Update data of : {}".format(instance.name))
+        current_app.logger.debug(f"Update data of : {instance.name}")
         instance_config = None
         try:
             instance_config = load_instance_config(instance.name)
@@ -317,7 +317,7 @@ def import_autocomplete(files, autocomplete_instance, asynchronous=True, backup_
     for f, ftype in files_and_types:
         dataset = models.DataSet()
         dataset.type = ftype
-        dataset.family_type = 'autocomplete_{}'.format(dataset.type)
+        dataset.family_type = f'autocomplete_{dataset.type}'
         if dataset.type in task:
             if backup_file:
                 filename = move_to_backupdirectory(f, autocomplete_instance.backup_dir(autocomplete_dir))
@@ -328,7 +328,7 @@ def import_autocomplete(files, autocomplete_instance, asynchronous=True, backup_
             )
         else:
             # unknown type, we skip it
-            current_app.logger.debug("unknown file type: {} for file {}".format(dataset.type, f))
+            current_app.logger.debug(f"unknown file type: {dataset.type} for file {f}")
             continue
 
         # currently the name of a dataset is the path to it
@@ -360,7 +360,7 @@ def import_in_mimir(_file, instance, asynchronous=True):
     datatype, _ = utils.type_of_data(_file)
     family_type = utils.family_of_data(datatype)
 
-    current_app.logger.debug("Import {} data to mimir".format(family_type))
+    current_app.logger.debug(f"Import {family_type} data to mimir")
 
     action = None
 
@@ -373,7 +373,7 @@ def import_in_mimir(_file, instance, asynchronous=True):
     elif family_type == 'poi':
         action = poi2mimir.si(instance.name, _file)
     else:
-        current_app.logger.warning("Unsupported family_type {}".format(family_type))
+        current_app.logger.warning(f"Unsupported family_type {family_type}")
 
     if asynchronous:
         return action.delay()
@@ -395,13 +395,13 @@ def update_autocomplete():
 @celery.task()
 def purge_datasets():
     instances = models.Instance.query_existing().all()
-    current_app.logger.info("Instances to purge: {}".format(instances))
+    current_app.logger.info(f"Instances to purge: {instances}")
     for instance in instances:
         try:
             purge_instance(instance.id, current_app.config['DATASET_MAX_BACKUPS_TO_KEEP'])
         except Exception as e:
             # Do not stop the task for all other instances if only one instance is missing
-            current_app.logger.error("Dataset purge failed for instance {i}: {e}".format(i=instance, e=e))
+            current_app.logger.error(f"Dataset purge failed for instance {instance}: {e}")
 
 
 @celery.task()
@@ -412,10 +412,10 @@ def purge_instance(instance_id, nb_to_keep):
     try:
         instance_config = load_instance_config(instance.name)
     except Exception as e:
-        logger.error("Impossible to load instance configuration for {i}: {e}".format(i=instance.name, e=e))
+        logger.error(f"Impossible to load instance configuration for {instance.name}: {e}")
         return
 
-    backups = set(glob.glob('{}/*'.format(instance_config.backup_directory)))
+    backups = set(glob.glob(f'{instance_config.backup_directory}/*'))
     logger.info('backups are: %s', backups)
     # we add the realpath not to have problems with double / or stuff like that
     loaded = set(
@@ -456,13 +456,13 @@ def purge_cities():
     datasets_to_keep = [job.data_sets.first().name for job in cities_job_to_keep]
 
     for job in cities_job[nb_datasets_to_keep:]:
-        logging.info(" - Remove JOB {}".format(job.id))
+        logging.info(f" - Remove JOB {job.id}")
         dataset = job.data_sets.first()
-        logging.info("   Remove associated DATASET {}".format(dataset.id))
+        logging.info(f"   Remove associated DATASET {dataset.id}")
         models.db.session.delete(dataset)
         if os.path.exists(dataset.name) and dataset.name not in datasets_to_keep:
-            logging.info("    - delete file {}".format(dataset.name))
-            shutil.rmtree('{}'.format(dataset.name))
+            logging.info(f"    - delete file {dataset.name}")
+            shutil.rmtree(f'{dataset.name}')
         models.db.session.delete(job)
 
     models.db.session.commit()
@@ -482,18 +482,18 @@ def purge_jobs(days_to_keep=None):
     instances = models.Instance.query_all().all()
 
     logger = logging.getLogger(__name__)
-    logger.info('Purge old jobs and datasets backup created before {}'.format(time_limit))
+    logger.info(f'Purge old jobs and datasets backup created before {time_limit}')
 
     for instance in instances:
         datasets_to_delete = instance.delete_old_jobs_and_list_datasets(time_limit)
 
         if datasets_to_delete:
             backups_to_delete = set(os.path.realpath(os.path.dirname(dataset)) for dataset in datasets_to_delete)
-            logger.info('backups_to_delete are: {}'.format(backups_to_delete))
+            logger.info(f'backups_to_delete are: {backups_to_delete}')
 
             for path in backups_to_delete:
                 if os.path.exists(path):
-                    shutil.rmtree('{}'.format(path))
+                    shutil.rmtree(f'{path}')
                 else:
                     logger.warning('Folder {} can\'t be found'.format(path))
 
@@ -528,7 +528,7 @@ def reload_kraken(instance_id):
     models.db.session.add(job)
     models.db.session.commit()
     chain(reload_data.si(instance_config, job.id), finish_job.si(job.id)).delay()
-    logging.info("Task reload kraken for instance {} queued".format(instance.name))
+    logging.info(f"Task reload kraken for instance {instance.name} queued")
 
 
 @celery.task()
@@ -546,7 +546,7 @@ def build_data(instance):
     models.db.session.add(job)
     models.db.session.commit()
     chain(ed2nav.si(instance_config, job.id, None), finish_job.si(job.id)).delay()
-    current_app.logger.info("Job build data of : %s queued" % instance.name)
+    current_app.logger.info(f"Job build data of : {instance.name} queued")
 
 
 @celery.task()
@@ -558,35 +558,35 @@ def load_data(instance_id, data_dirs):
 
 @celery.task()
 def cities(file_path, job_id, exe):
-    """ Launch 'cities' or 'cosmogony2cities' """
+    """Launch 'cities' or 'cosmogony2cities'"""
     job = models.Job.query.get(job_id)
     res = -1
     try:
         res = launch_exec(
-            "{}".format(exe),
+            f"{exe}",
             ['-i', file_path, '--connection-string', current_app.config['CITIES_DATABASE_URI']],
             logging,
         )
         if res != 0:
             job.state = 'failed'
-            logging.error('{} failed'.format(exe))
+            logging.error(f'{exe} failed')
         else:
             job.state = 'done'
 
     except Exception as e:
-        logging.exception('{} exception : {}'.format(exe, e.message))
+        logging.exception(f'{exe} exception : {e.message}')
         job.state = 'failed'
         models.db.session.commit()
         raise
 
     models.db.session.commit()
-    logging.info('Import of {} finished'.format(exe))
+    logging.info(f'Import of {exe} finished')
     return res
 
 
 @celery.task()
 def bounding_shape(instance_name, shape_path):
-    """ Set the bounding shape to a custom value """
+    """Set the bounding shape to a custom value"""
 
     instance_conf = load_instance_config(instance_name)
 
@@ -618,9 +618,9 @@ def heartbeat():
                 config = load_instance_config(instance.name)
                 exchange = kombu.Exchange(config.exchange, 'topic', durable=True)
                 producer = connection.Producer(exchange=exchange)
-                producer.publish(task.SerializeToString(), routing_key='{}.task.heartbeat'.format(instance.name))
+                producer.publish(task.SerializeToString(), routing_key=f'{instance.name}.task.heartbeat')
             except Exception as e:
-                logging.error("Could not ping krakens for instance {i}: {e}".format(i=instance, e=e))
+                logging.error(f"Could not ping krakens for instance {instance}: {e}")
 
 
 @celery.task()
@@ -638,12 +638,12 @@ def create_autocomplete_depot(name):
         if not os.path.exists(backup):
             os.makedirs(backup)
     except OSError:
-        logging.error('create directory {} failed'.format(main_dir))
+        logging.error(f'create directory {main_dir} failed')
 
 
 @celery.task()
 def remove_autocomplete_depot(name):
-    logging.info('removing instance dir for {}'.format(name))
+    logging.info(f'removing instance dir for {name}')
     autocomplete_dir = current_app.config['TYR_AUTOCOMPLETE_DIR']
     if os.path.exists(autocomplete_dir):
         autocomplete = models.AutocompleteParameter.query.filter_by(name=name).first_or_404()
@@ -651,7 +651,7 @@ def remove_autocomplete_depot(name):
         if os.path.exists(main_dir):
             shutil.rmtree(main_dir)
         else:
-            logging.warning('no autocomplete directory for {}, removing nothing'.format(autocomplete_dir))
+            logging.warning(f'no autocomplete directory for {autocomplete_dir}, removing nothing')
     else:
         logging.warning('no main autocomplete directory, removing nothing')
 

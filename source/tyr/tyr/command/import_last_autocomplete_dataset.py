@@ -45,7 +45,7 @@ def import_last_autocomplete_dataset(instance_name, wait=True):
     instance = models.AutocompleteParameter.query.filter_by(name=instance_name).first()
 
     if not instance:
-        raise Exception("cannot find autocomplete instance {}".format(instance_name))
+        raise Exception(f"cannot find autocomplete instance {instance_name}")
 
     files = [d.name for d in instance.last_datasets(1)]
     logger = logging.getLogger(__name__)
@@ -67,7 +67,7 @@ def import_last_stop_dataset(instance_name, wait=True):
     instance = models.Instance.query_existing().filter_by(name=instance_name).first()
 
     if not instance:
-        raise Exception("cannot find instance {}".format(instance_name))
+        raise Exception(f"cannot find instance {instance_name}")
 
     files = [d.name for d in instance.last_datasets(nb_dataset=1, family_type='pt')]
     files.extend([d.name for d in instance.last_datasets(nb_dataset=1, family_type='poi')])

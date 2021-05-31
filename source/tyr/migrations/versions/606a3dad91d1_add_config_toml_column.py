@@ -29,24 +29,24 @@ def upgrade():
         config_toml = ""
 
         # DataSet
-        config_toml += 'dataset = "{}"\n\n'.format(row["name"])
+        config_toml += f"dataset = \"{row['name']}\"\n\n"
 
         # Administrative regions
         config_toml += "[admin]\n"
-        tmp = "{}".format(row['admin'] == "OSM")
-        config_toml += "import = {}\n".format(tmp.lower())
+        tmp = f"{row['admin'] == 'OSM'}"
+        config_toml += f"import = {tmp.lower()}\n"
         config_toml += "city_level = 8\n"
-        config_toml += "levels = {}\n\n".format(row['admin_level'])
+        config_toml += f"levels = {row['admin_level']}\n\n"
 
         # Streets
         config_toml += "[street]\n"
-        tmp = "{}".format(row['street'] == "OSM")
-        config_toml += "import = {}\n\n".format(tmp.lower())
+        tmp = f"{row['street'] == 'OSM'}"
+        config_toml += f"import = {tmp.lower()}\n\n"
 
         # Pois
         config_toml += "[poi]\n"
-        tmp = "{}".format(row['poi'] == "OSM")
-        config_toml += "import = {}\n".format(tmp.lower())
+        tmp = f"{row['poi'] == 'OSM'}"
+        config_toml += f"import = {tmp.lower()}\n"
 
         poi_types_json = row["poi_types_json"]
         if poi_types_json:
@@ -57,21 +57,21 @@ def upgrade():
                 config_toml += "[poi.config]\n"
                 for poi_type in poi_types:
                     config_toml += "[[poi.config.types]]\n"
-                    config_toml += 'id = "{}"\n'.format(poi_type["id"])
+                    config_toml += f"id = \"{poi_type['id']}\"\n"
                     name = poi_type["name"].encode("utf-8")
                     name = name.replace("'", "''")
-                    config_toml += 'name = "{}"\n'.format(name)
+                    config_toml += f'name = "{name}\"\n'
 
                 for rule in rules:
                     poi_type_id = rule["poi_type_id"]
                     osm_tags_filters = rule["osm_tags_filters"]
                     for osm_tags_filter in osm_tags_filters:
                         config_toml += "[[poi.config.rules]]\n"
-                        config_toml += 'type = "poi_type:{}"\n'.format(poi_type_id)
+                        config_toml += f'type = "poi_type:{poi_type_id}\"\n'
                         config_toml += '[[poi.config.rules.osm_tags_filters]]\n'
-                        config_toml += 'key = "{}"\n'.format(osm_tags_filter["key"])
-                        config_toml += 'value = "{}"\n'.format(osm_tags_filter["value"])
-        query = "update autocomplete_parameter set config_toml='{}' where id={}".format(config_toml, row["id"])
+                        config_toml += f"key = \"{osm_tags_filter['key']}\"\n"
+                        config_toml += f"value = \"{osm_tags_filter['value']}\"\n"
+        query = f"update autocomplete_parameter set config_toml='{config_toml}' where id={row['id']}"
         op.execute(query.decode("utf-8"))
 
 

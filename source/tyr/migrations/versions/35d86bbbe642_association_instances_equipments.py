@@ -26,9 +26,9 @@ def upgrade():
         sa.ForeignKeyConstraint(['instance_id'], ['instance.id']),
         sa.PrimaryKeyConstraint('instance_id', 'equipments_id', name='instance_equipments_pk'),
     )
-    op.drop_column(u'equipments_provider', 'instances')
+    op.drop_column('equipments_provider', 'instances')
 
 
 def downgrade():
-    op.add_column(u'equipments_provider', sa.Column('instances', postgresql.ARRAY(sa.TEXT()), nullable=True))
+    op.add_column('equipments_provider', sa.Column('instances', postgresql.ARRAY(sa.TEXT()), nullable=True))
     op.drop_table('associate_instance_equipments')

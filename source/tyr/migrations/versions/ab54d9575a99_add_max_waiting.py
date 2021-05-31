@@ -21,7 +21,7 @@ def upgrade():
         sa.Column(
             'max_waiting_duration',
             sa.Integer(),
-            server_default='{}'.format(default_values.max_waiting_duration),
+            server_default=f'{default_values.max_waiting_duration}',
             nullable=False,
         ),
     )

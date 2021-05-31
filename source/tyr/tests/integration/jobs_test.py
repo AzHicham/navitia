@@ -36,12 +36,12 @@ from tyr import app
 def create_dataset(dataset_type):
     dataset = models.DataSet()
     dataset.type = dataset_type
-    dataset.family_type = '{}_family'.format(dataset_type)
-    dataset.name = '/path/to/dataset_{}'.format(dataset_type)
+    dataset.family_type = f'{dataset_type}_family'
+    dataset.name = f'/path/to/dataset_{dataset_type}'
     models.db.session.add(dataset)
 
     metric = models.Metric()
-    metric.type = '{}2ed'.format(dataset_type)
+    metric.type = f'{dataset_type}2ed'
     metric.dataset = dataset
     models.db.session.add(metric)
 
@@ -95,12 +95,12 @@ def test_jobs_deletion(create_instances):
     instances = create_instances
     # 3 jobs are created for each instance
     for instance in instances:
-        resp = api_get("/v0/jobs/{}".format(instance))
+        resp = api_get(f"/v0/jobs/{instance}")
         assert len(resp["jobs"]) == 3
 
     # ---1--- DELETE WITH FILTER BY INSTANCE AND BY STATE
     # delete "running" job for 'Instance_1'
-    api_delete("/v0/jobs/{}?confirm=yes&state=running".format("Instance_1"))
+    api_delete("/v0/jobs/Instance_1?confirm=yes&state=running")
 
     # two jobs remaining for 'Instance_1'
     resp = api_get("/v0/jobs/Instance_1?confirm=yes")
@@ -108,7 +108,7 @@ def test_jobs_deletion(create_instances):
 
     # other instances still have 3 jobs
     for instance in ["Instance_2", "Instance_3"]:
-        resp = api_get("/v0/jobs/{}".format(instance))
+        resp = api_get(f"/v0/jobs/{instance}")
         assert len(resp["jobs"]) == 3
 
     # --- 2 --- DELETE WITH FILTER BY STATE
@@ -116,7 +116,7 @@ def test_jobs_deletion(create_instances):
 
     # two jobs remaining for each instance
     for instance in instances:
-        resp = api_get("/v0/jobs/{}".format(instance))
+        resp = api_get(f"/v0/jobs/{instance}")
         assert len(resp["jobs"]) == 2
 
     # --- 3 --- DELETE WITH FILTER BY INSTANCE
@@ -128,12 +128,12 @@ def test_jobs_deletion(create_instances):
 
     # other instances still have 2 jobs
     for instance in ["Instance_2", "Instance_3"]:
-        resp = api_get("/v0/jobs/{}".format(instance))
+        resp = api_get(f"/v0/jobs/{instance}")
         assert len(resp["jobs"]) == 2
 
     # --- 4 --- DELETE WITH FILTER BY ID
     job_id = api_get("/v0/jobs/Instance_2")["jobs"][0]["id"]
-    api_delete("/v0/jobs/{}?confirm=yes".format(job_id))
+    api_delete(f"/v0/jobs/{job_id}?confirm=yes")
 
     # one job remaining for 'Instance_2'
     resp = api_get("/v0/jobs/Instance_2")

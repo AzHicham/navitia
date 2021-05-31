@@ -1,4 +1,3 @@
-from __future__ import absolute_import, print_function, unicode_literals, division
 from tests.check_utils import api_get
 import pytest
 from navitiacommon import models
@@ -27,7 +26,7 @@ def create_basic_job_with_data_sets():
             dataset.family_type = dataset.type
             if dataset.type == 'fusio':
                 dataset.family_type = 'pt'
-            dataset.name = '/path/to/dataset_{}'.format(i)
+            dataset.name = f'/path/to/dataset_{i}'
             models.db.session.add(dataset)
 
             job.data_sets.append(dataset)

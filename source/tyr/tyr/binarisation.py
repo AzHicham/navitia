@@ -31,7 +31,7 @@
 Functions to launch the binarizations
 """
 
-from __future__ import absolute_import, print_function, division
+
 import logging
 import os
 import zipfile
@@ -72,10 +72,10 @@ def unzip_if_needed(filename):
 
 
 def move_to_backupdirectory(filename, working_directory):
-    """ If there is no backup directory it creates one in
-        {instance_directory}/backup/{name}
-        The name of the backup directory is the time when it's created
-        formatted as %Y%m%d-%H%M%S
+    """If there is no backup directory it creates one in
+    {instance_directory}/backup/{name}
+    The name of the backup directory is the time when it's created
+    formatted as %Y%m%d-%H%M%S
     """
     now = datetime.datetime.now()
     working_directory += "/" + now.strftime("%Y%m%d-%H%M%S%f")
@@ -87,7 +87,7 @@ def move_to_backupdirectory(filename, working_directory):
 
 
 def make_connection_string(instance_config):
-    """ Make a connection string connection from the config """
+    """Make a connection string connection from the config"""
     connection_string = 'host=' + instance_config.pg_host
     connection_string += ' user=' + instance_config.pg_username
     connection_string += ' dbname=' + instance_config.pg_dbname
@@ -123,7 +123,7 @@ class Lock(object):
             logging.debug('args: %s -- kwargs: %s', args, kwargs)
             job = models.Job.query.get(job_id)
             logger = get_instance_logger(job.instance, task_id=job_id)
-            task = args[func.func_code.co_varnames.index('self')]
+            task = args[func.__code__.co_varnames.index('self')]
             try:
                 lock = redis.lock('tyr.lock|' + job.instance.name, timeout=self.timeout)
                 locked = lock.acquire(blocking=False)
@@ -175,7 +175,7 @@ def collect_metric(task_type, job, dataset_uid):
 
 def _retrieve_dataset_and_set_state(dataset_type, job_id):
     dataset = models.DataSet.find_by_type_and_job_id(dataset_type, job_id)
-    logging.getLogger(__name__).debug("Retrieved dataset: {}".format(dataset.id))
+    logging.getLogger(__name__).debug(f"Retrieved dataset: {dataset.id}")
     dataset.state = "running"
     models.db.session.commit()
     return dataset
@@ -184,7 +184,7 @@ def _retrieve_dataset_and_set_state(dataset_type, job_id):
 @celery.task(bind=True)
 @Lock(timeout=30 * 60)
 def fusio2ed(self, instance_config, filename, job_id, dataset_uid):
-    """ Unzip fusio file and launch fusio2ed """
+    """Unzip fusio file and launch fusio2ed"""
 
     job = models.Job.query.get(job_id)
     dataset = _retrieve_dataset_and_set_state("fusio", job.id)
@@ -227,7 +227,7 @@ def fusio2ed(self, instance_config, filename, job_id, dataset_uid):
 @celery.task(bind=True)
 @Lock(30 * 60)
 def gtfs2ed(self, instance_config, gtfs_filename, job_id, dataset_uid):
-    """ Unzip gtfs file launch gtfs2ed """
+    """Unzip gtfs file launch gtfs2ed"""
 
     job = models.Job.query.get(job_id)
     dataset = _retrieve_dataset_and_set_state("gtfs", job.id)
@@ -270,7 +270,7 @@ def gtfs2ed(self, instance_config, gtfs_filename, job_id, dataset_uid):
 @celery.task(bind=True)
 @Lock(timeout=30 * 60)
 def osm2ed(self, instance_config, osm_filename, job_id, dataset_uid):
-    """ launch osm2ed """
+    """launch osm2ed"""
     job = models.Job.query.get(job_id)
     dataset = _retrieve_dataset_and_set_state("osm", job.id)
     instance = job.instance
@@ -280,7 +280,7 @@ def osm2ed(self, instance_config, osm_filename, job_id, dataset_uid):
 
     osm_filename = unzip_if_needed(osm_filename)
     if os.path.isdir(osm_filename):
-        osm_filename = glob.glob('{}/*.pbf'.format(osm_filename))[0]
+        osm_filename = glob.glob(f'{osm_filename}/*.pbf')[0]
 
     logger = get_instance_logger(instance, task_id=job_id)
     try:
@@ -289,7 +289,7 @@ def osm2ed(self, instance_config, osm_filename, job_id, dataset_uid):
         args = ["-i", osm_filename, "--connection-string", connection_string]
         if poi_types_json:
             args.append('-p')
-            args.append(u'{}'.format(poi_types_json))
+            args.append(f'{poi_types_json}')
 
         args.append("--local_syslog")
         args.append("--log_comment")
@@ -320,7 +320,7 @@ def osm2ed(self, instance_config, osm_filename, job_id, dataset_uid):
 @celery.task(bind=True)
 @Lock(timeout=30 * 60)
 def geopal2ed(self, instance_config, filename, job_id, dataset_uid):
-    """ launch geopal2ed """
+    """launch geopal2ed"""
 
     job = models.Job.query.get(job_id)
     dataset = _retrieve_dataset_and_set_state("geopal", job.id)
@@ -355,7 +355,7 @@ def geopal2ed(self, instance_config, filename, job_id, dataset_uid):
 @celery.task(bind=True)
 @Lock(timeout=10 * 60)
 def poi2ed(self, instance_config, filename, job_id, dataset_uid):
-    """ launch poi2ed """
+    """launch poi2ed"""
 
     job = models.Job.query.get(job_id)
     dataset = _retrieve_dataset_and_set_state("poi", job.id)
@@ -390,7 +390,7 @@ def poi2ed(self, instance_config, filename, job_id, dataset_uid):
 @celery.task(bind=True)
 @Lock(timeout=10 * 60)
 def synonym2ed(self, instance_config, filename, job_id, dataset_uid):
-    """ launch synonym2ed """
+    """launch synonym2ed"""
 
     job = models.Job.query.get(job_id)
     dataset = _retrieve_dataset_and_set_state("synonym", job.id)
@@ -423,11 +423,11 @@ def synonym2ed(self, instance_config, filename, job_id, dataset_uid):
 
 # from http://wiki.openstreetmap.org/wiki/Osmosis/Polygon_Filter_File_Python_Parsing
 def parse_poly(lines):
-    """ Parse an Osmosis polygon filter file.
+    """Parse an Osmosis polygon filter file.
 
-        Accept a sequence of lines from a polygon file, return a shapely.geometry.MultiPolygon object.
+    Accept a sequence of lines from a polygon file, return a shapely.geometry.MultiPolygon object.
 
-        http://wiki.openstreetmap.org/wiki/Osmosis/Polygon_Filter_File_Format
+    http://wiki.openstreetmap.org/wiki/Osmosis/Polygon_Filter_File_Format
     """
     in_ring = False
     coords = []
@@ -449,7 +449,7 @@ def parse_poly(lines):
 
         elif in_ring:
             # we are in a ring and picking up new coordinates.
-            ring.append(map(float, line.split()))
+            ring.append(list(map(float, line.split())))
 
         elif not in_ring and line.strip() == 'END':
             # we are at the end of the whole polygon.
@@ -471,7 +471,7 @@ def parse_poly(lines):
 
 
 def load_bounding_shape(instance_name, instance_conf, shape_path):
-    logging.info("loading bounding shape for {} from = {}".format(instance_name, shape_path))
+    logging.info(f"loading bounding shape for {instance_name} from = {shape_path}")
 
     if shape_path.endswith(".poly"):
         with open(shape_path, "r") as myfile:
@@ -480,7 +480,7 @@ def load_bounding_shape(instance_name, instance_conf, shape_path):
         with open(shape_path, "r") as myfile:
             shape = wkt.loads(myfile.read())
     else:
-        logging.error("bounding_shape: {} has an unknown extension.".format(shape_path))
+        logging.error(f"bounding_shape: {shape_path} has an unknown extension.")
         return
     if not shape.is_valid:
         raise ValueError("shape isn't valid")
@@ -521,7 +521,7 @@ def shape2ed(self, instance_config, filename, job_id, dataset_uid):
     job = models.Job.query.get(job_id)
     dataset = _retrieve_dataset_and_set_state("shape", job.id)
     instance = job.instance
-    logging.info("loading bounding shape for {} from = {}".format(instance.name, filename))
+    logging.info(f"loading bounding shape for {instance.name} from = {filename}")
     try:
         load_bounding_shape(instance.name, instance_config, filename)
         dataset.state = "done"
@@ -536,10 +536,10 @@ def shape2ed(self, instance_config, filename, job_id, dataset_uid):
 
 @celery.task(bind=True)
 def reload_data(self, instance_config, job_id):
-    """ reload data on all kraken of this instance"""
+    """reload data on all kraken of this instance"""
     job = models.Job.query.get(job_id)
     instance = job.instance
-    logging.info("Unqueuing job {}, reload data of instance {}".format(job.id, instance.name))
+    logging.info(f"Unqueuing job {job.id}, reload data of instance {instance.name}")
     logger = get_instance_logger(instance, task_id=job_id)
     try:
         task = navitiacommon.task_pb2.Task()
@@ -561,7 +561,7 @@ def reload_data(self, instance_config, job_id):
 @celery.task(bind=True)
 @Lock(10 * 60)
 def ed2nav(self, instance_config, job_id, custom_output_dir):
-    """ Launch ed2nav"""
+    """Launch ed2nav"""
     job = models.Job.query.get(job_id)
     instance = job.instance
 
@@ -602,7 +602,7 @@ def ed2nav(self, instance_config, job_id, custom_output_dir):
 @celery.task(bind=True)
 @Lock(timeout=10 * 60)
 def fare2ed(self, instance_config, filename, job_id, dataset_uid):
-    """ launch fare2ed """
+    """launch fare2ed"""
 
     job = models.Job.query.get(job_id)
     instance = job.instance
@@ -634,7 +634,7 @@ def fare2ed(self, instance_config, filename, job_id, dataset_uid):
 
 @celery.task(bind=True)
 def bano2mimir(self, autocomplete_instance, filename, job_id, dataset_uid):
-    """ launch bano2mimir """
+    """launch bano2mimir"""
     autocomplete_instance = models.db.session.merge(autocomplete_instance)  # reatache the object
     logger = get_autocomplete_instance_logger(autocomplete_instance, task_id=job_id)
     job = models.Job.query.get(job_id)
@@ -674,7 +674,7 @@ def bano2mimir(self, autocomplete_instance, filename, job_id, dataset_uid):
 
 @celery.task(bind=True)
 def openaddresses2mimir(self, autocomplete_instance, filename, job_id, dataset_uid):
-    """ launch openaddresses2mimir """
+    """launch openaddresses2mimir"""
     autocomplete_instance = models.db.session.merge(autocomplete_instance)  # reatache the object
     logger = get_autocomplete_instance_logger(autocomplete_instance, task_id=job_id)
     job = models.Job.query.get(job_id)
@@ -714,17 +714,17 @@ def openaddresses2mimir(self, autocomplete_instance, filename, job_id, dataset_u
 
 @celery.task(bind=True)
 def osm2mimir(self, autocomplete_instance, filename, job_id, dataset_uid):
-    """ launch osm2mimir """
+    """launch osm2mimir"""
 
     autocomplete_instance = models.db.session.merge(autocomplete_instance)  # reatache the object
     logger = get_autocomplete_instance_logger(autocomplete_instance, task_id=job_id)
-    logger.debug('running osm2mimir for {}'.format(job_id))
+    logger.debug(f'running osm2mimir for {job_id}')
     job = models.Job.query.get(job_id)
     cnx_string = current_app.config['MIMIR_URL']
     data_filename = unzip_if_needed(filename)
     custom_config = "custom_config"
     working_directory = os.path.dirname(data_filename)
-    custom_config_config_toml = '{}/{}.toml'.format(working_directory, custom_config)
+    custom_config_config_toml = f'{working_directory}/{custom_config}.toml'
     with open(custom_config_config_toml, 'w') as f:
         f.write(autocomplete_instance.config_toml.encode("utf-8"))
     params = [
@@ -733,7 +733,7 @@ def osm2mimir(self, autocomplete_instance, filename, job_id, dataset_uid):
         '--connection-string',
         cnx_string,
         '-D',
-        "{}/".format(working_directory),
+        f"{working_directory}/",
         '-s',
         custom_config,
     ]
@@ -829,10 +829,10 @@ def ntfs2mimir(self, instance_name, input, job_id=None, dataset_uid=None):
 
 @celery.task(bind=True)
 def cosmogony2mimir(self, autocomplete_instance, filename, job_id, dataset_uid):
-    """ launch cosmogony2mimir """
+    """launch cosmogony2mimir"""
     autocomplete_instance = models.db.session.merge(autocomplete_instance)  # reattach the object
     logger = get_autocomplete_instance_logger(autocomplete_instance, task_id=job_id)
-    logger.debug('running cosmogony2mimir for {}'.format(job_id))
+    logger.debug(f'running cosmogony2mimir for {job_id}')
     job = models.Job.query.get(job_id)
     cnx_string = current_app.config['MIMIR_URL']
     cosmo_file = unzip_if_needed(filename)
@@ -860,8 +860,8 @@ def cosmogony2mimir(self, autocomplete_instance, filename, job_id, dataset_uid):
 
 @celery.task(bind=True)
 def poi2mimir(self, instance_name, input, job_id=None, dataset_uid=None):
-    """ launch poi2mimir """
-    dataset_name = 'priv.{}'.format(instance_name)  # We give the dataset a prefix to prevent
+    """launch poi2mimir"""
+    dataset_name = f'priv.{instance_name}'  # We give the dataset a prefix to prevent
     #   collision with other datasets.
 
     job = None

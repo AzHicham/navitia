@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division
+
 from tests.check_utils import api_get, api_post, api_delete, api_put
 import json
 import pytest
@@ -414,7 +414,7 @@ def test_add_user_invalid_shape_scope(mock_rabbit):
     assert "shape_scope" in message
     assert (
         message["shape_scope"]
-        == u"The shape_scope argument must be in list ('admin', 'street', 'addr', 'poi', 'stop'), you gave ab"
+        == "The shape_scope argument must be in list ('admin', 'street', 'addr', 'poi', 'stop'), you gave ab"
     )
     assert mock_rabbit.call_count == 0
 
@@ -445,7 +445,7 @@ def test_update_user_valid_shape_scope(create_multiple_users):
         assert_default_scop_shape(user)
     user = {'login': 'user1', 'email': 'user1@example.com', "shape_scope": ["poi", "stop"]}
     resp, status = api_put(
-        '/v0/users/{}'.format(create_multiple_users['user1']),
+        f"/v0/users/{create_multiple_users['user1']}",
         check=False,
         data=json.dumps(user),
         content_type='application/json',
@@ -467,7 +467,7 @@ def test_update_user_invalid_shape_scope(create_multiple_users, mock_rabbit):
         assert_default_scop_shape(user)
     user = {'login': 'user1', 'email': 'user1@example.com', "shape_scope": ["bob"]}
     resp, status = api_put(
-        '/v0/users/{}'.format(create_multiple_users['user1']),
+        f"/v0/users/{create_multiple_users['user1']}",
         check=False,
         data=json.dumps(user),
         content_type='application/json',
@@ -478,7 +478,7 @@ def test_update_user_invalid_shape_scope(create_multiple_users, mock_rabbit):
     assert "shape_scope" in message
     assert (
         message["shape_scope"]
-        == u"The shape_scope argument must be in list ('admin', 'street', 'addr', 'poi', 'stop'), you gave bob"
+        == "The shape_scope argument must be in list ('admin', 'street', 'addr', 'poi', 'stop'), you gave bob"
     )
     assert mock_rabbit.call_count == 0
 
@@ -515,10 +515,10 @@ def test_delete_user(create_multiple_users, mock_rabbit):
     """
     delete a user
     """
-    resp, status = api_delete('/v0/users/{}'.format(create_multiple_users['user1']), check=False, no_json=True)
+    resp, status = api_delete(f"/v0/users/{create_multiple_users['user1']}", check=False, no_json=True)
     assert status == 204
 
-    resp, status = api_get('/v0/users/{}'.format(create_multiple_users['user1']), check=False)
+    resp, status = api_get(f"/v0/users/{create_multiple_users['user1']}", check=False)
     assert status == 404
 
     resp = api_get('/v0/users/')
@@ -538,9 +538,9 @@ def test_delete_invalid_user(create_multiple_users, mock_rabbit):
     we try to delete an invalid users, this must fail and after that we check out users to be sure
     """
     to_delete = 0
-    while to_delete in create_multiple_users.values():
+    while to_delete in list(create_multiple_users.values()):
         to_delete = to_delete + 1
-    resp, status = api_delete('/v0/users/{}'.format(to_delete), check=False, no_json=True)
+    resp, status = api_delete(f'/v0/users/{to_delete}', check=False, no_json=True)
     assert status == 404
 
     resp = api_get('/v0/users/')
@@ -564,7 +564,7 @@ def test_update_user(create_multiple_users, mock_rabbit, geojson_polygon):
     """
     user = {'login': 'user1', 'email': 'user1@example.com', 'shape': geojson_polygon}
     resp = api_put(
-        '/v0/users/{}'.format(create_multiple_users['user1']),
+        f"/v0/users/{create_multiple_users['user1']}",
         data=json.dumps(user),
         content_type='application/json',
     )
@@ -586,7 +586,7 @@ def test_update_block_until(create_multiple_users, mock_rabbit, geojson_polygon)
     """
     user = {'block_until': '20160128T111200Z'}
     resp = api_put(
-        '/v0/users/{}'.format(create_multiple_users['user1']),
+        f"/v0/users/{create_multiple_users['user1']}",
         data=json.dumps(user),
         content_type='application/json',
     )
@@ -602,7 +602,7 @@ def test_update_shape(create_multiple_users, mock_rabbit, geojson_polygon):
     """
     user = {'shape': geojson_polygon}
     resp = api_put(
-        '/v0/users/{}'.format(create_multiple_users['user1']),
+        f"/v0/users/{create_multiple_users['user1']}",
         data=json.dumps(user),
         content_type='application/json',
     )
@@ -622,7 +622,7 @@ def test_update_shape_with_none(create_multiple_users, mock_rabbit):
     """
     user = {'shape': None}
     resp = api_put(
-        '/v0/users/{}'.format(create_multiple_users['user1']),
+        f"/v0/users/{create_multiple_users['user1']}",
         data=json.dumps(user),
         content_type='application/json',
     )
@@ -637,7 +637,7 @@ def test_update_shape_with_empty(create_multiple_users, mock_rabbit, geojson_pol
     """
     user = {'shape': {}}
     resp = api_put(
-        '/v0/users/{}'.format(create_multiple_users['user1']),
+        f"/v0/users/{create_multiple_users['user1']}",
         data=json.dumps(user),
         content_type='application/json',
     )
@@ -655,29 +655,29 @@ def test_full_registration_then_deletion(create_instance, mock_rabbit):
     resp_user = api_post('/v0/users/', data=json.dumps(user), content_type='application/json')
 
     api_post(
-        '/v0/users/{}/keys'.format(resp_user['id']),
+        f"/v0/users/{resp_user['id']}/keys",
         data=json.dumps({'app_name': 'myApp'}),
         content_type='application/json',
     )
     auth = {'instance_id': create_instance, 'api_id': 1}
     api_post(
-        '/v0/users/{}/authorizations'.format(resp_user['id']),
+        f"/v0/users/{resp_user['id']}/authorizations",
         data=json.dumps(auth),
         content_type='application/json',
     )
 
-    resp = api_get('/v0/users/{}'.format(resp_user['id']))
+    resp = api_get(f"/v0/users/{resp_user['id']}")
 
     assert len(resp['keys']) == 1
     assert resp['keys'][0]['app_name'] == 'myApp'
     assert len(resp['authorizations']) == 1
     assert resp['authorizations'][0]['instance']['name'] == 'instance'
 
-    _, status = api_delete('/v0/users/{}'.format(resp_user['id']), check=False, no_json=True)
+    _, status = api_delete(f"/v0/users/{resp_user['id']}", check=False, no_json=True)
     assert status == 204
     assert mock_rabbit.called
 
-    _, status = api_get('/v0/users/{}'.format(resp_user['id']), check=False)
+    _, status = api_get(f"/v0/users/{resp_user['id']}", check=False)
     assert status == 404
 
 
@@ -693,24 +693,22 @@ def test_deletion_keys_and_auth(create_instance, mock_rabbit):
     user = {'login': 'user1', 'email': 'user1@example.com'}
     resp_user = api_post('/v0/users/', data=json.dumps(user), content_type='application/json')
     api_post(
-        '/v0/users/{}/keys'.format(resp_user['id']),
+        f"/v0/users/{resp_user['id']}/keys",
         data=json.dumps({'app_name': 'myApp'}),
         content_type='application/json',
     )
     auth = {'instance_id': create_instance, 'api_id': 1}
     api_post(
-        '/v0/users/{}/authorizations'.format(resp_user['id']),
+        f"/v0/users/{resp_user['id']}/authorizations",
         data=json.dumps(auth),
         content_type='application/json',
     )
-    resp = api_get('/v0/users/{}'.format(resp_user['id']))
+    resp = api_get(f"/v0/users/{resp_user['id']}")
 
-    resp_key = api_delete(
-        '/v0/users/{user_id}/keys/{key_id}'.format(user_id=resp['id'], key_id=resp['keys'][0]['id'])
-    )
+    resp_key = api_delete(f"/v0/users/{resp['id']}/keys/{resp['keys'][0]['id']}")
     assert len(resp_key['keys']) == 0
     resp_auth = api_delete(
-        '/v0/users/{}/authorizations/'.format(resp['id']), data=json.dumps(auth), content_type='application/json'
+        f"/v0/users/{resp['id']}/authorizations/", data=json.dumps(auth), content_type='application/json'
     )
     assert len(resp_auth['authorizations']) == 0
     assert mock_rabbit.called
@@ -722,7 +720,7 @@ def test_get_user_with_shape(create_user, geojson_polygon):
     and we test that the attribute shape={} and has_shape = True
     """
     print(api_get('/v0/users'))
-    resp = api_get('/v0/users/{}'.format(create_user))
+    resp = api_get(f'/v0/users/{create_user}')
 
     assert resp['has_shape'] is True
     assert resp['shape'] == {}
@@ -734,7 +732,7 @@ def test_get_user_with_shape_and_disable_geojson_param_false(create_user, geojso
     We request the user with parameter disable_geojson=true
     We test that shape = geojson and has_shape = True
     """
-    resp = api_get('/v0/users/{}?disable_geojson=false'.format(create_user))
+    resp = api_get(f'/v0/users/{create_user}?disable_geojson=false')
 
     assert resp['has_shape'] is True
     assert resp['shape'] == geojson_polygon
@@ -745,7 +743,7 @@ def test_get_user_without_shape(create_user_without_shape):
     We start by creating the user without shape,
     and we test that  shape = None and has_shape = False
     """
-    resp = api_get('/v0/users/{}'.format(create_user_without_shape))
+    resp = api_get(f'/v0/users/{create_user_without_shape}')
     print(resp['shape'])
     assert resp['has_shape'] is False
     assert resp['shape'] is None
@@ -758,7 +756,7 @@ def test_get_user_without_shape_and_disable_geojson_param_false(create_user_with
     We request the user with parameter disable_geojson=true
     We test that shape = None and has_shape = False
     """
-    resp = api_get('/v0/users/{}?disable_geojson=false'.format(create_user_without_shape))
+    resp = api_get(f'/v0/users/{create_user_without_shape}?disable_geojson=false')
 
     assert resp['has_shape'] is False
     assert resp['shape'] is None
@@ -812,7 +810,7 @@ def test_get_billing_plan(create_billing_plan):
     """
     We create a billing_plan.
     """
-    resp = api_get('/v0/billing_plans/{}'.format(create_billing_plan))
+    resp = api_get(f'/v0/billing_plans/{create_billing_plan}')
 
     assert resp['name'] == 'test'
     assert resp['max_request_count'] == 10
@@ -824,9 +822,9 @@ def test_delete_billing_plan(create_billing_plan):
     We start by creating a billing_plan.
     Delete the billing_plan
     """
-    resp = api_get('/v0/billing_plans/{}'.format(create_billing_plan))
+    resp = api_get(f'/v0/billing_plans/{create_billing_plan}')
 
-    _, status = api_delete('/v0/billing_plans/{}'.format(resp['id']), check=False, no_json=True)
+    _, status = api_delete(f"/v0/billing_plans/{resp['id']}", check=False, no_json=True)
     assert status == 204
 
 
@@ -837,13 +835,13 @@ def test_delete_billing_plan_used_by_an_user(create_user, geojson_polygon):
     A default billing_plan is created and used with name = 'nav_ctp'
     We try to delete the billing_plan of this user but in vain.
     """
-    resp = api_get('/v0/users/{}?disable_geojson=false'.format(create_user))
+    resp = api_get(f'/v0/users/{create_user}?disable_geojson=false')
 
     assert resp['billing_plan']['name'] == 'nav_ctp'
     assert resp['has_shape'] is True
     assert resp['shape'] == geojson_polygon
 
-    _, status = api_delete('/v0/billing_plans/{}'.format(resp['billing_plan']['id']), check=False, no_json=True)
+    _, status = api_delete(f"/v0/billing_plans/{resp['billing_plan']['id']}", check=False, no_json=True)
     assert status == 409
 
 
@@ -852,15 +850,15 @@ def test_filter_users_by_key(create_user, create_multiple_users):
     assert len(resp_users) == 3
     for user in resp_users:
         api_post(
-            '/v0/users/{}/keys'.format(user['id']),
+            f"/v0/users/{user['id']}/keys",
             data=json.dumps({'app_name': 'myApp'}),
             content_type='application/json',
         )
 
-        resp_user = api_get('/v0/users/{}'.format(user['id']))
+        resp_user = api_get(f"/v0/users/{user['id']}")
         assert len(resp_user['keys']) == 1
         assert 'token' in resp_user['keys'][0]
 
         token = resp_user['keys'][0]['token']
-        resp_token = api_get('/v0/users?key={}'.format(token))
+        resp_token = api_get(f'/v0/users?key={token}')
         assert resp_token['id'] == user['id']

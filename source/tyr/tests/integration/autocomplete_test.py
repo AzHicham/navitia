@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division, unicode_literals
+
 from tests.check_utils import api_get, api_post, api_delete, api_put, _dt
 import json
 import pytest
@@ -49,8 +49,8 @@ def create_autocomplete_parameter():
 
             dataset = models.DataSet()
             dataset.type = dset_type
-            dataset.family_type = 'autocomplete_{}'.format(dataset.type)
-            dataset.name = '/path/to/dataset_{}'.format(i)
+            dataset.family_type = f'autocomplete_{dataset.type}'
+            dataset.name = f'/path/to/dataset_{i}'
             models.db.session.add(dataset)
 
             job.autocomplete_params_id = autocomplete_param.id
