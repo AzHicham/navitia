@@ -81,20 +81,20 @@ class SytralProvider(object):
         Call equipments webservice with URL defined in settings
         :return: data received from the webservice
         """
-        logging.getLogger(__name__).debug('sytralRT RT service , call url : {}'.format(self.url))
+        logging.getLogger(__name__).debug(f'sytralRT RT service , call url : {self.url}')
         result = None
         try:
             response = self.breaker.call(requests.get, url=self.url, timeout=self.timeout)
             result = response.json()
             self.record_call("OK")
         except pybreaker.CircuitBreakerError as e:
-            logging.getLogger(__name__).error('Service SytralRT is dead (error: {})'.format(e))
+            logging.getLogger(__name__).error(f'Service SytralRT is dead (error: {e})')
             self.record_call('failure', reason='circuit breaker open')
         except requests.Timeout as t:
-            logging.getLogger(__name__).error('SytralRT service timeout (error: {})'.format(t))
+            logging.getLogger(__name__).error(f'SytralRT service timeout (error: {t})')
             self.record_call('failure', reason='timeout')
         except Exception as e:
-            logging.getLogger(__name__).exception('SytralRT service error: {}'.format(e))
+            logging.getLogger(__name__).exception(f'SytralRT service error: {e}')
             self.record_call('failure', reason=str(e))
         return result
 
@@ -137,7 +137,7 @@ class SytralProvider(object):
         elif embedded_type_sytral == "TCL_ESCALIER":
             return "escalator"
         else:
-            self.logger.exception('impossible to use {} sytral type'.format(embedded_type_sytral))
+            self.logger.exception(f'impossible to use {embedded_type_sytral} sytral type')
             return ""
 
     def _process_for_journeys(self, data, stop_points_list):
@@ -149,7 +149,7 @@ class SytralProvider(object):
         for st in stop_points_list:
             for code in st.codes:
                 if code.type in self.code_types:
-                    equipments_list = jmespath.search("equipments_details[?id=='{}']".format(code.value), data)
+                    equipments_list = jmespath.search(f"equipments_details[?id=='{code.value}']", data)
 
                     if equipments_list:
                         equipment = equipments_list[0]
@@ -175,7 +175,7 @@ class SytralProvider(object):
             unique_codes = {six.text_type(code): code for st in sae.stop_area.stop_points for code in st.codes}
             for code in list(unique_codes.values()):
                 if code.type in self.code_types:
-                    equipments_list = jmespath.search("equipments_details[?id=='{}']".format(code.value), data)
+                    equipments_list = jmespath.search(f"equipments_details[?id=='{code.value}']", data)
 
                     if equipments_list:
                         equipment = equipments_list[0]

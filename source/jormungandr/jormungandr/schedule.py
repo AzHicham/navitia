@@ -105,7 +105,7 @@ class RoutePoint(object):
         self.pb_route = route
 
     def __str__(self):
-        return '({} {})'.format(self.pb_stop_point.uri, self.pb_route.uri)
+        return f'({self.pb_stop_point.uri} {self.pb_route.uri})'
 
     def __unicode__(self):
         return str(self)
@@ -132,7 +132,7 @@ class RoutePoint(object):
         if len(tags) > 1:
             # there is more than one RT id for the given object, which shouldn't happen
             logging.getLogger(__name__).warning(
-                'Object {o} has multiple RealTime codes for tag {t}'.format(o=obj.uri, t=object_id_tag)
+                f'Object {obj.uri} has multiple RealTime codes for tag {object_id_tag}'
             )
         return tags[0]
 
@@ -204,7 +204,7 @@ class MixedSchedule(object):
 
         rt_system = self.instance.realtime_proxy_manager.get(rt_system_code)
         if not rt_system:
-            log.info('impossible to find {}, no realtime added'.format(rt_system_code))
+            log.info(f'impossible to find {rt_system_code}, no realtime added')
             new_relic.record_custom_event(
                 'realtime_internal_failure', {'rt_system_id': rt_system_code, 'message': 'no handler found'}
             )
@@ -227,7 +227,7 @@ class MixedSchedule(object):
             )
         except Exception as e:
             log.exception(
-                'failure while requesting next passages to external RT system {}'.format(rt_system.rt_system_id)
+                f'failure while requesting next passages to external RT system {rt_system.rt_system_id}'
             )
             new_relic.record_custom_event(
                 'realtime_internal_failure',

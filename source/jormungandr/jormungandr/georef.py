@@ -69,7 +69,7 @@ class Kraken(object):
 
         response = self.instance.send_and_receive(req, request_id=request_id)
         if response.error and response.error.id == response_pb2.Error.error_id.Value('no_solution'):
-            logger.error("Cannot compute car co2 emission from {} to {}".format(origin, destination))
+            logger.error(f"Cannot compute car co2 emission from {origin} to {destination}")
             return None
         return response.car_co2_emission
 
@@ -85,7 +85,7 @@ class Kraken(object):
         request_id=None,
         forbidden_uris=[],
         allowed_id=[],
-        **kwargs
+        **kwargs,
     ):
 
         logger = logging.getLogger(__name__)
@@ -105,12 +105,12 @@ class Kraken(object):
         if allowed_id is not None:
             allowed_id_count = len(allowed_id)
             if allowed_id_count > 0:
-                poi_ids = ('poi.id={}'.format(uri) for uri in allowed_id)
+                poi_ids = (f'poi.id={uri}' for uri in allowed_id)
                 allowed_id_items = '  or  '.join(poi_ids)
 
                 # Format the filter for all allowed_ids uris
                 if allowed_id_count >= 1:
-                    allowed_id_filter = ' and ({})'.format(allowed_id_items)
+                    allowed_id_filter = f' and ({allowed_id_items})'
 
         # We implement filter only for poi with poi_type.uri=poi_type:amenity:parking
         if filter is not None:
@@ -135,13 +135,11 @@ class Kraken(object):
         req.ptref.count = 100
         req.ptref.start_page = 0
         req.ptref.depth = 0
-        req.ptref.filter = 'stop_area.uri = {uri}'.format(uri=uri)
+        req.ptref.filter = f'stop_area.uri = {uri}'
 
         result = self.instance.send_and_receive(req, request_id=request_id)
         if not result.stop_points:
-            logging.getLogger(__name__).info(
-                'PtRef, Unable to find stop_point with filter {}'.format(req.ptref.filter)
-            )
+            logging.getLogger(__name__).info(f'PtRef, Unable to find stop_point with filter {req.ptref.filter}')
         return result.stop_points
 
     def get_stop_points_from_uri(self, uri, request_id):
@@ -151,7 +149,7 @@ class Kraken(object):
         req.ptref.count = 100
         req.ptref.start_page = 0
         req.ptref.depth = 0
-        req.ptref.filter = 'stop_point.uri = {uri}'.format(uri=uri)
+        req.ptref.filter = f'stop_point.uri = {uri}'
         result = self.instance.send_and_receive(req, request_id=request_id)
         return result.stop_points
 

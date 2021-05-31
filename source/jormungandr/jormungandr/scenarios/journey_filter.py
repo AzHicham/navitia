@@ -50,7 +50,7 @@ def delete_journeys(responses, request):
         nb_deleted += pb_del_if(r.journeys, lambda j: to_be_deleted(j))
 
     if nb_deleted:
-        logging.getLogger(__name__).info('filtering {} journeys'.format(nb_deleted))
+        logging.getLogger(__name__).info(f'filtering {nb_deleted} journeys')
 
 
 def to_be_deleted(journey):
@@ -105,7 +105,7 @@ def filter_wrapper(filter_obj=None, is_debug=False):
         logger = logging.getLogger(__name__)
         res = filter_func(journey)
         if not res:
-            logger.debug("We delete: {}, cause: {}".format(journey.internal_id, message))
+            logger.debug(f"We delete: {journey.internal_id}, cause: {message}")
             mark_as_dead(journey, is_debug, message)
         return res or is_debug
 
@@ -387,7 +387,7 @@ class FilterTooLongDirectPath(SingleJourneyFilter):
     def _get_mode_of_journey(self, journey):
         mode = FallbackModes.modes_str() & set(journey.tags)
         if len(mode) != 1:
-            self.logger.error('Cannot determine the mode of direct path: {}'.format(mode))
+            self.logger.error(f'Cannot determine the mode of direct path: {mode}')
             return None
 
         return next(iter(mode))
@@ -402,7 +402,7 @@ class FilterTooLongDirectPath(SingleJourneyFilter):
 
         direct_path_mode = self._get_mode_of_journey(journey)
 
-        attr_name = 'max_{}_direct_path_duration'.format(direct_path_mode)
+        attr_name = f'max_{direct_path_mode}_direct_path_duration'
         max_duration = self.request[attr_name]
         return max_duration > journey.duration
 
@@ -457,14 +457,14 @@ def is_walk_after_parking(journey, idx_section):
 
 
 def similar_pt_section_vj(section):
-    return 'pt:%s' % section.pt_display_informations.uris.vehicle_journey
+    return f'pt:{section.pt_display_informations.uris.vehicle_journey}'
 
 
 def similar_pt_section_line(section):
-    return "pt:{}".format(section.pt_display_informations.uris.line)
+    return f"pt:{section.pt_display_informations.uris.line}"
 
 
-def similar_journeys_generator(journey, pt_functor, sn_functor=lambda s: 'sn:{}'.format(s.street_network.mode)):
+def similar_journeys_generator(journey, pt_functor, sn_functor=lambda s: f'sn:{s.street_network.mode}'):
     for idx, s in enumerate(journey.sections):
         if s.type == response_pb2.PUBLIC_TRANSPORT:
             yield pt_functor(s)
@@ -518,7 +518,7 @@ def shared_section_generator(journey):
     # Compare each section of the journey with the criteria in the function description
     for s in journey.sections:
         if s.type == response_pb2.PUBLIC_TRANSPORT:
-            yield "origin:{}/dest:{}".format(s.origin.uri, s.destination.uri)
+            yield f"origin:{s.origin.uri}/dest:{s.destination.uri}"
 
 
 def fallback_duration(journey):
@@ -792,7 +792,7 @@ def _filter_similar_journeys(journey_pairs_pool, request, *similar_journey_gener
                 worst,
                 is_debug,
                 'duplicate_journey',
-                'similar_to_{other}'.format(other=j1.internal_id if worst == j2 else j2.internal_id),
+                f'similar_to_{j1.internal_id if worst == j2 else j2.internal_id}',
             )
 
 
@@ -814,7 +814,7 @@ def _filter_too_much_connections(journeys, instance, request):
         max_connections_allowed = max_additional_connections + best_pt_journey_connections
         for j in it2:
             if get_nb_connections(j) > max_connections_allowed:
-                logger.debug("the journey {} has a too much connections, we delete it".format(j.internal_id))
+                logger.debug(f"the journey {j.internal_id} has a too much connections, we delete it")
                 mark_as_dead(j, is_debug, "too_much_connections")
 
 

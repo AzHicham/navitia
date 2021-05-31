@@ -63,7 +63,7 @@ class EquipmentProviderManager(object):
             ):
                 self._equipment_providers_legacy[key] = self._init_class(provider['class'], provider['args'])
             else:
-                self.logger.error('impossible to create provider with key: {}'.format(key))
+                self.logger.error(f'impossible to create provider with key: {key}')
 
     def _init_class(self, cls, arguments):
         """
@@ -74,17 +74,17 @@ class EquipmentProviderManager(object):
         """
         try:
             if '.' not in cls:
-                self.logger.warning('impossible to build, wrongly formated class: {}'.format(cls))
+                self.logger.warning(f'impossible to build, wrongly formated class: {cls}')
 
             module_path, name = cls.rsplit('.', 1)
             module = import_module(module_path)
             attr = getattr(module, name)
             return attr(**arguments)
         except ImportError:
-            self.logger.warning('impossible to build, cannot find class: {}'.format(cls))
+            self.logger.warning(f'impossible to build, cannot find class: {cls}')
 
     def _update_provider(self, provider):
-        self.logger.info('updating/adding {} equipment provider'.format(provider.id))
+        self.logger.info(f'updating/adding {provider.id} equipment provider')
         try:
             self._equipment_providers[provider.id] = self._init_class(provider.klass, provider.args)
             self._equipment_providers_last_update[provider.id] = provider.last_update()

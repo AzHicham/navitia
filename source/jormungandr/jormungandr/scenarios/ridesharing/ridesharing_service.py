@@ -77,7 +77,7 @@ class AbstractRidesharingService(object):
         # Format call_params from parameters
         self.call_params = ''
         for key, value in list(params.items()):
-            self.call_params += '{}={}&'.format(key, value)
+            self.call_params += f'{key}={value}&'
 
         try:
             return self.breaker.call(
@@ -155,7 +155,7 @@ class AbstractRidesharingService(object):
         pass
 
     def _get_rs_id(self):
-        return '{}_{}'.format(six.text_type(self.system_id), six.text_type(self.network))
+        return f'{six.text_type(self.system_id)}_{six.text_type(self.network)}'
 
     def record_internal_failure(self, message):
         params = {

@@ -72,7 +72,7 @@ class Timeo(RealtimeProxy):
         destination_id_tag=None,
         instance=None,
         timeout=10,
-        **kwargs
+        **kwargs,
     ):
         self.service_url = service_url
         self.service_args = service_args
@@ -115,7 +115,7 @@ class Timeo(RealtimeProxy):
 
     def __repr__(self):
         """
-         used as the cache key. we use the rt_system_id to share the cache between servers in production
+        used as the cache key. we use the rt_system_id to share the cache between servers in production
         """
         try:
             return self.rt_system_id.encode('utf-8', 'backslashreplace')
@@ -137,13 +137,13 @@ class Timeo(RealtimeProxy):
             return self.breaker.call(requests.get, url, timeout=self.timeout)
         except pybreaker.CircuitBreakerError as e:
             logging.getLogger(__name__).error(
-                'Timeo RT service dead, using base schedule (error: {}'.format(e),
+                f'Timeo RT service dead, using base schedule (error: {e}',
                 extra={'rt_system_id': six.text_type(self.rt_system_id)},
             )
             raise RealtimeProxyError('circuit breaker open')
         except requests.Timeout as t:
             logging.getLogger(__name__).error(
-                'Timeo RT service timeout, using base schedule (error: {}'.format(t),
+                f'Timeo RT service timeout, using base schedule (error: {t}',
                 extra={'rt_system_id': six.text_type(self.rt_system_id)},
             )
             raise RealtimeProxyError('timeout')
@@ -179,8 +179,7 @@ class Timeo(RealtimeProxy):
         if not url:
             return None
         logging.getLogger(__name__).debug(
-            'Timeo RT service , call url : {}'.format(url),
-            extra={'rt_system_id': six.text_type(self.rt_system_id)},
+            f'Timeo RT service , call url : {url}', extra={'rt_system_id': six.text_type(self.rt_system_id)}
         )
         r = self._call_timeo(url)
         return self._get_passages(r, current_dt, route_point.fetch_line_uri())
@@ -190,14 +189,14 @@ class Timeo(RealtimeProxy):
         # Handling http error
         if status_code != 200:
             logging.getLogger(__name__).error(
-                'Timeo RT service unavailable, impossible to query : {}'.format(response.url),
+                f'Timeo RT service unavailable, impossible to query : {response.url}',
                 extra={'rt_system_id': six.text_type(self.rt_system_id), 'status_code': status_code},
             )
             raise RealtimeProxyError('non 200 response')
 
         timeo_resp = response.json()
         logging.getLogger(__name__).debug(
-            'timeo response: {}'.format(timeo_resp), extra={'rt_system_id': six.text_type(self.rt_system_id)}
+            f'timeo response: {timeo_resp}', extra={'rt_system_id': six.text_type(self.rt_system_id)}
         )
 
         # internal timeo error handling
@@ -214,10 +213,12 @@ class Timeo(RealtimeProxy):
                     resp_comment = ''
                 self.record_internal_failure(
                     'Timeo RT internal service error',
-                    'ResponseCode: {} - ResponseComment: {}'.format(resp_code, resp_comment),
+                    f'ResponseCode: {resp_code} - ResponseComment: {resp_comment}',
                 )
-                timeo_internal_error_message = 'Timeo RT internal service error, ResponseCode: {} - ResponseComment: {}'.format(
-                    resp_code, resp_comment
+                timeo_internal_error_message = (
+                    'Timeo RT internal service error, ResponseCode: {} - ResponseComment: {}'.format(
+                        resp_code, resp_comment
+                    )
                 )
                 logging.getLogger(__name__).error(timeo_internal_error_message)
                 raise RealtimeProxyError(timeo_internal_error_message)
@@ -226,8 +227,7 @@ class Timeo(RealtimeProxy):
         # by construction there should be only one StopTimesResponse
         if not st_responses or len(st_responses) != 1:
             logging.getLogger(__name__).warning(
-                'invalid timeo response: {}'.format(timeo_resp),
-                extra={'rt_system_id': six.text_type(self.rt_system_id)},
+                f'invalid timeo response: {timeo_resp}', extra={'rt_system_id': six.text_type(self.rt_system_id)}
             )
             raise RealtimeProxyError('invalid response')
 
@@ -262,7 +262,7 @@ class Timeo(RealtimeProxy):
 
          Note: since there are some strange symbol ('?' and ';') in the url we can't use param as dict in
          requests
-         """
+        """
 
         base_params = '&'.join([k + '=' + v for k, v in list(self.service_args.items())])
 
@@ -305,9 +305,7 @@ class Timeo(RealtimeProxy):
             "&StopTimeoCode={stop}{dt};"
         ).format(stop=stop, line=line, route=route, count=count, data_freshness='TR', dt=dt_param)
 
-        url = "{base_url}?{base_params}&{stop_id}".format(
-            base_url=self.service_url, base_params=base_params, stop_id=stop_id_url
-        )
+        url = f"{self.service_url}?{base_params}&{stop_id_url}"
 
         return url
 

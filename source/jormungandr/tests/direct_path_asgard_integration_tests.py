@@ -62,9 +62,7 @@ MOCKED_ASGARD_CONF_WITH_BAD_RESPONSE = [
 s_coord = "0.0000898312;0.0000898312"  # coordinate of S in the dataset
 r_coord = "0.00188646;0.00071865"  # coordinate of R in the dataset
 
-journey_basic_query = "journeys?from={from_coord}&to={to_coord}&datetime={datetime}".format(
-    from_coord=s_coord, to_coord=r_coord, datetime="20120614T080000"
-)
+journey_basic_query = f"journeys?from={s_coord}&to={r_coord}&datetime=20120614T080000"
 
 # Create 4 path items of 10 meters each.
 # The first is not a cycle lane, the others are.
@@ -94,9 +92,9 @@ def route_response(mode):
     journey = response.journeys.add()
     journey.nb_transfers = 0
     journey.nb_sections = 1
-    journey.departure_date_time = 1548669936
-    journey.arrival_date_time = 1548670472
-    journey.requested_date_time = 1548669936
+    journey.departure_date_time = 1_548_669_936
+    journey.arrival_date_time = 1_548_670_472
+    journey.requested_date_time = 1_548_669_936
 
     duration = map_mode_time.get(mode)
     distance = map_mode_dist.get(mode)
@@ -121,8 +119,8 @@ def route_response(mode):
     section.duration = duration
     section.length = distance
     section.id = "section"
-    section.begin_date_time = 1548669936
-    section.end_date_time = 1548670472
+    section.begin_date_time = 1_548_669_936
+    section.end_date_time = 1_548_670_472
 
     return response
 
@@ -140,7 +138,7 @@ def bss_route_response(request):
     # 200 + bss_rent_duration + 1600 + bss_return_duration + 200
     duration = int(2000 + bss_rent_duration + bss_return_duration)
 
-    journey.requested_date_time = journey.departure_date_time = int(1548669936)
+    journey.requested_date_time = journey.departure_date_time = int(1_548_669_936)
     journey.arrival_date_time = int(journey.departure_date_time + duration)
 
     journey.duration = duration
@@ -158,7 +156,7 @@ def bss_route_response(request):
     section.duration = int(200)
     section.length = int(200)
     section.id = "section_0"
-    section.begin_date_time = int(1548669936)
+    section.begin_date_time = int(1_548_669_936)
     section.end_date_time = int(section.begin_date_time + 200)
 
     # Rent
@@ -304,8 +302,8 @@ class TestAsgardDirectPath(AbstractTestFixture):
             journey_basic_query
             + "&first_section_mode[]=bss"
             + "&last_section_mode[]=bss"
-            + "&bss_rent_duration={}".format(bss_rent_duration)
-            + "&bss_return_duration={}".format(bss_return_duration)
+            + f"&bss_rent_duration={bss_rent_duration}"
+            + f"&bss_return_duration={bss_return_duration}"
             + "&forbidden_uris[]=stop_point:stopA"
             + "&forbidden_uris[]=stop_point:stopB"
         )

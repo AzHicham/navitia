@@ -52,7 +52,7 @@ class AtosProvider(CommonBssProvider):
         operators={'keolis'},
         timeout=5,
         feed_publisher=DEFAULT_ATOS_FEED_PUBLISHER,
-        **kwargs
+        **kwargs,
     ):
         self.id_ao = id_ao
         self.network = network.lower()
@@ -91,10 +91,10 @@ class AtosProvider(CommonBssProvider):
 
                 return stands
         except pybreaker.CircuitBreakerError as e:
-            logging.getLogger(__name__).error('atos service dead (error: {})'.format(e))
+            logging.getLogger(__name__).error(f'atos service dead (error: {e})')
             raise BssProxyError('circuit breaker open')
         except requests.Timeout as t:
-            logging.getLogger(__name__).error('atos service timeout (error: {})'.format(t))
+            logging.getLogger(__name__).error(f'atos service timeout (error: {t})')
             raise BssProxyError('timeout')
         except Exception as e:
             logging.getLogger(__name__).exception('cykleo error : {}'.format(str(e)))

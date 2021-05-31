@@ -247,7 +247,7 @@ class PlaceUri(ResourceUri):
     def get(self, id, region=None, lon=None, lat=None):
         args = self.parsers["get"].parse_args()
         args.update({"uri": transform_id(id), "_current_datetime": datetime.utcnow()})
-        request_id = "places_{}".format(flask.request.id)
+        request_id = f"places_{flask.request.id}"
         args["request_id"] = request_id
 
         if any([region, lon, lat]):
@@ -348,14 +348,14 @@ class PlacesNearby(ResourceUri):
                 # for coherence we check the type of the object
                 obj_type = uris[-2]
                 if obj_type not in places_types:
-                    abort(404, message='places_nearby api not available for {}'.format(obj_type))
+                    abort(404, message=f'places_nearby api not available for {obj_type}')
             else:
                 abort(404)
         elif lon and lat:
             # check if lon and lat can be converted to float
             float(lon)
             float(lat)
-            args["uri"] = "coord:{}:{}".format(lon, lat)
+            args["uri"] = f"coord:{lon}:{lat}"
         else:
             abort(404)
         args["filter"] = args["filter"].replace(".id", ".uri")

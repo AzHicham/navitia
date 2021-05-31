@@ -274,7 +274,7 @@ def change_ids(new_journeys, response_index):
     """
     # we need to change the fare id, the section id and the fare ref in the journey
     def _change_id(old_id):
-        return '{id}_{response_index}'.format(id=old_id, response_index=response_index)
+        return f'{old_id}_{response_index}'
 
     for ticket in new_journeys.tickets:
         ticket.id = _change_id(ticket.id)
@@ -367,7 +367,7 @@ def gen_all_combin(n, t):
 
 
 def add_link(resp, rel, **kwargs):
-    """ create and add a protobuf link to a protobuff response"""
+    """create and add a protobuf link to a protobuff response"""
     link = resp.links.add(rel=rel, is_templated=False, ressource_name='journeys')
     for k, v in list(kwargs.items()):
         if k is None or v is None:

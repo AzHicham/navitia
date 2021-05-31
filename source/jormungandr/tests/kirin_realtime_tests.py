@@ -1250,9 +1250,7 @@ class TestKirinOnNewStopTimeInBetween(MockKirinDisruptionsFixture):
         assert response['journeys'][0]['sections'][0]['type'] == 'street_network'
 
         # Query from S to C: Uses a public_transport from B to C
-        S_to_C_query = "journeys?from={from_coord}&to={to_coord}".format(
-            from_coord='0.0000898312;0.0000898312', to_coord='stop_point:stopC'
-        )
+        S_to_C_query = "journeys?from=0.0000898312;0.0000898312&to=stop_point:stopC"
         base_journey_query = S_to_C_query + "&data_freshness=realtime&datetime=20120614T080200"
         response = self.query_region(base_journey_query)
         assert len(response['journeys']) == 2
@@ -1307,9 +1305,7 @@ class TestKirinOnNewStopTimeAtTheBeginning(MockKirinDisruptionsFixture):
         disrupts = self.query_region('disruptions?_current_datetime=20120614T080000')
         assert len(disrupts['disruptions']) == 12
 
-        C_to_R_query = "journeys?from={from_coord}&to={to_coord}".format(
-            from_coord='stop_point:stopC', to_coord='stop_point:stopA'
-        )
+        C_to_R_query = "journeys?from=stop_point:stopC&to=stop_point:stopA"
 
         # Query from C to R: the journey doesn't have any public_transport
         base_journey_query = C_to_R_query + "&data_freshness=realtime&datetime=20120614T080000&walking_speed=0.7"
@@ -1698,7 +1694,7 @@ class TestKirinAddNewTrip(MockKirinDisruptionsFixture):
         5. test that PT-Ref filters are working
         6. test /departures and stop_schedules
         """
-        disruption_query = 'disruptions?_current_datetime={dt}'.format(dt='20120614T080000')
+        disruption_query = "disruptions?_current_datetime=20120614T080000"
         disruptions_before = self.query_region(disruption_query)
         nb_disruptions_before = len(disruptions_before['disruptions'])
 
@@ -1716,7 +1712,7 @@ class TestKirinAddNewTrip(MockKirinDisruptionsFixture):
         assert 'non_pt_walking' in response['journeys'][0]['tags']
 
         # /pt_objects before
-        ptobj_query = 'pt_objects?q={q}&_current_datetime={dt}'.format(q='adi', dt='20120614T080000')  # ++typo
+        ptobj_query = "pt_objects?q=adi&_current_datetime=20120614T080000"  # ++typo
         response = self.query_region(ptobj_query)
         assert 'pt_objects' not in response
 
@@ -1729,7 +1725,7 @@ class TestKirinAddNewTrip(MockKirinDisruptionsFixture):
         assert 'vehicle_journeys' not in response
 
         # Check that no additional line exists
-        line_query = 'lines/{l}?_current_datetime={dt}'.format(l='line:stopC_stopB', dt='20120614T080000')
+        line_query = "lines/line:stopC_stopB?_current_datetime=20120614T080000"
         response, status = self.query_region(line_query, check=False)
         assert status == 404
         assert 'lines' not in response
@@ -2000,7 +1996,7 @@ class TestPtRefOnAddedTrip(MockKirinDisruptionsFixture):
         3. Test all possibles ptref calls with/without filters after modifying the recently added trip
         Note: physical_mode is present in gtfs-rt whereas for network and commercial_mode default value is used
         """
-        disruption_query = 'disruptions?_current_datetime={dt}'.format(dt='20120614T080000')
+        disruption_query = "disruptions?_current_datetime=20120614T080000"
         disruptions_before = self.query_region(disruption_query)
         nb_disruptions_before = len(disruptions_before['disruptions'])
 
@@ -2213,7 +2209,7 @@ class TestKirinAddNewTripWithWrongPhysicalMode(MockKirinDisruptionsFixture):
         1. send a disruption to create a new trip with physical_mode absent in kaken
         2. check of journey, disruption and PT-Ref objects to verify that no trip is added
         """
-        disruption_query = 'disruptions?_current_datetime={dt}'.format(dt='20120614T080000')
+        disruption_query = "disruptions?_current_datetime=20120614T080000"
         disruptions_before = self.query_region(disruption_query)
         nb_disruptions_before = len(disruptions_before['disruptions'])
 
@@ -2279,7 +2275,7 @@ class TestKirinAddNewTripWithoutPhysicalMode(MockKirinDisruptionsFixture):
         1. send a disruption to create a new trip without physical_mode absent in kaken
         2. check physical_mode of journey
         """
-        disruption_query = 'disruptions?_current_datetime={dt}'.format(dt='20120614T080000')
+        disruption_query = "disruptions?_current_datetime=20120614T080000"
         disruptions_before = self.query_region(disruption_query)
         nb_disruptions_before = len(disruptions_before['disruptions'])
 
@@ -2347,7 +2343,7 @@ class TestKirinUpdateTripWithPhysicalMode(MockKirinDisruptionsFixture):
         initial_nb_vehicle_journeys = len(pt_response['vehicle_journeys'])
         assert initial_nb_vehicle_journeys == 9
 
-        disruption_query = 'disruptions?_current_datetime={dt}'.format(dt='20120614T080000')
+        disruption_query = "disruptions?_current_datetime=20120614T080000"
         disruptions_before = self.query_region(disruption_query)
         nb_disruptions_before = len(disruptions_before['disruptions'])
 
@@ -2406,7 +2402,7 @@ class TestKirinAddTripWithHeadSign(MockKirinDisruptionsFixture):
         1. send a disruption with a headsign to add a trip
         2. check that headsign is present in journey.section.display_informations
         """
-        disruption_query = 'disruptions?_current_datetime={dt}'.format(dt='20120614T080000')
+        disruption_query = "disruptions?_current_datetime=20120614T080000"
         disruptions_before = self.query_region(disruption_query)
         nb_disruptions_before = len(disruptions_before['disruptions'])
 
@@ -2479,7 +2475,7 @@ class TestKirinAddNewTripBlocked(MockKirinDisruptionsFixture):
         5. test that PT-Ref filters find nothing
         6. test /departures and stop_schedules
         """
-        disruption_query = 'disruptions?_current_datetime={dt}'.format(dt='20120614T080000')
+        disruption_query = "disruptions?_current_datetime=20120614T080000"
         disruptions_before = self.query_region(disruption_query)
         nb_disruptions_before = len(disruptions_before['disruptions'])
 
@@ -2529,7 +2525,7 @@ class TestKirinAddNewTripBlocked(MockKirinDisruptionsFixture):
         assert 'non_pt_walking' in response['journeys'][0]['tags']
 
         # /pt_objects before
-        ptobj_query = 'pt_objects?q={q}&_current_datetime={dt}'.format(q='adi', dt='20120614T080000')  # ++typo
+        ptobj_query = "pt_objects?q=adi&_current_datetime=20120614T080000"  # ++typo
         response = self.query_region(ptobj_query)
         assert 'pt_objects' not in response
 
@@ -2542,7 +2538,7 @@ class TestKirinAddNewTripBlocked(MockKirinDisruptionsFixture):
         assert 'vehicle_journeys' not in response
 
         # Check that no additional line exists
-        line_query = 'lines/{l}?_current_datetime={dt}'.format(l='line:stopC_stopB', dt='20120614T080000')
+        line_query = "lines/line:stopC_stopB?_current_datetime=20120614T080000"
         response, status = self.query_region(line_query, check=False)
         assert status == 404
         assert 'lines' not in response
@@ -2581,7 +2577,7 @@ class TestKirinAddNewTripBlocked(MockKirinDisruptionsFixture):
 class TestKirinAddNewTripPresentInNavitiaTheSameDay(MockKirinDisruptionsFixture):
     def test_add_new_trip_present_in_navitia_the_same_day(self):
 
-        disruption_query = 'disruptions?_current_datetime={dt}'.format(dt='20120614T080000')
+        disruption_query = "disruptions?_current_datetime=20120614T080000"
         disruptions_before = self.query_region(disruption_query)
         nb_disruptions_before = len(disruptions_before['disruptions'])
 
@@ -2628,7 +2624,7 @@ class TestKirinAddNewTripPresentInNavitiaTheSameDay(MockKirinDisruptionsFixture)
 class TestKirinAddNewTripPresentInNavitiaWithAShift(MockKirinDisruptionsFixture):
     def test_add_new_trip_present_in_navitia_with_a_shift(self):
 
-        disruption_query = 'disruptions?_current_datetime={dt}'.format(dt='20120614T080000')
+        disruption_query = "disruptions?_current_datetime=20120614T080000"
         disruptions_before = self.query_region(disruption_query)
         nb_disruptions_before = len(disruptions_before['disruptions'])
 
@@ -2684,7 +2680,7 @@ class TestKirinDelayPassMidnightTowardsNextDay(MockKirinDisruptionsFixture):
         4. Verify disruption count, vehicle_journeys count and journey
         Note: '&forbidden_uris[]=PM' used to avoid line 'PM' and it's vj=vjPB in /journey
         """
-        disruption_query = 'disruptions?_current _datetime={dt}'.format(dt='20120614T080000')
+        disruption_query = "disruptions?_current _datetime=20120614T080000"
         initial_nb_disruptions = len(self.query_region(disruption_query)['disruptions'])
 
         pt_response = self.query_region('vehicle_journeys')
@@ -2899,7 +2895,7 @@ class TestKirinDelayOnBasePassMidnightTowardsNextDay(MockKirinDisruptionsFixture
             assert resp['journeys'][0]['sections'][0]['display_informations']['name'] == 'PM'
             assert resp['journeys'][0]['sections'][0]['data_freshness'] == 'base_schedule'
 
-        disruption_query = 'disruptions?_current _datetime={dt}'.format(dt='20120615T080000')
+        disruption_query = "disruptions?_current _datetime=20120615T080000"
         initial_nb_disruptions = len(self.query_region(disruption_query)['disruptions'])
 
         pt_response = self.query_region('vehicle_journeys')
@@ -3128,7 +3124,7 @@ def make_mock_kirin_item(
     feed_message.header.timestamp = 0
 
     entity = feed_message.entity.add()
-    entity.id = disruption_id or "{}".format(uuid.uuid1())
+    entity.id = disruption_id or f"{uuid.uuid1()}"
     trip_update = entity.trip_update
 
     trip = trip_update.trip

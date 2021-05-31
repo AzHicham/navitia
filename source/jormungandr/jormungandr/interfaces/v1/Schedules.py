@@ -192,7 +192,7 @@ class Schedules(ResourceUri, ResourceUtc):
                         direction_type
                     ),
                 )
-            return 'route.has_direction_type({})'.format(values)
+            return f'route.has_direction_type({values})'
 
         if filter:
             return '({}) and ({})'.format(filter, create_direction_type_filter(direction_type))

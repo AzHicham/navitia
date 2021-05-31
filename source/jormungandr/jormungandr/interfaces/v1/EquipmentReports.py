@@ -98,7 +98,7 @@ class EquipmentReports(ResourceUri, ResourceUtc):
             args["filter"] += " and " + self._create_filter_equipment(instance)
         else:
             args["filter"] = self._create_filter_equipment(instance)
-        logging.getLogger(__name__).debug("equipment provider filter: {}".format(args["filter"]))
+        logging.getLogger(__name__).debug(f"equipment provider filter: {args['filter']}")
 
         response = i_manager.dispatch(args, "equipment_reports", instance_name=self.region)
         return instance.equipment_provider_manager.manage_equipments_for_equipment_reports(response)

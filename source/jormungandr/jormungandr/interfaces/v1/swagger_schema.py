@@ -156,7 +156,7 @@ class SwaggerParam(object):
                     required=argument.required,
                     items=items,
                     collection_format=collection_format,
-                    **metadata
+                    **metadata,
                 )
             )
 
@@ -310,7 +310,7 @@ def make_id(name, rule):
     # better
     formated_rule = rule.replace('/v1/', '').replace('/', '_').replace(';', '')
     formated_rule = ARGS_REGEXP.sub(lambda m: '_' + m.group('name') + '_', formated_rule)
-    return '{method}_{rule}'.format(rule=formated_rule, method=name)
+    return f'{name}_{formated_rule}'
 
 
 class SwaggerMethod(object):

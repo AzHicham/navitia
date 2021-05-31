@@ -60,12 +60,12 @@ def collect_all_errors(validation_error):
             for k, v in list(err.items()):
                 if k == 'default_factory':
                     continue
-                errors.update(_collect(v, key='{prev}.{k}'.format(prev=key, k=k)))
+                errors.update(_collect(v, key=f'{key}.{k}'))
             return errors
 
         if isinstance(err, list):
             for i, e in enumerate(err):
-                errors.update(_collect(e, key='{k}[{i}]'.format(k=key, i=i)))
+                errors.update(_collect(e, key=f'{key}[{i}]'))
             return errors
 
         return {key: err}
@@ -186,7 +186,7 @@ class TestSwaggerSchema(AbstractTestFixture, SchemaChecker):
     def get_api_schema(self, url):
         response = self.tester.options(url)
 
-        assert response, "response for url {} is null".format(url)
+        assert response, f"response for url {url} is null"
         assert response.status_code == 200
         data = json.loads(response.data, encoding='utf-8')
 

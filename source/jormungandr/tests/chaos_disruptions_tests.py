@@ -218,10 +218,10 @@ class TestChaosDisruptionsLineSection(ChaosDisruptionsFixture):
 
         def query_on_date(q, **kwargs):
             """We do the query on a dt inside the disruption application period"""
-            return self.query_region('{q}?_current_datetime=20120614T120000'.format(q=q), **kwargs)
+            return self.query_region(f'{q}?_current_datetime=20120614T120000', **kwargs)
 
         def has_dis(obj_get, dis):
-            r = query_on_date('{col}/{uri}'.format(col=obj_get.collection, uri=obj_get.uri))
+            r = query_on_date(f'{obj_get.collection}/{obj_get.uri}')
             return has_disruption(r, obj_get, dis)
 
         response = self.query_region('disruptions')
@@ -266,10 +266,10 @@ class TestChaosDisruptionsLineSectionOnOneStop(ChaosDisruptionsFixture):
 
         def query_on_date(q, **kwargs):
             """We do the query on a dt inside the disruption application period"""
-            return self.query_region('{q}?_current_datetime=20120614T120000'.format(q=q), **kwargs)
+            return self.query_region(f'{q}?_current_datetime=20120614T120000', **kwargs)
 
         def has_dis(obj_get, dis):
-            r = query_on_date('{col}/{uri}'.format(col=obj_get.collection, uri=obj_get.uri))
+            r = query_on_date(f'{obj_get.collection}/{obj_get.uri}')
             return has_disruption(r, obj_get, dis)
 
         response = self.query_region('disruptions')
@@ -323,10 +323,10 @@ class TestChaosDisruptionsLineSectionOnOneStopWithRoute(ChaosDisruptionsFixture)
 
         def query_on_date(q, **kwargs):
             """We do the query on a dt inside the disruption application period"""
-            return self.query_region('{q}?_current_datetime=20120614T120000'.format(q=q), **kwargs)
+            return self.query_region(f'{q}?_current_datetime=20120614T120000', **kwargs)
 
         def has_dis(obj_get, dis):
-            r = query_on_date('{col}/{uri}'.format(col=obj_get.collection, uri=obj_get.uri))
+            r = query_on_date(f'{obj_get.collection}/{obj_get.uri}')
             return has_disruption(r, obj_get, dis)
 
         response = self.query_region('disruptions')
@@ -542,7 +542,7 @@ class TestChaosDisruptionsBlocking(ChaosDisruptionsFixture):
         )
         journey_query_2_to_format += "&datetime={datetime}"
         start_period = "20120615T080000"
-        disruption_uri = "blocking_{}_disruption".format(type_)
+        disruption_uri = f"blocking_{type_}_disruption"
 
         def get_type_id(k, v):
             if (k != "links" or "type" not in v or "id" not in v or v["type"] != type_) and (

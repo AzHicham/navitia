@@ -80,7 +80,7 @@ MOCKED_INSTANCE_POI_DATASET_CONF = {
 BRAGI_MOCK_RESPONSE = {
     "features": [
         {
-            "geometry": {"coordinates": [3.282103, 49.847586], "type": "Point"},
+            "geometry": {"coordinates": [3.282_103, 49.847_586], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "city": "Bobtown",
@@ -101,7 +101,7 @@ BRAGI_MOCK_RESPONSE = {
                             "name": "Bobtown",
                             "zip_codes": ["02000"],
                             "weight": 1,
-                            "coord": {"lat": 48.8396154, "lon": 2.3957517},
+                            "coord": {"lat": 48.839_615_4, "lon": 2.395_751_7},
                         }
                     ],
                 }
@@ -115,7 +115,7 @@ BRAGI_MOCK_RESPONSE = {
 BRAGI_MOCK_REVERSE_RESPONSE_NEW_ID_FMT = {
     "features": [
         {
-            "geometry": {"coordinates": [3.282103, 49.847586], "type": "Point"},
+            "geometry": {"coordinates": [3.282_103, 49.847_586], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "city": "Bobtown",
@@ -136,7 +136,7 @@ BRAGI_MOCK_REVERSE_RESPONSE_NEW_ID_FMT = {
                             "name": "Bobtown",
                             "zip_codes": ["02000"],
                             "weight": 1,
-                            "coord": {"lat": 48.8396154, "lon": 2.3957517},
+                            "coord": {"lat": 48.839_615_4, "lon": 2.395_751_7},
                         }
                     ],
                 }
@@ -150,7 +150,7 @@ BRAGI_MOCK_REVERSE_RESPONSE_NEW_ID_FMT = {
 BRAGI_BOB_STREET_NEW_ID_FMT = {
     "features": [
         {
-            "geometry": {"coordinates": [0.00188646, 0.00071865], "type": "Point"},
+            "geometry": {"coordinates": [0.001_886_46, 0.000_718_65], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "city": "Bobtown",
@@ -173,7 +173,7 @@ BRAGI_BOB_STREET_NEW_ID_FMT = {
                             "name": "Bobtown",
                             "zip_codes": ["02000"],
                             "weight": 1,
-                            "coord": {"lat": 48.8396154, "lon": 2.3957517},
+                            "coord": {"lat": 48.839_615_4, "lon": 2.395_751_7},
                         }
                     ],
                 }
@@ -188,7 +188,7 @@ BRAGI_MOCK_ZONE = {
     "features": [
         {
             "type": "Feature",
-            "geometry": {"coordinates": [2.3514616, 48.8566969], "type": "Point"},
+            "geometry": {"coordinates": [2.351_461_6, 48.856_696_9], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "id": "admin:fr:75056",
@@ -202,13 +202,13 @@ BRAGI_MOCK_ZONE = {
                     "level": 8,
                     "administrative_regions": [],
                     "codes": [{"name": "ref:FR:MGP", "value": "T1"}, {"name": "ref:INSEE", "value": "75056"}],
-                    "bbox": [2.224122, 48.8155755, 2.4697602, 48.902156],
+                    "bbox": [2.224_122, 48.815_575_5, 2.469_760_2, 48.902_156],
                 }
             },
         },
         {
             "type": "Feature",
-            "geometry": {"coordinates": [2.374402147020069, 48.84691600012601], "type": "Point"},
+            "geometry": {"coordinates": [2.374_402_147_020_069, 48.846_916_000_126_01], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "id": "admin:fr:7511248",
@@ -222,7 +222,7 @@ BRAGI_MOCK_ZONE = {
                     "level": 10,
                     "administrative_regions": [],
                     "codes": [{"name": "ref:INSEE", "value": "7511248"}],
-                    "bbox": [2.3644295, 48.8401716, 2.3843422, 48.853255399999995],
+                    "bbox": [2.364_429_5, 48.840_171_6, 2.384_342_2, 48.853_255_399_999_995],
                 }
             },
         },
@@ -236,7 +236,7 @@ BRAGI_MOCK_TYPE_UNKNOWN = {
     "features": [
         {
             "type": "Feature",
-            "geometry": {"coordinates": [3.1092154, 50.6274528], "type": "Point"},
+            "geometry": {"coordinates": [3.109_215_4, 50.627_452_8], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "id": "admin:osm:relation:2643160",
@@ -253,7 +253,7 @@ BRAGI_MOCK_TYPE_UNKNOWN = {
         },
         {
             "type": "Feature",
-            "geometry": {"coordinates": [3.0706414, 50.6305089], "type": "Point"},
+            "geometry": {"coordinates": [3.070_641_4, 50.630_508_9], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "id": "admin:fr:59350",
@@ -275,7 +275,7 @@ BRAGI_MOCK_TYPE_UNKNOWN = {
 BRAGI_MOCK_POI_WITHOUT_ADDRESS = {
     "features": [
         {
-            "geometry": {"coordinates": [0.0000898312, 0.0000898312], "type": "Point"},
+            "geometry": {"coordinates": [0.000_089_831_2, 0.000_089_831_2], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "city": "Bobtown",
@@ -300,7 +300,7 @@ BRAGI_MOCK_POI_WITHOUT_ADDRESS = {
                             "name": "Bobtown",
                             "zip_codes": ["02000"],
                             "weight": 1,
-                            "coord": {"lat": 48.8396154, "lon": 2.3957517},
+                            "coord": {"lat": 48.839_615_4, "lon": 2.395_751_7},
                         }
                     ],
                 }
@@ -314,7 +314,7 @@ BRAGI_MOCK_POI_WITHOUT_ADDRESS = {
 BRAGI_MOCK_STOP_AREA_WITH_MORE_ATTRIBUTS = {
     "features": [
         {
-            "geometry": {"coordinates": [0.0000898312, 0.0000898312], "type": "Point"},
+            "geometry": {"coordinates": [0.000_089_831_2, 0.000_089_831_2], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "city": "Bobtown",
@@ -377,7 +377,7 @@ BRAGI_MOCK_STOP_AREA_WITH_MORE_ATTRIBUTS = {
                             "name": "Bobtown",
                             "zip_codes": ["02000"],
                             "weight": 1,
-                            "coord": {"lat": 48.8396154, "lon": 2.3957517},
+                            "coord": {"lat": 48.839_615_4, "lon": 2.395_751_7},
                         }
                     ],
                     "feed_publishers": [
@@ -400,7 +400,7 @@ BRAGI_MOCK_STOP_AREA_WITH_BASIC_ATTRIBUTS = {
     "features": [
         {
             "geometry": {
-                "coordinates": [0.0000898312, 0.0000898312],  # has to match with kraken mock
+                "coordinates": [0.000_089_831_2, 0.000_089_831_2],  # has to match with kraken mock
                 "type": "Point",
             },
             "properties": {
@@ -422,7 +422,7 @@ BRAGI_MOCK_STOP_AREA_WITH_BASIC_ATTRIBUTS = {
                             "name": "Bobtown",
                             "zip_codes": ["02000"],
                             "weight": 1,
-                            "coord": {"lat": 48.8396154, "lon": 2.3957517},
+                            "coord": {"lat": 48.839_615_4, "lon": 2.395_751_7},
                         }
                     ],
                 }
@@ -435,7 +435,7 @@ BRAGI_MOCK_STOP_AREA_WITH_BASIC_ATTRIBUTS = {
 BRAGI_MOCK_BOBETTE = {
     "features": [
         {
-            "geometry": {"coordinates": [0.0000898312, 0.0000898312], "type": "Point"},
+            "geometry": {"coordinates": [0.000_089_831_2, 0.000_089_831_2], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "city": "Bobtown",
@@ -468,10 +468,10 @@ BRAGI_MOCK_BOBETTE = {
                                 "name": "Bobtown",
                                 "zip_codes": ["02000"],
                                 "weight": 1,
-                                "coord": {"lat": 48.8396154, "lon": 2.3957517},
+                                "coord": {"lat": 48.839_615_4, "lon": 2.395_751_7},
                             }
                         ],
-                        "weight": 0.00847457627118644,
+                        "weight": 0.008_474_576_271_186_44,
                     },
                     "administrative_regions": [
                         {
@@ -482,7 +482,7 @@ BRAGI_MOCK_BOBETTE = {
                             "name": "Bobtown",
                             "zip_codes": ["02000"],
                             "weight": 1,
-                            "coord": {"lat": 48.8396154, "lon": 2.3957517},
+                            "coord": {"lat": 48.839_615_4, "lon": 2.395_751_7},
                         }
                     ],
                 }
@@ -494,7 +494,7 @@ BRAGI_MOCK_BOBETTE = {
 # Original coordinates are used to calculate id. We need different lat and lon for test
 BRAGI_MOCK_BOBETTE_DEPTH_ZERO = deepcopy(BRAGI_MOCK_BOBETTE)
 BRAGI_MOCK_BOBETTE_DEPTH_ZERO["features"][0]["geometry"] = {
-    "coordinates": [2.3957517, 48.8396154],
+    "coordinates": [2.395_751_7, 48.839_615_4],
     "type": "Point",
 }
 BRAGI_MOCK_BOBETTE_DEPTH_ONE = deepcopy(BRAGI_MOCK_BOBETTE_DEPTH_ZERO)
@@ -504,7 +504,7 @@ BRAGI_MOCK_BOBETTE_DEPTH_THREE = deepcopy(BRAGI_MOCK_BOBETTE_DEPTH_ZERO)
 BOB_STREET = {
     "features": [
         {
-            "geometry": {"coordinates": [0.00188646, 0.00071865], "type": "Point"},
+            "geometry": {"coordinates": [0.001_886_46, 0.000_718_65], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "city": "Bobtown",
@@ -525,7 +525,7 @@ BOB_STREET = {
                             "name": "Bobtown",
                             "zip_codes": ["02000"],
                             "weight": 1,
-                            "coord": {"lat": 48.8396154, "lon": 2.3957517},
+                            "coord": {"lat": 48.839_615_4, "lon": 2.395_751_7},
                         }
                     ],
                 }
@@ -542,7 +542,7 @@ BRAGI_MOCK_ADMIN = {
         {
             "type": "Feature",
             "distance": 400,
-            "geometry": {"coordinates": [5.0414701, 47.3215806], "type": "Point"},
+            "geometry": {"coordinates": [5.041_470_1, 47.321_580_6], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "id": "admin:fr:21231",
@@ -566,7 +566,7 @@ BRAGI_MOCK_ADMINISTRATIVE_REGION = {
     "features": [
         {
             "type": "Feature",
-            "geometry": {"coordinates": [2.4518371, 48.7830727], "type": "Point"},
+            "geometry": {"coordinates": [2.451_837_1, 48.783_072_7], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "id": "admin:fr:941",
@@ -590,7 +590,7 @@ BRAGI_MOCK_ADMINISTRATIVE_REGION_WITH_WRONG_TYPE = {
     "features": [
         {
             "type": "Feature",
-            "geometry": {"coordinates": [2.4518371, 48.7830727], "type": "Point"},
+            "geometry": {"coordinates": [2.451_837_1, 48.783_072_7], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "id": "myId",
@@ -614,7 +614,7 @@ BRAGI_MOCK_RESPONSE_STOP_AREA_WITH_COMMENTS = {
     "features": [
         {
             "type": "Feature",
-            "geometry": {"coordinates": [3.282103, 49.847586], "type": "Point"},
+            "geometry": {"coordinates": [3.282_103, 49.847_586], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "city": "Bobtown",
@@ -650,7 +650,7 @@ BRAGI_MOCK_RESPONSE_STOP_AREA_WITHOUT_COMMENTS = {
     "features": [
         {
             "type": "Feature",
-            "geometry": {"coordinates": [3.282103, 49.847586], "type": "Point"},
+            "geometry": {"coordinates": [3.282_103, 49.847_586], "type": "Point"},
             "properties": {
                 "geocoding": {
                     "city": "Bobtown",
@@ -706,8 +706,7 @@ def mock_bragi_autocomplete_call(bragi_response, limite=10, http_response_code=2
 @dataset({'main_routing_test': MOCKED_INSTANCE_CONF}, global_config={'activate_bragi': True})
 class TestBragiAutocomplete(AbstractTestFixture):
     def test_autocomplete_no_json(self):
-        """
-        """
+        """ """
         with requests_mock.Mocker() as m:
             m.post('https://host_of_bragi/autocomplete', text="this isn't a json")
             resp, status = self.query_region('places?q=bob&from=3.25;49.84', check=False)
@@ -768,7 +767,7 @@ class TestBragiAutocomplete(AbstractTestFixture):
             assert params.get('timeout') == ['2000']
 
     def test_autocomplete_call_override(self):
-        """"
+        """ "
         test that the _autocomplete param switch the right autocomplete service
         """
         with mock_bragi_autocomplete_call(BRAGI_MOCK_RESPONSE):
@@ -826,9 +825,9 @@ class TestBragiAutocomplete(AbstractTestFixture):
             coords = [
                 [
                     [-0.99991, -0.99991],
-                    [-0.99991, 0.00171865],
-                    [0.00288646, 0.00171865],
-                    [0.00288646, -0.99991],
+                    [-0.99991, 0.001_718_65],
+                    [0.002_886_46, 0.001_718_65],
+                    [0.002_886_46, -0.99991],
                     [-0.99991, -0.99991],
                 ]
             ]
@@ -1474,7 +1473,7 @@ class TestBragiShape(AbstractTestFixture):
 
     def test_global_coords_uri(self):
         url = 'https://host_of_bragi'
-        params = {'pt_dataset[]': 'main_routing_test', 'lon': 3.282103, 'lat': 49.84758, 'timeout': 200}
+        params = {'pt_dataset[]': 'main_routing_test', 'lon': 3.282_103, 'lat': 49.84758, 'timeout': 200}
         url += "/reverse?{}".format(urlencode(params, doseq=True))
 
         with requests_mock.Mocker() as m:
@@ -1552,10 +1551,8 @@ class AbstractAutocompleteAndRouting:
             return r[0]['id']
 
         with requests_mock.Mocker() as m:
-            m.post('https://host_of_bragi/autocomplete?{p}'.format(p=bobette_params), json=BRAGI_MOCK_BOBETTE)
-            m.post(
-                'https://host_of_bragi/autocomplete?{p}'.format(p=bob_params), json=bragi_bob_reverse_response
-            )
+            m.post(f'https://host_of_bragi/autocomplete?{bobette_params}', json=BRAGI_MOCK_BOBETTE)
+            m.post(f'https://host_of_bragi/autocomplete?{bob_params}', json=bragi_bob_reverse_response)
             m.get(reverse_url, json=bragi_bob_reverse_response)
             m.get(features_url, json=BRAGI_MOCK_BOBETTE)
             journeys_from = get_autocomplete('places?q=bobette')
@@ -1594,7 +1591,7 @@ class AbstractAutocompleteAndRouting:
 
     def test_global_coords_uri(self):
         url = 'https://host_of_bragi'
-        params = {'pt_dataset[]': 'main_routing_test', 'lon': 3.282103, 'lat': 49.84758, 'timeout': 200}
+        params = {'pt_dataset[]': 'main_routing_test', 'lon': 3.282_103, 'lat': 49.84758, 'timeout': 200}
 
         url += "/reverse?{}".format(urlencode(params, doseq=True))
 
@@ -1628,7 +1625,7 @@ class AbstractAutocompleteAndRouting:
         It should not be a problem since navitia is not meant to do some tricks to parse the id, but we never know
         """
         url = 'https://host_of_bragi'
-        params = {'pt_dataset[]': 'main_routing_test', 'lon': 3.282103, 'lat': 49.84758, 'timeout': 200}
+        params = {'pt_dataset[]': 'main_routing_test', 'lon': 3.282_103, 'lat': 49.84758, 'timeout': 200}
 
         url += "/reverse?{}".format(urlencode(params, doseq=True))
 
@@ -1696,7 +1693,7 @@ class AbstractAutocompletePoiDataset:
     def test_poi_dataset_reverse(self):
 
         url = 'https://host_of_bragi'
-        params = {'pt_dataset[]': 'main_routing_test', 'lon': 3.282103, 'lat': 49.84758, 'timeout': 200}
+        params = {'pt_dataset[]': 'main_routing_test', 'lon': 3.282_103, 'lat': 49.84758, 'timeout': 200}
         url += "/reverse?{}".format(urlencode(params, doseq=True))
 
         with requests_mock.Mocker() as m:
@@ -1722,9 +1719,7 @@ class AbstractAutocompletePoiDataset:
         with requests_mock.Mocker() as m:
 
             m.get(url, json={})
-            query = 'journeys?from={f}&to={to}&datetime={dt}'.format(
-                f=param_from, to=param_to, dt="20120614T080000"
-            )
+            query = f'journeys?from={param_from}&to={param_to}&datetime=20120614T080000'
             response = self.query_region(query)
 
             assert m.called

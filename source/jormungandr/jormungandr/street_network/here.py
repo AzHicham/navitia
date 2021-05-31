@@ -123,7 +123,7 @@ DEFAULT_HERE_FEED_PUBLISHER = {
 
 def _get_coord(pt_object):
     coord = get_pt_object_coord(pt_object)
-    return 'geo!{lat},{lon}'.format(lat=coord.lat, lon=coord.lon)
+    return f'geo!{coord.lat},{coord.lon}'
 
 
 def get_here_mode(mode):
@@ -138,7 +138,7 @@ def get_here_mode(mode):
     try:
         return map_mode[mode]
     except KeyError:
-        raise TechnicalError('HERE does not handle the mode {}'.format(mode))
+        raise TechnicalError(f'HERE does not handle the mode {mode}')
 
 
 def _str_to_dt(timestamp):
@@ -162,14 +162,14 @@ class Here(AbstractStreetNetworkService):
         engine_type="diesel",
         engine_average_consumption=7,
         feed_publisher=DEFAULT_HERE_FEED_PUBLISHER,
-        **kwargs
+        **kwargs,
     ):
         self.instance = instance
         self.sn_system_id = id
         if not service_base_url:
-            raise ValueError('service_url {} is not a valid HERE url'.format(service_base_url))
+            raise ValueError(f'service_url {service_base_url} is not a valid HERE url')
         service_base_url = service_base_url.rstrip('/')
-        self.routing_service_url = 'https://{base_url}/calculateroute.json'.format(base_url=service_base_url)
+        self.routing_service_url = f'https://{service_base_url}/calculateroute.json'
         self.matrix_service_url = 'https://matrix.{base_url}/calculatematrix.json'.format(
             base_url=service_base_url
         )
@@ -220,17 +220,17 @@ class Here(AbstractStreetNetworkService):
         }
 
     def _call_here(self, url, params):
-        self.log.debug('Here routing service, url: {}'.format(url))
+        self.log.debug(f'Here routing service, url: {url}')
         try:
             r = self.breaker.call(requests.get, url, timeout=self.timeout, params=params)
             self.record_call('ok')
             return r
         except pybreaker.CircuitBreakerError as e:
-            self.log.error('Here routing service dead (error: {})'.format(e))
+            self.log.error(f'Here routing service dead (error: {e})')
             self.record_call('failure', reason='circuit breaker open')
             raise TechnicalError('HERE service not available')
         except requests.Timeout as t:
-            self.log.error('Here routing service dead (error: {})'.format(t))
+            self.log.error(f'Here routing service dead (error: {t})')
             self.record_call('failure', reason='timeout')
             raise TechnicalError('impossible to access HERE service, timeout reached')
         except Exception as e:
@@ -382,9 +382,9 @@ class Here(AbstractStreetNetworkService):
                         # The superior latitude has to be the first coord for Here API
                         # https://developer.here.com/documentation/routing/dev_guide/topics/resource-param-type-bounding-box.html
                         if lat_1 > lat_2:
-                            boxes += "{},{};{},{}".format(lat_1, lon_1, lat_2, lon_2)
+                            boxes += f"{lat_1},{lon_1};{lat_2},{lon_2}"
                         else:
-                            boxes += "{},{};{},{}".format(lat_2, lon_2, lat_1, lon_1)
+                            boxes += f"{lat_2},{lon_2};{lat_1},{lon_1}"
                         if idx < (len(_exclusion_areas) - 1):
                             boxes += "!"
                     else:
@@ -405,14 +405,14 @@ class Here(AbstractStreetNetworkService):
         try:
             return Languages[language]
         except KeyError:
-            self.log.error('Here parameters language={} not exist - force to english'.format(language))
+            self.log.error(f'Here parameters language={language} not exist - force to english')
             return Languages.english
 
     def _get_engine_type(self, engine_type):
         try:
             return EngineType[engine_type]
         except KeyError:
-            self.log.error('Here parameters engine_type={} not exist - force to diesel'.format(engine_type))
+            self.log.error(f'Here parameters engine_type={engine_type} not exist - force to diesel')
             return EngineType.diesel
 
     def get_language_parameter(self, request):
@@ -442,9 +442,7 @@ class Here(AbstractStreetNetworkService):
 
     def _get_max_matrix_points(self, max_matrix_points):
         if max_matrix_points > default_values.here_max_matrix_points:
-            self.log.error(
-                'Here confifguration max_matrix_points={} is > 100. Force to 100'.format(max_matrix_points)
-            )
+            self.log.error(f'Here confifguration max_matrix_points={max_matrix_points} is > 100. Force to 100')
             return default_values.here_max_matrix_points
         return max_matrix_points
 
@@ -498,10 +496,8 @@ class Here(AbstractStreetNetworkService):
             'summaryAttributes': 'traveltime',
             'legAttributes': 'bt,tt,mn',
             'maneuverAttributes': 'di,rn,le,tt,po',
-            'language': '{language}'.format(language=language.value),
-            'vehicletype': '{engine_type},{engine_average_consumption}'.format(
-                engine_type=engine_type.value, engine_average_consumption=engine_average_consumption
-            ),
+            'language': f'{language.value}',
+            'vehicletype': f'{engine_type.value},{engine_average_consumption}',
             # street network mode + realtime activation
             'mode': 'fastest;{mode};traffic:{realtime_traffic}'.format(
                 mode=get_here_mode(mode), realtime_traffic=realtime_traffic.value
@@ -554,7 +550,7 @@ class Here(AbstractStreetNetworkService):
 
         json = r.json()
 
-        self.log.debug('here response = {}'.format(json))
+        self.log.debug(f'here response = {json}')
 
         return self._read_response(
             json, pt_object_origin, pt_object_destination, mode, fallback_extremity, request
@@ -625,10 +621,10 @@ class Here(AbstractStreetNetworkService):
         params['departure'] = _str_to_dt(datetime)
 
         for i, o in enumerate(itertools.islice(origins, int(max_matrix_points))):
-            params['start{}'.format(i)] = _get_coord(o)
+            params[f'start{i}'] = _get_coord(o)
 
         for i, o in enumerate(itertools.islice(destinations, int(max_matrix_points))):
-            params['destination{}'.format(i)] = _get_coord(o)
+            params[f'destination{i}'] = _get_coord(o)
 
         # TODO handle max_duration (but the API can only handle a max distance (searchRange)
 
@@ -682,10 +678,8 @@ class Here(AbstractStreetNetworkService):
                 origins, destinations, mode, max_duration, request, realtime_traffic, max_matrix_points
             )
         else:
-            self.log.error('Here, invalid matrix_type : {}, impossible to query'.format(self.matrix_type.value))
-            raise TechnicalError(
-                'Here, invalid matrix_type : {}, impossible to query'.format(self.matrix_type.value)
-            )
+            self.log.error(f'Here, invalid matrix_type : {self.matrix_type.value}, impossible to query')
+            raise TechnicalError(f'Here, invalid matrix_type : {self.matrix_type.value}, impossible to query')
 
     def make_path_key(self, mode, orig_uri, dest_uri, streetnetwork_path_type, period_extremity):
         """

@@ -70,7 +70,7 @@ class Coord(ResourceUri):
         return None
 
     def _get_args(self, lon=None, lat=None):
-        return {"uri": "{};{}".format(lon, lat), "_current_datetime": datetime.datetime.utcnow()}
+        return {"uri": f"{lon};{lat}", "_current_datetime": datetime.datetime.utcnow()}
 
     @get_serializer(serpy=api.DictAddressesSerializer)
     def get(self, region=None, lon=None, lat=None, id=None):

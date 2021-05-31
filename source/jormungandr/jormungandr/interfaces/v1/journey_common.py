@@ -61,7 +61,7 @@ class DatetimeRepresents(CustomSchemaType):
             return False
         if value == "departure":
             return True
-        raise ValueError("Unable to parse {}".format(name))
+        raise ValueError(f"Unable to parse {name}")
 
     def schema(self):
         return TypeSchema(type=str, metadata={'enum': ['arrival', 'departure'], 'default': 'departure'})

@@ -88,7 +88,7 @@ class MockRequests(object):
         if r:
             return MockResponse(r[0], r[1], url)
         else:
-            raise Exception("impossible to find mock response for url {}".format(url))
+            raise Exception(f"impossible to find mock response for url {url}")
 
     def post(self, *args, **kwargs):
         return self.get(*args, **kwargs)
@@ -158,16 +158,18 @@ def user_set(app, fake_user_type, user_name):
 
 def test_timestamp_to_datetime():
     # timestamp > MAX_INT
-    assert timestamp_to_datetime(18446744071562142720) is None
+    assert timestamp_to_datetime(18_446_744_071_562_142_720) is None
 
     with app.app_context():
         g.timezone = pytz.utc
         # test valid date
-        assert timestamp_to_datetime(1493296245) == datetime.datetime(2017, 4, 27, 12, 30, 45, tzinfo=pytz.UTC)
+        assert timestamp_to_datetime(1_493_296_245) == datetime.datetime(
+            2017, 4, 27, 12, 30, 45, tzinfo=pytz.UTC
+        )
 
         g.timezone = None
         # test valid date but no timezone
-        assert timestamp_to_datetime(1493296245) is None
+        assert timestamp_to_datetime(1_493_296_245) is None
 
 
 def test_make_named_tuple():
@@ -204,7 +206,7 @@ def test_walk_dict():
     result = io.StringIO()
 
     def my_first_stopper_visitor(name, val):
-        result.write("{}={}\n".format(name, val))
+        result.write(f"{name}={val}\n")
         if val == 'ltuple1':
             return True
 
@@ -213,7 +215,7 @@ def test_walk_dict():
     assert all(node in result.getvalue() for node in expected_nodes)
 
     def my_second_stopper_visitor(name, val):
-        result.write("{}={}\n".format(name, val))
+        result.write(f"{name}={val}\n")
         if val == 3:
             return True
 

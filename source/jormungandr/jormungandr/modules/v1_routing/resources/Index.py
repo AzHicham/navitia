@@ -99,7 +99,7 @@ class TechnicalStatus(ModuleResource):
                 resp_dict = {
                     "status": "dead",
                     "realtime_proxies": [],
-                    "error": {"code": "dead_socket", "value": "The region {} is dead".format(key_region)},
+                    "error": {"code": "dead_socket", "value": f"The region {key_region} is dead"},
                 }
             resp_dict['region_id'] = key_region
             response['regions'].append(resp_dict)

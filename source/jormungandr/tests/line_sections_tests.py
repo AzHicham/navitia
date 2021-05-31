@@ -75,13 +75,13 @@ class TestLineSections(AbstractTestFixture):
         """
         query navitia with a current date in the publication period of the impacts
         """
-        return self.query_region('{}?_current_datetime=20170101T100000'.format(q), **kwargs)
+        return self.query_region(f'{q}?_current_datetime=20170101T100000', **kwargs)
 
     def has_disruption(self, object_get, disruption_uri):
         """
         Little helper calling the detail of an object and checking it's disruptions
         """
-        r = self.default_query('{col}/{uri}'.format(col=object_get.collection, uri=object_get.uri))
+        r = self.default_query(f'{object_get.collection}/{object_get.uri}')
         return has_disruption(r, object_get, disruption_uri)
 
     def has_tf_disruption(self, q, disruption):
@@ -253,11 +253,9 @@ class TestLineSections(AbstractTestFixture):
         scenario = {'A': False, 'B': False, 'C': True, 'D': True, 'E': True, 'F': False}
 
         for sa, result in list(scenario.items()):
-            assert result == self.has_tf_disruption(
-                'stop_areas/{}/traffic_reports'.format(sa), 'line_section_on_line_1'
-            )
+            assert result == self.has_tf_disruption(f'stop_areas/{sa}/traffic_reports', 'line_section_on_line_1')
             assert result == self.has_tf_linked_disruption(
-                'stop_areas/{}/traffic_reports'.format(sa), 'line_section_on_line_1', ObjGetter('stop_areas', sa)
+                f'stop_areas/{sa}/traffic_reports', 'line_section_on_line_1', ObjGetter('stop_areas', sa)
             )
 
         # line_section_on_line_1_other_effect
@@ -265,10 +263,10 @@ class TestLineSections(AbstractTestFixture):
 
         for sa, result in list(scenario.items()):
             assert result == self.has_tf_disruption(
-                'stop_areas/{}/traffic_reports'.format(sa), 'line_section_on_line_1_other_effect'
+                f'stop_areas/{sa}/traffic_reports', 'line_section_on_line_1_other_effect'
             )
             assert result == self.has_tf_linked_disruption(
-                'stop_areas/{}/traffic_reports'.format(sa),
+                f'stop_areas/{sa}/traffic_reports',
                 'line_section_on_line_1_other_effect',
                 ObjGetter('stop_areas', sa),
             )
@@ -277,11 +275,9 @@ class TestLineSections(AbstractTestFixture):
         scenario = {'A': False, 'B': True, 'C': False, 'D': False, 'E': False, 'F': True}
 
         for sa, result in list(scenario.items()):
-            assert result == self.has_tf_disruption(
-                'stop_areas/{}/traffic_reports'.format(sa), 'line_section_on_line_2'
-            )
+            assert result == self.has_tf_disruption(f'stop_areas/{sa}/traffic_reports', 'line_section_on_line_2')
             assert result == self.has_tf_linked_disruption(
-                'stop_areas/{}/traffic_reports'.format(sa), 'line_section_on_line_2', ObjGetter('stop_areas', sa)
+                f'stop_areas/{sa}/traffic_reports', 'line_section_on_line_2', ObjGetter('stop_areas', sa)
             )
 
     def test_traffic_reports_on_networks(self):
@@ -316,11 +312,9 @@ class TestLineSections(AbstractTestFixture):
         }
 
         for line, result in list(scenario.items()):
-            assert result == self.has_tf_disruption(
-                'lines/{}/traffic_reports'.format(line), 'line_section_on_line_1'
-            )
+            assert result == self.has_tf_disruption(f'lines/{line}/traffic_reports', 'line_section_on_line_1')
             assert result == self.has_tf_linked_disruption(
-                'lines/{}/traffic_reports'.format(line), 'line_section_on_line_1', ObjGetter('lines', line)
+                f'lines/{line}/traffic_reports', 'line_section_on_line_1', ObjGetter('lines', line)
             )
 
         # there is no link between line:3 and the disruption
@@ -337,12 +331,10 @@ class TestLineSections(AbstractTestFixture):
 
         for line, result in list(scenario.items()):
             assert result == self.has_tf_disruption(
-                'lines/{}/traffic_reports'.format(line), 'line_section_on_line_1_other_effect'
+                f'lines/{line}/traffic_reports', 'line_section_on_line_1_other_effect'
             )
             assert result == self.has_tf_linked_disruption(
-                'lines/{}/traffic_reports'.format(line),
-                'line_section_on_line_1_other_effect',
-                ObjGetter('lines', line),
+                f'lines/{line}/traffic_reports', 'line_section_on_line_1_other_effect', ObjGetter('lines', line)
             )
 
         # there is no link between line:2 and the disruption
@@ -358,11 +350,9 @@ class TestLineSections(AbstractTestFixture):
         }
 
         for line, result in list(scenario.items()):
-            assert result == self.has_tf_disruption(
-                'lines/{}/traffic_reports'.format(line), 'line_section_on_line_2'
-            )
+            assert result == self.has_tf_disruption(f'lines/{line}/traffic_reports', 'line_section_on_line_2')
             assert result == self.has_tf_linked_disruption(
-                'lines/{}/traffic_reports'.format(line), 'line_section_on_line_2', ObjGetter('lines', line)
+                f'lines/{line}/traffic_reports', 'line_section_on_line_2', ObjGetter('lines', line)
             )
 
         # there is no link between line:1 and the disruption
@@ -377,7 +367,7 @@ class TestLineSections(AbstractTestFixture):
     )
     def test_failing_traffic_reports_on_lines(self):
         """
-            specific cases for lines where the actual behavior is undesirable
+        specific cases for lines where the actual behavior is undesirable
         """
 
         assert not self.has_tf_disruption('lines/line:3/traffic_reports', 'line_section_on_line_1')
@@ -405,7 +395,7 @@ class TestLineSections(AbstractTestFixture):
         }
 
         for route, result in list(scenario.items()):
-            assert result == self.has_dis('routes/{}/traffic_reports'.format(route), 'line_section_on_line_1')
+            assert result == self.has_dis(f'routes/{route}/traffic_reports', 'line_section_on_line_1')
 
         # line_section_on_line_1_other_effect
         scenario = {
@@ -418,7 +408,7 @@ class TestLineSections(AbstractTestFixture):
 
         for route, result in list(scenario.items()):
             assert result == self.has_dis(
-                'routes/{}/traffic_reports'.format(route), 'line_section_on_line_1_other_effect'
+                f'routes/{route}/traffic_reports', 'line_section_on_line_1_other_effect'
             )
 
         # line_section_on_line_2
@@ -431,7 +421,7 @@ class TestLineSections(AbstractTestFixture):
         }
 
         for route, result in list(scenario.items()):
-            assert result == self.has_dis('routes/{}/traffic_reports'.format(route), 'line_section_on_line_2')
+            assert result == self.has_dis(f'routes/{route}/traffic_reports', 'line_section_on_line_2')
 
     @pytest.mark.xfail(
         strict=True,
@@ -440,7 +430,7 @@ class TestLineSections(AbstractTestFixture):
     )
     def test_failing_traffic_reports_on_routes(self):
         """
-            specific cases for routes where the actual behavior is undesirable
+        specific cases for routes where the actual behavior is undesirable
         """
 
         assert not self.has_dis('routes/route:line:3:1/traffic_reports', 'line_section_on_line_1')
@@ -469,9 +459,7 @@ class TestLineSections(AbstractTestFixture):
         }
 
         for vj, result in list(scenario.items()):
-            assert result == self.has_dis(
-                'vehicle_journeys/{}/traffic_reports'.format(vj), 'line_section_on_line_1'
-            )
+            assert result == self.has_dis(f'vehicle_journeys/{vj}/traffic_reports', 'line_section_on_line_1')
 
         # line_section_on_line_1_other_effect
         scenario = {
@@ -484,7 +472,7 @@ class TestLineSections(AbstractTestFixture):
 
         for vj, result in list(scenario.items()):
             assert result == self.has_dis(
-                'vehicle_journeys/{}/traffic_reports'.format(vj), 'line_section_on_line_1_other_effect'
+                f'vehicle_journeys/{vj}/traffic_reports', 'line_section_on_line_1_other_effect'
             )
 
         # line_section_on_line_2
@@ -497,9 +485,7 @@ class TestLineSections(AbstractTestFixture):
         }
 
         for vj, result in list(scenario.items()):
-            assert result == self.has_dis(
-                'vehicle_journeys/{}/traffic_reports'.format(vj), 'line_section_on_line_2'
-            )
+            assert result == self.has_dis(f'vehicle_journeys/{vj}/traffic_reports', 'line_section_on_line_2')
 
     @pytest.mark.xfail(
         strict=True,
@@ -508,7 +494,7 @@ class TestLineSections(AbstractTestFixture):
     )
     def test_failing_traffic_reports_on_vjs(self):
         """
-            specific cases for vjs where the actual behavior is undesirable
+        specific cases for vjs where the actual behavior is undesirable
         """
 
         assert not self.has_dis(
@@ -549,12 +535,10 @@ class TestLineSections(AbstractTestFixture):
 
         for sp, result in list(scenario.items()):
             assert result == self.has_tf_disruption(
-                'stop_points/{}/traffic_reports'.format(sp), 'line_section_on_line_1'
+                f'stop_points/{sp}/traffic_reports', 'line_section_on_line_1'
             )
             assert result == self.has_tf_linked_disruption(
-                'stop_points/{}/traffic_reports'.format(sp),
-                'line_section_on_line_1',
-                ObjGetter('stop_areas', sp[0]),
+                f'stop_points/{sp}/traffic_reports', 'line_section_on_line_1', ObjGetter('stop_areas', sp[0])
             )
 
         # line_section_on_line_1_other_effect
@@ -577,10 +561,10 @@ class TestLineSections(AbstractTestFixture):
 
         for sp, result in list(scenario.items()):
             assert result == self.has_tf_disruption(
-                'stop_points/{}/traffic_reports'.format(sp), 'line_section_on_line_1_other_effect'
+                f'stop_points/{sp}/traffic_reports', 'line_section_on_line_1_other_effect'
             )
             assert result == self.has_tf_linked_disruption(
-                'stop_points/{}/traffic_reports'.format(sp),
+                f'stop_points/{sp}/traffic_reports',
                 'line_section_on_line_1_other_effect',
                 ObjGetter('stop_areas', sp[0]),
             )
@@ -605,12 +589,10 @@ class TestLineSections(AbstractTestFixture):
 
         for sp, result in list(scenario.items()):
             assert result == self.has_tf_disruption(
-                'stop_points/{}/traffic_reports'.format(sp), 'line_section_on_line_2'
+                f'stop_points/{sp}/traffic_reports', 'line_section_on_line_2'
             )
             assert result == self.has_tf_linked_disruption(
-                'stop_points/{}/traffic_reports'.format(sp),
-                'line_section_on_line_2',
-                ObjGetter('stop_areas', sp[0]),
+                f'stop_points/{sp}/traffic_reports', 'line_section_on_line_2', ObjGetter('stop_areas', sp[0])
             )
 
     def test_journeys_use_vj_impacted_by_line_section(self):

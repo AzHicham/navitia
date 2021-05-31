@@ -60,7 +60,7 @@ class Sytral(RealtimeProxy):
         destination_id_tag="source",
         instance=None,
         timeout=2,
-        **kwargs
+        **kwargs,
     ):
         self.service_url = service_url
         self.timeout = timeout  # timeout in seconds
@@ -75,7 +75,7 @@ class Sytral(RealtimeProxy):
 
     def __repr__(self):
         """
-         used as the cache key. We use the rt_system_id to share the cache between servers in production
+        used as the cache key. We use the rt_system_id to share the cache between servers in production
         """
         try:
             return self.rt_system_id.encode('utf-8', 'backslashreplace')
@@ -89,7 +89,7 @@ class Sytral(RealtimeProxy):
         stop_id_list = route_point.fetch_all_stop_id(self.object_id_tag)
         if not stop_id_list:
             logging.getLogger(__name__).debug(
-                'missing realtime id for {obj}: stop code={s}'.format(obj=route_point, s=stop_id_list),
+                f'missing realtime id for {route_point}: stop code={stop_id_list}',
                 extra={'rt_system_id': six.text_type(self.rt_system_id)},
             )
             self.record_internal_failure('missing id')
@@ -107,20 +107,20 @@ class Sytral(RealtimeProxy):
         http call to sytralRT
         """
         logging.getLogger(__name__).debug(
-            'systralRT RT service , call url : {}'.format(self.service_url),
+            f'systralRT RT service , call url : {self.service_url}',
             extra={'rt_system_id': six.text_type(self.rt_system_id)},
         )
         try:
             return self.breaker.call(requests.get, url=self.service_url, params=params, timeout=self.timeout)
         except pybreaker.CircuitBreakerError as e:
             logging.getLogger(__name__).error(
-                'systralRT service dead, using base ' 'schedule (error: {}'.format(e),
+                f'systralRT service dead, using base schedule (error: {e}',
                 extra={'rt_system_id': six.text_type(self.rt_system_id)},
             )
             raise RealtimeProxyError('circuit breaker open')
         except requests.Timeout as t:
             logging.getLogger(__name__).error(
-                'systralRT service timeout, using base ' 'schedule (error: {}'.format(t),
+                f'systralRT service timeout, using base schedule (error: {t}',
                 extra={'rt_system_id': six.text_type(self.rt_system_id)},
             )
             raise RealtimeProxyError('timeout')
@@ -140,7 +140,7 @@ class Sytral(RealtimeProxy):
 
     def _get_passages(self, route_point, resp):
         logging.getLogger(__name__).debug(
-            'sytralrt response: {}'.format(resp), extra={'rt_system_id': six.text_type(self.rt_system_id)}
+            f'sytralrt response: {resp}', extra={'rt_system_id': six.text_type(self.rt_system_id)}
         )
 
         # One line navitia can be multiple lines on the SAE side
@@ -169,7 +169,7 @@ class Sytral(RealtimeProxy):
 
         if r.status_code != requests.codes.ok:
             logging.getLogger(__name__).error(
-                'sytralrt service unavailable, impossible to query : {}'.format(r.url),
+                f'sytralrt service unavailable, impossible to query : {r.url}',
                 extra={'rt_system_id': six.text_type(self.rt_system_id)},
             )
             raise RealtimeProxyError('non 200 response')

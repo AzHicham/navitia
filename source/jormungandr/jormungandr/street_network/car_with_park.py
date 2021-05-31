@@ -74,7 +74,7 @@ class CarWithPark(AbstractStreetNetworkService):
             request_id,
             get_poi_params(request['forbidden_uris[]']),
             get_poi_params(request['allowed_id[]']),
-            **speed_switcher
+            **speed_switcher,
         )
 
         park_ride_car_parks = utils.pick_up_park_ride_car_park(car_parks)
@@ -90,7 +90,7 @@ class CarWithPark(AbstractStreetNetworkService):
             request.get('max_walking_duration_to_pt', 1800),
             request,
             request_id,
-            **speed_switcher
+            **speed_switcher,
         ).rows
 
         if (
@@ -184,7 +184,7 @@ class CarWithPark(AbstractStreetNetworkService):
 
         def rename_section_id(n_section):
             n, section = n_section
-            section.id = 'section_{}'.format(n)
+            section.id = f'section_{n}'
 
         deque(six.moves.map(rename_section_id, enumerate(car_direct_path.journeys[0].sections)), maxlen=1)
 

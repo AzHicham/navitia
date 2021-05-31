@@ -44,7 +44,7 @@ class StarProvider(CommonCarParkProvider):
         super(StarProvider, self).__init__(url, operators, dataset, timeout, feed_publisher, **kwargs)
 
     def process_data(self, data, poi):
-        park = jmespath.search('records[?fields.idparc==\'{}\']|[0]'.format(poi['properties']['ref']), data)
+        park = jmespath.search(f"records[?fields.idparc=='{poi['properties']['ref']}']|[0]", data)
         if not park:
             return None
 

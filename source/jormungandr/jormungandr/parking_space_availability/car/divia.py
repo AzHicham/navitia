@@ -56,11 +56,11 @@ def divia_maker(search_patterns):
 
         def process_data(self, data, poi):
             park = jmespath.search(
-                'records[?to_number(fields.{})==`{}`]|[0]'.format(self.id_park, poi['properties']['ref']), data
+                f"records[?to_number(fields.{self.id_park})==`{poi['properties']['ref']}`]|[0]", data
             )
             if park:
-                available = jmespath.search('fields.{}'.format(self.available), park)
-                nb_places = jmespath.search('fields.{}'.format(self.total), park)
+                available = jmespath.search(f'fields.{self.available}', park)
+                nb_places = jmespath.search(f'fields.{self.total}', park)
                 if available is not None and nb_places is not None and nb_places >= available:
                     occupied = nb_places - available
                 else:

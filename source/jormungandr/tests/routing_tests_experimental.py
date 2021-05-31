@@ -58,8 +58,7 @@ unit for scenario experimental
 )
 class TestJourneysDistributedWithMock(JourneyMinBikeMinCar, NewDefaultScenarioAbstractTestFixture):
     def test_first_and_last_section_multi_modes(self):
-        """Test to verify optimization of direct path calls
-        """
+        """Test to verify optimization of direct path calls"""
         # Initialize counter value in the object MockKraken
         sn_service = i_manager.instances['main_routing_test'].get_all_street_networks()[0]
         sn_service.direct_path_call_count = 0
@@ -90,8 +89,7 @@ class TestJourneysDistributedWithMock(JourneyMinBikeMinCar, NewDefaultScenarioAb
         self.is_valid_journey_response(response, query)
 
     def test_first_and_last_section_multi_modes_no_debug(self):
-        """Test to verify optimization of direct path calls
-        """
+        """Test to verify optimization of direct path calls"""
         # Initialize counter value in the object MockKraken
         sn_service = i_manager.instances['main_routing_test'].get_all_street_networks()[0]
         sn_service.direct_path_call_count = 0
@@ -773,7 +771,7 @@ class TestTaxiDistributed(NewDefaultScenarioAbstractTestFixture):
             + "&first_section_mode[]=taxi"
             + "&taxi_speed=0.05"
             # Now we set the max_taxi_duration_to_pt
-            + "&max_taxi_duration_to_pt={}".format(taxi_fallback_time - 1)
+            + f"&max_taxi_duration_to_pt={taxi_fallback_time - 1}"
         )
 
         response = self.query_region(query)
@@ -864,7 +862,7 @@ class TestCarNoParkDistributed(NewDefaultScenarioAbstractTestFixture):
             + "&first_section_mode[]=car_no_park"
             + "&car_no_park_speed=0.1"
             # Now we set the max_taxi_duration_to_pt
-            + "&max_car_no_park_duration_to_pt={}".format(car_no_park_with_pt_fallback_time - 1)
+            + f"&max_car_no_park_duration_to_pt={car_no_park_with_pt_fallback_time - 1}"
         )
 
         response = self.query_region(query)
@@ -902,7 +900,7 @@ class TestCarDistributed(NewDefaultScenarioAbstractTestFixture):
             + "&first_section_mode[]=car"
             + "&car_speed=1"
             # now we set _stop_points_nearby_duration
-            + "&_stop_points_nearby_duration={}".format(int(park_to_stop_point_duration / math.sqrt(2)) - 1)
+            + f"&_stop_points_nearby_duration={int(park_to_stop_point_duration / math.sqrt(2)) - 1}"
         )
 
         response = self.query_region(query)

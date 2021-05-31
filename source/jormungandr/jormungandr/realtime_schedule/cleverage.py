@@ -68,7 +68,7 @@ class Cleverage(RealtimeProxy):
         destination_id_tag=None,
         instance=None,
         timeout=10,
-        **kwargs
+        **kwargs,
     ):
         self.service_url = service_url if (service_url[-1] == '/') else (service_url + '/')
         self.service_args = service_args
@@ -85,7 +85,7 @@ class Cleverage(RealtimeProxy):
 
     def __repr__(self):
         """
-         used as the cache key. we use the rt_system_id to share the cache between servers in production
+        used as the cache key. we use the rt_system_id to share the cache between servers in production
         """
         try:
             return self.rt_system_id.encode('utf-8', 'backslashreplace')
@@ -97,18 +97,14 @@ class Cleverage(RealtimeProxy):
         """
         http call to cleverage
         """
-        logging.getLogger(__name__).debug('Cleverage RT service , call url : {}'.format(url))
+        logging.getLogger(__name__).debug(f'Cleverage RT service , call url : {url}')
         try:
             return self.breaker.call(requests.get, url, timeout=self.timeout, headers=self.service_args)
         except pybreaker.CircuitBreakerError as e:
-            logging.getLogger(__name__).error(
-                'Cleverage RT service dead, using base ' 'schedule (error: {}'.format(e)
-            )
+            logging.getLogger(__name__).error(f'Cleverage RT service dead, using base schedule (error: {e}')
             raise RealtimeProxyError('circuit breaker open')
         except requests.Timeout as t:
-            logging.getLogger(__name__).error(
-                'Cleverage RT service timeout, using base ' 'schedule (error: {}'.format(t)
-            )
+            logging.getLogger(__name__).error(f'Cleverage RT service timeout, using base schedule (error: {t}')
             raise RealtimeProxyError('timeout')
         except Exception as e:
             logging.getLogger(__name__).exception('Cleverage RT error, using base schedule')
@@ -123,13 +119,11 @@ class Cleverage(RealtimeProxy):
 
         if not stop_id:
             # one a the id is missing, we'll not find any realtime
-            logging.getLogger(__name__).debug(
-                'missing realtime id for {obj}: stop code={s}'.format(obj=route_point, s=stop_id)
-            )
+            logging.getLogger(__name__).debug(f'missing realtime id for {route_point}: stop code={stop_id}')
             self.record_internal_failure('missing id')
             return None
 
-        url = "{base_url}{stop_id}".format(base_url=self.service_url, stop_id=stop_id)
+        url = f"{self.service_url}{stop_id}"
 
         return url
 
@@ -141,7 +135,7 @@ class Cleverage(RealtimeProxy):
         return utc_dt
 
     def _get_passages(self, route_point, cleverage_resp):
-        logging.getLogger(__name__).debug('cleverage response: {}'.format(cleverage_resp))
+        logging.getLogger(__name__).debug(f'cleverage response: {cleverage_resp}')
 
         line_code = route_point.fetch_line_id(self.object_id_tag)
 
@@ -175,9 +169,7 @@ class Cleverage(RealtimeProxy):
 
         if r.status_code != 200:
             # TODO better error handling, the response might be in 200 but in error
-            logging.getLogger(__name__).error(
-                'Cleverage RT service unavailable, impossible to query : {}'.format(r.url)
-            )
+            logging.getLogger(__name__).error(f'Cleverage RT service unavailable, impossible to query : {r.url}')
             raise RealtimeProxyError('non 200 response')
 
         return self._get_passages(route_point, r.json())

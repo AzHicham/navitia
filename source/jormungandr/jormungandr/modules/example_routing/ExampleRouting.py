@@ -57,7 +57,7 @@ class ExampleRouting(ABlueprint):
 
     def page(self, page):
         try:
-            return render_template('%s.html' % page)
+            return render_template(f'{page}.html')
         except TemplateNotFound:
             abort(404)
 

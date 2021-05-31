@@ -96,7 +96,7 @@ class AbstractTestFixture(unittest.TestCase):
 
     @classmethod
     def _get_zmq_socket_name(cls, kraken_name):
-        return "ipc:///tmp/{uid}_{name}".format(uid=cls.uid, name=kraken_name)
+        return f"ipc:///tmp/{cls.uid}_{kraken_name}"
 
     @classmethod
     def launch_all_krakens(cls):
@@ -104,7 +104,7 @@ class AbstractTestFixture(unittest.TestCase):
         rabbitmq = os.getenv('KRAKEN_RABBITMQ_HOST', 'localhost')
         for (kraken_name, conf) in list(cls.data_sets.items()):
             exe = os.path.join(krakens_dir, kraken_name)
-            assert os.path.exists(exe), "cannot find the kraken {}".format(exe)
+            assert os.path.exists(exe), f"cannot find the kraken {exe}"
 
             kraken_main_args = [
                 "--GENERAL.zmq_socket=" + cls._get_zmq_socket_name(kraken_name),
@@ -140,7 +140,7 @@ class AbstractTestFixture(unittest.TestCase):
             instance_config = {"key": name, "zmq_socket": cls._get_zmq_socket_name(name)}
             instance_config.update(cls.data_sets[name].get('instance_config', {}))
             with open(os.path.join(krakens_dir, name) + '.json', 'w') as f:
-                logging.debug("writing ini file {} for {}".format(f.name, name))
+                logging.debug(f"writing ini file {f.name} for {name}")
                 f.write(json.dumps(instance_config, indent=4))
 
         # we set the env var that will be used to init jormun
@@ -155,7 +155,7 @@ class AbstractTestFixture(unittest.TestCase):
         non instance dependent jormungandr setup
         """
         if cls.global_config.get('activate_bragi', False):
-            logging.info("rigging the autocomplete for {}".format(cls.__name__))
+            logging.info(f"rigging the autocomplete for {cls.__name__}")
             # if we need a global bragi, we rig jormungandr global_autocomplete
             cls.old_global_autocompletes = deepcopy(jormungandr.global_autocomplete)
 
@@ -179,7 +179,7 @@ class AbstractTestFixture(unittest.TestCase):
         cleanup the global config
         """
         if hasattr(cls, 'old_global_autocompletes'):
-            logging.info("putting back the old global autoconfig for {}".format(cls.__name__))
+            logging.info(f"putting back the old global autoconfig for {cls.__name__}")
             # if we changed the global_autocomplete variable, we put the old value back
             # we want to keep the same address for global_autocomplete as others might have references on it
             jormungandr.global_autocomplete.clear()
@@ -204,7 +204,7 @@ class AbstractTestFixture(unittest.TestCase):
         cls.tester = app.test_client()
         cls.krakens_pool = {}
         cls.uid = uuid.uuid1()
-        logging.info("Initing the tests {}, let's pop the krakens".format(cls.__name__))
+        logging.info(f"Initing the tests {cls.__name__}, let's pop the krakens")
         cls.global_jormun_setup()
         cls.launch_all_krakens()
         instances_config_files = cls.create_dummy_json()
@@ -247,7 +247,7 @@ class AbstractTestFixture(unittest.TestCase):
                     retry_on_result=lambda x: not instance.is_initialized,
                 ).call(instance.init)
             except retrying.RetryError:
-                logging.exception('impossible to start kraken {}'.format(name))
+                logging.exception(f'impossible to start kraken {name}')
                 assert False, 'impossible to start a kraken'
 
         # we don't want to have anything to do with the jormun database either
@@ -268,7 +268,7 @@ class AbstractTestFixture(unittest.TestCase):
 
     @classmethod
     def teardown_class(cls):
-        logging.info("Tearing down the tests {}, time to hunt the krakens down".format(cls.__name__))
+        logging.info(f"Tearing down the tests {cls.__name__}, time to hunt the krakens down")
         cls.global_jormun_teardown()
         cls.kill_all_krakens()
         for m in cls.mocks:

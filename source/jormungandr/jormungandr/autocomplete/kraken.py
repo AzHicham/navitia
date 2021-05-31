@@ -58,7 +58,7 @@ class Kraken(AbstractAutocomplete):
         if request["type[]"]:
             for type in request["type[]"]:
                 if type not in places_type:
-                    abort(422, message="{} is not an acceptable type".format(type))
+                    abort(422, message=f"{type} is not an acceptable type")
 
                 req.places.types.append(places_type[type])
 

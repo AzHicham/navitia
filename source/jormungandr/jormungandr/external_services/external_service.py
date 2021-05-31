@@ -53,22 +53,20 @@ class AbstractExternalService(object):
         Call external_services webservice with URL defined in settings
         :return: data received from the webservice
         """
-        logging.getLogger(__name__).debug(
-            'forseti external_services service , call url : {}'.format(self.service_url)
-        )
+        logging.getLogger(__name__).debug(f'forseti external_services service , call url : {self.service_url}')
         result = None
         try:
-            url = "{}?{}".format(self.service_url, urlencode(arguments, doseq=True))
+            url = f"{self.service_url}?{urlencode(arguments, doseq=True)}"
             result = self.breaker.call(requests.get, url=url, timeout=self.timeout)
             self.record_call(url=url, status="OK")
         except pybreaker.CircuitBreakerError as e:
-            logging.getLogger(__name__).error('Service Forseti is dead (error: {})'.format(e))
+            logging.getLogger(__name__).error(f'Service Forseti is dead (error: {e})')
             self.record_call(url=url, status='failure', reason='circuit breaker open')
         except requests.Timeout as t:
-            logging.getLogger(__name__).error('Forseti service timeout (error: {})'.format(t))
+            logging.getLogger(__name__).error(f'Forseti service timeout (error: {t})')
             self.record_call(url=url, status='failure', reason='timeout')
         except Exception as e:
-            logging.getLogger(__name__).exception('Forseti service error: {}'.format(e))
+            logging.getLogger(__name__).exception(f'Forseti service error: {e}')
             self.record_call(url=url, status='failure', reason=str(e))
         return result
 
@@ -94,7 +92,7 @@ class AbstractExternalService(object):
         if response.status_code == 503:
             raise ExternalServiceUnavailable('forseti responded with 503')
         if response.status_code != 200:
-            error_msg = 'external service request failed with HTTP code {}'.format(response.status_code)
+            error_msg = f'external service request failed with HTTP code {response.status_code}'
             if response.text:
-                error_msg += ' ({})'.format(response.text)
+                error_msg += f' ({response.text})'
             raise ExternalServiceError(error_msg)

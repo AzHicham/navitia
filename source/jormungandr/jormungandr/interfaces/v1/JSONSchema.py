@@ -54,7 +54,7 @@ def format_args(rule):
     return formatted_rule
 
 
-base_path_regexp = re.compile('^/{base}'.format(base=BASE_PATH))
+base_path_regexp = re.compile(f'^/{BASE_PATH}')
 
 
 def get_all_described_paths():

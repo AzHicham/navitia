@@ -145,7 +145,7 @@ def create_address_field(geocoding, poi_lat=None, poi_lon=None):
     coord = geocoding.get('coord', {})
     lat = str(coord.get('lat')) if coord and coord.get('lat') else poi_lat
     lon = str(coord.get('lon')) if coord and coord.get('lon') else poi_lon
-    address_id = '{lon};{lat}'.format(lon=lon, lat=lat)
+    address_id = f'{lon};{lat}'
     resp = {
         "id": address_id,
         "label": geocoding.get('label'),
@@ -191,7 +191,7 @@ class GeocodeJson(AbstractAutocomplete):
         try:
             return self.breaker.call(method, url, **kwargs)
         except pybreaker.CircuitBreakerError as e:
-            logging.getLogger(__name__).error('external autocomplete service dead (error: {})'.format(e))
+            logging.getLogger(__name__).error(f'external autocomplete service dead (error: {e})')
             raise GeocodeJsonUnavailable('circuit breaker open')
         except requests.Timeout:
             logging.getLogger(__name__).error('autocomplete request timeout')
@@ -209,9 +209,9 @@ class GeocodeJson(AbstractAutocomplete):
         if response.status_code == 503:
             raise GeocodeJsonUnavailable('geocodejson responded with 503')
         if response.status_code != 200:
-            error_msg = 'Autocomplete request failed with HTTP code {}'.format(response.status_code)
+            error_msg = f'Autocomplete request failed with HTTP code {response.status_code}'
             if response.text:
-                error_msg += ' ({})'.format(response.text)
+                error_msg += f' ({response.text})'
             raise GeocodeJsonError(error_msg)
 
     @classmethod
@@ -278,9 +278,9 @@ class GeocodeJson(AbstractAutocomplete):
         if not self.host:
             raise GeocodeJsonError('global autocomplete not configured')
 
-        url = "{host}/{end_point}".format(host=self.host, end_point=end_point)
+        url = f"{self.host}/{end_point}"
         if uri:
-            url = '{url}/{uri}'.format(url=url, uri=uri)
+            url = f'{url}/{uri}'
         return url
 
     def basic_params(self, instances):

@@ -85,7 +85,7 @@ class InstantSystem(AbstractRidesharingService):
             rating_scale_max=self.rating_scale_max,
         )
 
-        self.logger = logging.getLogger("{} {}".format(__name__, self.system_id))
+        self.logger = logging.getLogger(f"{__name__} {self.system_id}")
 
         self.breaker = pybreaker.CircuitBreaker(
             fail_max=app.config.get(str('CIRCUIT_BREAKER_MAX_INSTANT_SYSTEM_FAIL'), 4),
@@ -241,9 +241,9 @@ class InstantSystem(AbstractRidesharingService):
             '%Y-%m-%dT%H:%M:%SZ'
         )
         if period_extremity.represents_start:
-            datetime_str = '{}/PT{}S'.format(datetime_str, self.timeframe_duration)
+            datetime_str = f'{datetime_str}/PT{self.timeframe_duration}S'
         else:
-            datetime_str = 'PT{}S/{}'.format(self.timeframe_duration, datetime_str)
+            datetime_str = f'PT{self.timeframe_duration}S/{datetime_str}'
 
         params = {
             'from': from_coord,
@@ -256,7 +256,7 @@ class InstantSystem(AbstractRidesharingService):
         if limit is not None:
             params.update({'limit', limit})
 
-        headers = {'Authorization': 'apiKey {}'.format(self.api_key)}
+        headers = {'Authorization': f'apiKey {self.api_key}'}
         resp = self._call_service(params=params, headers=headers)
 
         if not resp or resp.status_code != 200:

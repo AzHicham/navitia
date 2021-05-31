@@ -258,9 +258,7 @@ class add_tad_links(object):
 
                         # Get the Network details and verify if it contains codes with type = "app_code"
                         instance = i_manager.instances.get(region)
-                        network_details = instance.ptref.get_objs(
-                            type_pb2.NETWORK, 'network.uri={}'.format(network_id)
-                        )
+                        network_details = instance.ptref.get_objs(type_pb2.NETWORK, f'network.uri={network_id}')
                         network_dict = protobuf_to_dict(next(network_details))
                         app_value = next(
                             (
@@ -285,7 +283,7 @@ class add_tad_links(object):
                         args['destination_latitude'] = to_coord.get('lat')
                         args['destination_longitude'] = to_coord.get('lon')
                         args['requested_departure_time'] = dt_to_str(date_utc, _format=UTC_DATETIME_FORMAT)
-                        url = "{}://home?".format(app_value)
+                        url = f"{app_value}://home?"
                         tad_link = make_external_service_link(
                             url=url, rel="tad_dynamic_link", _type="tad_dynamic_link", **args
                         )
@@ -569,9 +567,9 @@ class Journeys(JourneyCommon):
 
         for mode in FallbackModes.modes_str():
             parser_get.add_argument(
-                "max_{}_direct_path_duration".format(mode),
+                f"max_{mode}_direct_path_duration",
                 type=int,
-                help="limit duration of direct path in {}, used ONLY in distributed scenario".format(mode),
+                help=f"limit duration of direct path in {mode}, used ONLY in distributed scenario",
             )
         parser_get.add_argument("depth", type=DepthArgument(), default=1, help="The depth of your object")
         args = self.parsers["get"].parse_args()
@@ -630,7 +628,7 @@ class Journeys(JourneyCommon):
     def get(self, region=None, lon=None, lat=None, uri=None):
         args = self.parsers['get'].parse_args()
         possible_regions = compute_possible_region(region, args)
-        logging.getLogger(__name__).debug("Possible regions for the request : {}".format(possible_regions))
+        logging.getLogger(__name__).debug(f"Possible regions for the request : {possible_regions}")
         args.update(self.parse_args(region, uri))
 
         # count override min_nb_journey or max_nb_journey
@@ -702,13 +700,13 @@ class Journeys(JourneyCommon):
             # we create a new arg for internal usage, only used by distributed scenario
             args['max_nb_crowfly_by_mode'] = mod.max_nb_crowfly_by_mode  # it's a dict of str vs int
             for mode in fallback_modes.all_fallback_modes:
-                nb_crowfly = args.get('_max_nb_crowfly_by_{}'.format(mode))
+                nb_crowfly = args.get(f'_max_nb_crowfly_by_{mode}')
                 if nb_crowfly is not None:
                     args['max_nb_crowfly_by_mode'][mode] = nb_crowfly
 
             # activated only for distributed
             for mode in FallbackModes.modes_str():
-                tmp = 'max_{}_direct_path_duration'.format(mode)
+                tmp = f'max_{mode}_direct_path_duration'
                 if args.get(tmp) is None:
                     args[tmp] = getattr(mod, tmp)
 
@@ -754,9 +752,9 @@ class Journeys(JourneyCommon):
 
             now = dt_to_str(datetime.datetime.utcnow())
 
-            result = "journeys_{}_{}#{}#".format(json_hash, now, scenario)
+            result = f"journeys_{json_hash}_{now}#{scenario}#"
 
-            logger.info("Generating id : {} for request : {}".format(result, request.url))
+            logger.info(f"Generating id : {result} for request : {request.url}")
 
             return result
 
@@ -784,7 +782,7 @@ class Journeys(JourneyCommon):
 
             _set_specific_params(i_manager.instances[r])
             set_request_timezone(self.region)
-            logging.getLogger(__name__).debug("Querying region : {}".format(r))
+            logging.getLogger(__name__).debug(f"Querying region : {r}")
 
             # Save the original datetime for debuging purpose
             original_datetime = args['original_datetime']
@@ -814,7 +812,7 @@ class Journeys(JourneyCommon):
             # the error message field
             if not response.journeys and not response.HasField(str('error')):
                 logging.getLogger(__name__).debug(
-                    "impossible to find journeys for the region {}," " insert error field in response ".format(r)
+                    f"impossible to find journeys for the region {r}, insert error field in response "
                 )
                 response.error.id = response_pb2.Error.no_solution
                 response.error.message = "no solution found for this journey"

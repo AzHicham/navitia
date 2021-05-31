@@ -307,9 +307,7 @@ class InstanceManager(object):
     def _all_keys_of_coord(self, lon, lat):
         p = geometry.Point(lon, lat)
         instances = [i.name for i in list(self.instances.values()) if i.has_point(p)]
-        logging.getLogger(__name__).debug(
-            "all_keys_of_coord(self, {}, {}) returns {}".format(lon, lat, instances)
-        )
+        logging.getLogger(__name__).debug(f"all_keys_of_coord(self, {lon}, {lat}) returns {instances}")
         if not instances:
             raise RegionNotFound(lon=lon, lat=lat)
         return instances
@@ -366,7 +364,7 @@ class InstanceManager(object):
             except DeadSocketException:
                 resp_dict = {
                     "status": "dead",
-                    "error": {"code": "dead_socket", "value": "The region {} is dead".format(key_region)},
+                    "error": {"code": "dead_socket", "value": f"The region {key_region} is dead"},
                 }
             if resp_dict.get('status') == 'no_data' and not region and not lon and not lat:
                 continue

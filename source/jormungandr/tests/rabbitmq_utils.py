@@ -38,7 +38,7 @@ import os
 
 
 # we need to generate a unique topic not to have conflict between tests
-rt_topic = 'rt_test_{}'.format(uuid.uuid1())
+rt_topic = f'rt_test_{uuid.uuid1()}'
 
 
 class RabbitMQCnxFixture(AbstractTestFixture):

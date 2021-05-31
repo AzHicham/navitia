@@ -279,9 +279,7 @@ def _get_fallback_logic(fallback_type):
     if fallback_type == StreetNetworkPathType.ENDING_FALLBACK:
         return EndingFallback()
 
-    raise EntryPointException(
-        "Unknown fallback type : {}".format(fallback_type), response_pb2.Error.unknown_object
-    )
+    raise EntryPointException(f"Unknown fallback type : {fallback_type}", response_pb2.Error.unknown_object)
 
 
 class BeginningFallback(object):
@@ -482,7 +480,7 @@ def get_max_fallback_duration(request, mode, dp_future):
     :return:  max_fallback_duration
     """
     # 30 minutes by default
-    max_duration = request.get('max_{}_duration_to_pt'.format(mode), 1800)
+    max_duration = request.get(f'max_{mode}_duration_to_pt', 1800)
     dp = dp_future.wait_and_get() if dp_future else None
     dp_duration = dp.journeys[0].durations.total if getattr(dp, 'journeys', None) else max_duration
     return min(max_duration, dp_duration)
@@ -519,7 +517,7 @@ def compute_fallback(
         pt_orig = fallback.get_pt_boundaries(journey)
         pt_departure = fallback.get_pt_section_datetime(journey)
         fallback_extremity_dep = PeriodExtremity(pt_departure, False)
-        from_sub_request_id = "{}_{}_from".format(request_id, i)
+        from_sub_request_id = f"{request_id}_{i}_from"
         if from_obj.uri != pt_orig.uri and pt_orig.uri not in orig_all_free_access:
             orig_obj = pt_orig
             # here, if the mode is car, we have to find from which car park the stop_point is accessed
@@ -543,7 +541,7 @@ def compute_fallback(
         pt_dest = fallback.get_pt_boundaries(journey)
         pt_arrival = fallback.get_pt_section_datetime(journey)
         fallback_extremity_arr = PeriodExtremity(pt_arrival, True)
-        to_sub_request_id = "{}_{}_to".format(request_id, i)
+        to_sub_request_id = f"{request_id}_{i}_to"
         if to_obj.uri != pt_dest.uri and pt_dest.uri not in dest_all_free_access:
             dest_obj = pt_dest
             if arr_mode == 'car':
@@ -607,7 +605,7 @@ def get_entry_point_or_raise(entry_point_obj_future, requested_uri):
     entry_point_obj = entry_point_obj_future.wait_and_get()
     if not entry_point_obj:
         raise EntryPointException(
-            error_message="The entry point: {} is not valid".format(requested_uri),
+            error_message=f"The entry point: {requested_uri} is not valid",
             error_id=response_pb2.Error.unknown_object,
         )
     return entry_point_obj
@@ -647,4 +645,4 @@ def timed_logger(logger, task_name, request_id):
             )
         )
         if elapsed_time > 1e-5:
-            logger.info('time  in {}: {}s'.format(task_name, '%.2e' % elapsed_time))
+            logger.info(f"time  in {task_name}: {elapsed_time:.2e}s")

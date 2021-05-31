@@ -59,7 +59,7 @@ class SiriLite(RealtimeProxy):
 
     def __repr__(self):
         """
-         used as the cache key. we use the rt_system_id to share the cache between servers in production
+        used as the cache key. we use the rt_system_id to share the cache between servers in production
         """
         try:
             return self.rt_system_id.encode('utf-8', 'backslashreplace')
@@ -68,14 +68,14 @@ class SiriLite(RealtimeProxy):
 
     @cache.memoize(app.config['CACHE_CONFIGURATION'].get('TIMEOUT_SIRILITE', 30))
     def _call(self, url):
-        self.log.debug('sirilite RT service, call url: {}'.format(url))
+        self.log.debug(f'sirilite RT service, call url: {url}')
         try:
             return self.breaker.call(requests.get, url, timeout=self.timeout)
         except pybreaker.CircuitBreakerError as e:
-            self.log.error('sirilite RT service dead, using base schedule (error: {}'.format(e))
+            self.log.error(f'sirilite RT service dead, using base schedule (error: {e}')
             raise RealtimeProxyError('circuit breaker open')
         except requests.Timeout as t:
-            self.log.error('sitelite RT service timeout, using base schedule (error: {}'.format(t))
+            self.log.error(f'sitelite RT service timeout, using base schedule (error: {t}')
             raise RealtimeProxyError('timeout')
         except Exception as e:
             self.log.exception('sirilite RT error, using base schedule')
@@ -94,11 +94,11 @@ class SiriLite(RealtimeProxy):
         # if the stif starts to handle it, we can add it with '&LineRef={line_id}'
         if not stop_id or not line_id:
             # one of the id is missing, we'll not find any realtime
-            self.log.debug('missing realtime id for {obj}: stop code={s}'.format(obj=route_point, s=stop_id))
+            self.log.debug(f'missing realtime id for {route_point}: stop code={stop_id}')
             self.record_internal_failure('missing id')
             return None
 
-        url = "{base_url}&MonitoringRef={stop_id}".format(base_url=self.service_url, stop_id=stop_id)
+        url = f"{self.service_url}&MonitoringRef={stop_id}"
 
         return url
 
@@ -106,7 +106,7 @@ class SiriLite(RealtimeProxy):
         return pytz.utc.localize(datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%S.%fZ"))
 
     def _get_passages(self, route_point, resp):
-        self.log.debug('sirilite response: {}'.format(resp))
+        self.log.debug(f'sirilite response: {resp}')
 
         # Add STIF line code
         line_code = route_point.fetch_line_id(self.object_id_tag)
@@ -195,7 +195,7 @@ class SiriLite(RealtimeProxy):
         r = self._call(url)
 
         if r.status_code != 200:
-            self.log.error('sirilite RT service unavailable, impossible to query : {}'.format(r.url))
+            self.log.error(f'sirilite RT service unavailable, impossible to query : {r.url}')
             raise RealtimeProxyError('non 200 response')
 
         return self._get_passages(route_point, r.json())

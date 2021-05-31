@@ -81,7 +81,7 @@ class CykleoProvider(CommonBssProvider):
         organization_id=None,
         timeout=2,
         feed_publisher=DEFAULT_CYKLEO_FEED_PUBLISHER,
-        **kwargs
+        **kwargs,
     ):
         self.url = url
         self.network = network.lower()
@@ -110,18 +110,18 @@ class CykleoProvider(CommonBssProvider):
             response = self.breaker.call(method, url, **kwargs)
             if not response or response.status_code != 200:
                 logging.getLogger(__name__).error(
-                    'cykleo, Invalid response, status_code: {}'.format(response.status_code)
+                    F'cykleo, Invalid response, status_code: {response.status_code}'
                 )
                 raise BssProxyError('non 200 response')
             return response
         except pybreaker.CircuitBreakerError as e:
-            logging.getLogger(__name__).error('cykleo service dead (error: {})'.format(e))
+            logging.getLogger(__name__).error(f'cykleo service dead (error: {e})')
             raise BssProxyError('circuit breaker open')
         except requests.Timeout as t:
-            logging.getLogger(__name__).error('cykleo service timeout (error: {})'.format(t))
+            logging.getLogger(__name__).error(f'cykleo service timeout (error: {t})')
             raise BssProxyError('timeout')
         except Exception as e:
-            logging.getLogger(__name__).exception('cykleo error : {}'.format(str(e)))
+            logging.getLogger(__name__).exception(f'cykleo error : {str(e)}')
             raise BssProxyError(str(e))
 
     @cache.memoize(app.config.get(str('CACHE_CONFIGURATION'), {}).get(str('TIMEOUT_CYKLEO_JETON'), 10 * 60))
@@ -132,7 +132,7 @@ class CykleoProvider(CommonBssProvider):
             data.update({"serviceId": self.service_id})
 
         response = self.service_caller(
-            method=requests.post, url='{}/bo/auth'.format(self.url), headers=headers, data=json.dumps(data)
+            method=requests.post, url=f'{self.url}/bo/auth', headers=headers, data=json.dumps(data)
         )
         if not response:
             return None
@@ -146,13 +146,10 @@ class CykleoProvider(CommonBssProvider):
     @cache.memoize(app.config.get(str('CACHE_CONFIGURATION'), {}).get(str('TIMEOUT_CYKLEO'), 30))
     def _call_webservice(self):
         access_token = self.get_access_token()
-        headers = {'Authorization': 'Bearer {}'.format(access_token)}
+        headers = {'Authorization': f'Bearer {access_token}'}
         params = None if self.organization_id is None else {'organization_id': self.organization_id}
         data = self.service_caller(
-            method=requests.get,
-            url='{}/bo/stations/availability'.format(self.url),
-            headers=headers,
-            params=params,
+            method=requests.get, url=f'{self.url}/bo/stations/availability', headers=headers, params=params
         )
         stands = {}
         if not data:
@@ -175,7 +172,7 @@ class CykleoProvider(CommonBssProvider):
         return self._feed_publisher
 
     def __repr__(self):
-        return ('cykleo-{}'.format(self.network)).encode('utf-8', 'backslashreplace')
+        return (f'cykleo-{self.network}').encode('utf-8', 'backslashreplace')
 
     def _get_informations(self, poi):
         ref = poi.get('properties', {}).get('ref')

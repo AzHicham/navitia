@@ -59,14 +59,13 @@ class RegionNotFound(HTTPException):
         if not any([region, lon, lat, object_id]):
             self.data = format_error("unknown_object", "No region nor " "coordinates given")
         elif region and not any([lon, lat, object_id]):
-            self.data = format_error("unknown_object", "The region {0} " "doesn't exists".format(region))
+            self.data = format_error("unknown_object", f"The region {region} " "doesn't exists")
         elif not any([region, object_id]) and lon and lat:
             self.data = format_error(
-                "unknown_object",
-                "No region available for the coordinates:" "{lon}, {lat}".format(lon=lon, lat=lat),
+                "unknown_object", f"No region available for the coordinates:" f"{lon}, {lat}"
             )
         elif region == lon == lat is None and object_id:
-            self.data = format_error("unknown_object", "Invalid id : {id}".format(id=object_id))
+            self.data = format_error("unknown_object", f"Invalid id : {object_id}")
         else:
             self.data = format_error("unknown_object", "Unable to parse region")
 
@@ -77,7 +76,7 @@ class RegionNotFound(HTTPException):
 class DeadSocketException(HTTPException):
     def __init__(self, region, path):
         super(DeadSocketException, self).__init__()
-        error = 'The region {} is dead'.format(region)
+        error = f'The region {region} is dead'
         self.data = format_error("dead_socket", error)
         self.code = 503
 
@@ -85,7 +84,7 @@ class DeadSocketException(HTTPException):
 class ApiNotFound(HTTPException):
     def __init__(self, api):
         super(ApiNotFound, self).__init__()
-        error = 'The api {} doesn\'t exist'.format(api)
+        error = f'The api {api} doesn\'t exist'
         self.data = format_error("unknown_object", error)
         self.code = 404
 
@@ -93,7 +92,7 @@ class ApiNotFound(HTTPException):
 class UnknownObject(HTTPException):
     def __init__(self, msg):
         super(UnknownObject, self).__init__()
-        error = 'The object {} doesn\'t exist'.format(msg)
+        error = f'The object {msg} doesn\'t exist'
         self.data = format_error("unknown_object", error)
         self.code = 404
 
@@ -131,7 +130,7 @@ def log_exception(sender, exception, **extra):
     message = ""
     if hasattr(exception, "data") and "message" in exception.data:
         message = exception.data['message']
-    error = '{} {} {}'.format(exception.__class__.__name__, message, request.url)
+    error = f'{exception.__class__.__name__} {message} {request.url}'
 
     if isinstance(exception, (HTTPException, RegionNotFound)):
         logger.debug(error)

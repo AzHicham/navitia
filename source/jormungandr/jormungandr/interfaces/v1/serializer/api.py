@@ -308,7 +308,7 @@ class JourneysCommon(PbNestedSerializer):
             args["templated"] = value.is_templated
             args["description"] = value.description
             args["rel"] = value.rel
-            response.append(create_external_link('v1.{}'.format(value.ressource_name), **args))
+            response.append(create_external_link(f'v1.{value.ressource_name}', **args))
         return response
 
 

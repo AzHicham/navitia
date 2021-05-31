@@ -138,7 +138,7 @@ class Siri(RealtimeProxy):
         destination_id_tag=None,
         instance=None,
         timeout=10,
-        **kwargs
+        **kwargs,
     ):
         self.service_url = service_url
         self.requestor_ref = requestor_ref  # login for siri
@@ -158,7 +158,7 @@ class Siri(RealtimeProxy):
 
     def __repr__(self):
         """
-         used as the cache key. we use the rt_system_id to share the cache between servers in production
+        used as the cache key. we use the rt_system_id to share the cache between servers in production
         """
         try:
             return self.rt_system_id.encode('utf-8', 'backslashreplace')
@@ -173,7 +173,7 @@ class Siri(RealtimeProxy):
         siri_response = self._call_siri(request)
         if not siri_response or siri_response.status_code != 200:
             raise RealtimeProxyError('invalid response')
-        logging.getLogger(__name__).debug('siri for {}: {}'.format(stop, siri_response.text))
+        logging.getLogger(__name__).debug(f'siri for {stop}: {siri_response.text}')
 
         ns = {'siri': 'http://www.siri.org.uk/siri'}
         tree = None
@@ -260,7 +260,7 @@ class Siri(RealtimeProxy):
         encoded_request = request.encode('utf-8', 'backslashreplace')
         headers = {"Content-Type": "text/xml; charset=UTF-8", "Content-Length": str(len(encoded_request))}
 
-        logging.getLogger(__name__).debug('siri RT service, post at {}: {}'.format(self.service_url, request))
+        logging.getLogger(__name__).debug(f'siri RT service, post at {self.service_url}: {request}')
         try:
             return self.breaker.call(
                 requests.post,
@@ -271,14 +271,10 @@ class Siri(RealtimeProxy):
                 timeout=self.timeout,
             )
         except pybreaker.CircuitBreakerError as e:
-            logging.getLogger(__name__).error(
-                'siri RT service dead, using base ' 'schedule (error: {}'.format(e)
-            )
+            logging.getLogger(__name__).error(f'siri RT service dead, using base schedule (error: {e}')
             raise RealtimeProxyError('circuit breaker open')
         except requests.Timeout as t:
-            logging.getLogger(__name__).error(
-                'siri RT service timeout, using base ' 'schedule (error: {}'.format(t)
-            )
+            logging.getLogger(__name__).error(f'siri RT service timeout, using base schedule (error: {t}')
             raise RealtimeProxyError('timeout')
         except Exception as e:
             logging.getLogger(__name__).exception('siri RT error, using base schedule')

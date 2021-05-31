@@ -151,7 +151,7 @@ def wait_and_complete_pt_journey(
 
     logger = logging.getLogger(__name__)
     # launch fallback direct path asynchronously
-    sub_request_id = "{}_fallback".format(request_id)
+    sub_request_id = f"{request_id}_fallback"
     with timed_logger(logger, 'compute_fallback', sub_request_id):
 
         compute_fallback(

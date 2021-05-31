@@ -69,11 +69,11 @@ class ResourceUri(StatedResource):
         if args.get("headsign"):
             f = "vehicle_journey.has_headsign({})".format(protect(args["headsign"]))
             if args.get("filter"):
-                args["filter"] = '({}) and {}'.format(args["filter"], f)
+                args["filter"] = f"({args['filter']}) and {f}"
             else:
                 args["filter"] = f
 
-        filter_list = ['({})'.format(args["filter"])] if args.get("filter") else []
+        filter_list = [f"({args['filter']})"] if args.get("filter") else []
         type_ = None
 
         for item in items:
@@ -83,7 +83,7 @@ class ResourceUri(StatedResource):
                         type_ = 'calendar'
                     else:
                         if item not in collections_to_resource_type:
-                            abort(400, message="unknown type: {}".format(item))
+                            abort(400, message=f"unknown type: {item}")
                         type_ = collections_to_resource_type[item]
                 else:
                     type_ = "coord"
@@ -107,7 +107,7 @@ class ResourceUri(StatedResource):
         # handle tags
         tags = args.get("tags[]", [])
         if tags:
-            filter_list.append('disruption.tags({})'.format(' ,'.join([protect(t) for t in tags])))
+            filter_list.append(f"disruption.tags({' ,'.join([protect(t) for t in tags])})")
         return " and ".join(filter_list)
 
 

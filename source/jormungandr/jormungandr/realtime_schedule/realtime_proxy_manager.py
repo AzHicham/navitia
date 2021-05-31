@@ -61,16 +61,14 @@ class RealtimeProxyManager(object):
 
             try:
                 if '.' not in cls:
-                    log.warning(
-                        'impossible to build rt proxy {}, wrongly formated class: {}'.format(proxy_id, cls)
-                    )
+                    log.warning(f'impossible to build rt proxy {proxy_id}, wrongly formated class: {cls}')
                     continue
 
                 module_path, name = cls.rsplit('.', 1)
                 module = import_module(module_path)
                 attr = getattr(module, name)
             except ImportError:
-                log.warning('impossible to build rt proxy {}, cannot find class: {}'.format(proxy_id, cls))
+                log.warning(f'impossible to build rt proxy {proxy_id}, cannot find class: {cls}')
                 continue
 
             try:
@@ -78,7 +76,7 @@ class RealtimeProxyManager(object):
                     id=proxy_id, object_id_tag=object_id_tag, instance=instance, **args
                 )  # all services must have an ID
             except TypeError as e:
-                log.warning('impossible to build rt proxy {}, wrong arguments: {}'.format(proxy_id, e))
+                log.warning(f'impossible to build rt proxy {proxy_id}, wrong arguments: {e}')
                 continue
 
             self.realtime_proxies[proxy_id] = rt_proxy

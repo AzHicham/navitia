@@ -84,7 +84,7 @@ class CommonCarParkProvider(AbstractParkingPlacesProvider):
     def _call_webservice(self, request_url):
         try:
             if self.api_key:
-                headers = {'Authorization': 'apiKey {}'.format(self.api_key)}
+                headers = {'Authorization': f'apiKey {self.api_key}'}
             else:
                 headers = None
             data = self.breaker.call(requests.get, url=request_url, headers=headers, timeout=self.timeout)
@@ -93,13 +93,13 @@ class CommonCarParkProvider(AbstractParkingPlacesProvider):
             return json_data
 
         except pybreaker.CircuitBreakerError as e:
-            self.log.error('{} service dead (error: {})'.format(self.provider_name, e))
+            self.log.error(f'{self.provider_name} service dead (error: {e})')
             self.record_call('failure', reason='circuit breaker open')
         except requests.Timeout as t:
-            self.log.error('{} service timeout (error: {})'.format(self.provider_name, t))
+            self.log.error(f'{self.provider_name} service timeout (error: {t})')
             self.record_call('failure', reason='timeout')
         except Exception as e:
-            self.log.exception('{} service error: {}'.format(self.provider_name, e))
+            self.log.exception(f'{self.provider_name} service error: {e}')
             self.record_call('failure', reason=str(e))
         return None
 
