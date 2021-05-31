@@ -36,7 +36,7 @@ import pytest
 import requests_mock
 
 
-def test_geocodejson_check_response(mock):
+def test_geocodejson_check_response():
     url = 'https://geocode.json'
     with requests_mock.Mocker() as m:
         m.get('https://geocode.json/features/my_method', status_code=42, text='{"msg": "this is a response"}')
