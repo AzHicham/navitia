@@ -54,7 +54,7 @@ class DepthArgument(CustomSchemaType):
     def __call__(self, value, name):
         conv_value = int(value)
         if conv_value > 3:
-            raise ValueError("The {} argument has to be <= 3, you gave : {}".format(name, value))
+            raise ValueError(f"The {name} argument has to be <= 3, you gave : {value}")
         return conv_value
 
     def schema(self):
@@ -65,7 +65,7 @@ class PositiveFloat(CustomSchemaType):
     def __call__(self, value, name):
         conv_value = float(value)
         if conv_value <= 0:
-            raise ValueError("The {} argument has to be > 0, you gave : {}".format(name, value))
+            raise ValueError(f"The {name} argument has to be > 0, you gave : {value}")
         return conv_value
 
     def schema(self):
@@ -109,8 +109,8 @@ class OptionValue(CustomSchemaType):
 class DescribedOptionValue(OptionValue):
     def __init__(self, optional_values):
         self.description = "Possible values:\n"
-        self.description += '\n'.join([" * '{}' - {}".format(k, v) for k, v in optional_values.items()])
-        super(DescribedOptionValue, self).__init__(optional_values.keys())
+        self.description += '\n'.join([f" * '{k}' - {v}" for k, v in list(optional_values.items())])
+        super(DescribedOptionValue, self).__init__(list(optional_values.keys()))
 
     def schema(self):
         ts = super(DescribedOptionValue, self).schema()
@@ -199,7 +199,7 @@ class UnsignedInteger(CustomSchemaType):
 
             return d
         except ValueError as e:
-            raise ValueError("Unable to evaluate, {}".format(e))
+            raise ValueError(f"Unable to evaluate, {e}")
 
     def schema(self):
         return TypeSchema(type=int, metadata={'minimum': 0})
@@ -214,7 +214,7 @@ class PositiveInteger(CustomSchemaType):
 
             return d
         except ValueError as e:
-            raise ValueError("Unable to evaluate, {}".format(e))
+            raise ValueError(f"Unable to evaluate, {e}")
 
     def schema(self):
         return TypeSchema(type=int, metadata={'minimum': 1})
@@ -242,7 +242,7 @@ class DateTimeFormat(CustomSchemaType):
 
             return d
         except ValueError as e:
-            raise ValueError("Unable to parse datetime, {}".format(e))
+            raise ValueError(f"Unable to parse datetime, {e}")
 
     def schema(self):
         return TypeSchema(type=str, metadata={'format': 'date-time'})

@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
+
 from sqlalchemy.dialects.postgresql.json import JSONB
 from navitiacommon.models import db, TimestampMixin
 from datetime import timedelta
@@ -56,7 +56,7 @@ class BssProvider(db.Model, TimestampMixin):  # type: ignore
         self.discarded = json['discarded'] if 'discarded' in json else self.discarded
 
     def __repr__(self):
-        return '<BssProvider %r>' % self.id
+        return f'<BssProvider {self.id!r}>'
 
     @classmethod
     def _not_discarded(cls):

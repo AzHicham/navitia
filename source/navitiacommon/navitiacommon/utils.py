@@ -151,7 +151,7 @@ def type_of_data(filename):
             try:
                 zipf = zipfile.ZipFile(filename)
             except Exception as e:
-                logging.exception('Corrupted source file  : {} error {}'.format(filename, e))
+                logging.exception(f'Corrupted source file  : {filename} error {e}')
                 raise
 
             pt_type = files_type(zipf.namelist())

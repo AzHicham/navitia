@@ -29,7 +29,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
 
 from sqlalchemy.dialects.postgresql.json import JSONB
 from navitiacommon.models import db, TimestampMixin
