@@ -1610,7 +1610,7 @@ class TravelerProfile(flask_restful.Resource):
 
         self.args = parser.parse_args()
 
-    def check_resources(f: Callable[[TravelerProfile, Any, Any], Any]):
+    def check_resources(f: Callable[['TravelerProfile', Any, Any], Any]):
         @wraps(f)
         def wrapper(*args, **kwds):
             tp = kwds.get('traveler_type')
