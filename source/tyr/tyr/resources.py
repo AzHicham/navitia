@@ -75,8 +75,7 @@ from werkzeug.exceptions import BadRequest
 import werkzeug
 import six
 from collections import deque
-from collections.abc import Callable
-from typing import Any
+from typing import Any, Callable
 
 
 class Api(flask_restful.Resource):
