@@ -36,7 +36,7 @@ jobs:
 
     strategy:
         matrix:
-            docker_image: [navitia/debian8_dev, navitia/debian9_dev, navitia/debian10_dev]
+            docker_image: [azhicham/navitia]
 
     container:
         image: ${{matrix.docker_image}}
@@ -54,10 +54,10 @@ jobs:
     - name: configure for Release
       run: cmake -DSTRIP_SYMBOLS=ON source
     - name: run
-      run: make -j $(nproc)
+      run:  make -j $(nproc)
     - name: Tests python3
       run: |
-        apt update && apt install -y libpq-dev python3.8 python3.8-dev python3.8-distutils python3.8-venv python3-pip clang-format-6.0 git 2to3 protobuf-compiler
+        apt update && apt install -y libpq-dev git
         pip3 install virtualenv -U
         virtualenv -p python3.8 navitia_py3
         . navitia_py3/bin/activate
@@ -74,7 +74,6 @@ jobs:
     - name: docker_test for python3
       run: |
         . navitia_py3/bin/activate
-        python -V
         pip3 install -r source/tyr/requirements_dev.txt
         pip3 install -r source/sql/requirements.txt
         export NAVITIA_CHAOS_DUMP_PATH=$(echo $GITHUB_WORKSPACE/source/tests/chaos/chaos_loading.sql.gz | sed -e 's#__w#home/runner/work#')
