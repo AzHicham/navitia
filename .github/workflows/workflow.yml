@@ -65,7 +65,7 @@ jobs:
         pip3 install -r source/jormungandr/requirements_dev.txt
         export JORMUNGANDR_BROKER_URL='amqp://guest:guest@rabbitmq:5672//'
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
-        ctest --output-on-failure
+        ctest --output-on-failure --verbose
     - name: remove useless tests
       run: |
         rm -rf tests/mock_kraken kraken/tests ed/tests fare/tests routing/tests calendar/tests
