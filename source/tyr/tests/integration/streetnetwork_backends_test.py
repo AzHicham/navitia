@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division
 
 from tyr import app
 from navitiacommon import models
@@ -206,14 +205,14 @@ def test_streetnetwork_backend_schema():
 
     def send_and_check(backend_id, json_data, missing_param):
         resp, status = api_put(
-            url='v0/streetnetwork_backends/{}'.format(backend_id),
+            url=f'v0/streetnetwork_backends/{backend_id}',
             data=ujson.dumps(json_data),
             content_type='application/json',
             check=False,
         )
         assert status == 400
         assert 'message' in resp
-        assert resp['message'] == "'{}' is a required property".format(missing_param)
+        assert resp['message'] == f"'{missing_param}' is a required property"
         assert 'status' in resp
         assert resp['status'] == "invalid data"
 

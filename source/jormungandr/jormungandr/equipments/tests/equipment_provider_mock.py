@@ -27,8 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
-
 
 class EquipmentsProviderMock(object):
     def __init__(self, url, timeout=2, **kwargs):

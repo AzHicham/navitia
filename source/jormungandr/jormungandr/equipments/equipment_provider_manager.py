@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from importlib import import_module
 from itertools import chain
@@ -64,7 +63,7 @@ class EquipmentProviderManager(object):
             ):
                 self._equipment_providers_legacy[key] = self._init_class(provider['class'], provider['args'])
             else:
-                self.logger.error('impossible to create provider with key: {}'.format(key))
+                self.logger.error(f'impossible to create provider with key: {key}')
 
     def _init_class(self, cls, arguments):
         """
@@ -75,17 +74,17 @@ class EquipmentProviderManager(object):
         """
         try:
             if '.' not in cls:
-                self.logger.warning('impossible to build, wrongly formated class: {}'.format(cls))
+                self.logger.warning(f'impossible to build, wrongly formated class: {cls}')
 
             module_path, name = cls.rsplit('.', 1)
             module = import_module(module_path)
             attr = getattr(module, name)
             return attr(**arguments)
         except ImportError:
-            self.logger.warning('impossible to build, cannot find class: {}'.format(cls))
+            self.logger.warning(f'impossible to build, cannot find class: {cls}')
 
     def _update_provider(self, provider):
-        self.logger.info('updating/adding {} equipment provider'.format(provider.id))
+        self.logger.info(f'updating/adding {provider.id} equipment provider')
         try:
             self._equipment_providers[provider.id] = self._init_class(provider.klass, provider.args)
             self._equipment_providers_last_update[provider.id] = provider.last_update()
@@ -149,7 +148,7 @@ class EquipmentProviderManager(object):
 
         stop_points = get_from_to_stop_points_of_journeys(response.journeys)
 
-        for provider in self._get_providers().values():
+        for provider in list(self._get_providers().values()):
             provider.get_informations_for_journeys(stop_points)
 
         return response
@@ -162,7 +161,7 @@ class EquipmentProviderManager(object):
         """
         stop_area_equipments = (sae for er in response.equipment_reports for sae in er.stop_area_equipments)
 
-        for provider in self._get_providers().values():
+        for provider in list(self._get_providers().values()):
             provider.get_informations_for_equipment_reports(stop_area_equipments)
 
         return response

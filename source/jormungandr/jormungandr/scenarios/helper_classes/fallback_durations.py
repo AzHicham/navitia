@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
 
 import jormungandr.street_network.utils
 from navitiacommon import response_pb2
@@ -336,7 +335,7 @@ class FallbackDurationsPool(dict):
         return f.wait_and_get() if f else None
 
     def is_empty(self):
-        return next((False for _, v in self._value.items() if v.wait_and_get()), True)
+        return next((False for _, v in list(self._value.items()) if v.wait_and_get()), True)
 
     def get_best_fallback_durations(self, main_mode):
         main_fb = self.wait_and_get(main_mode)

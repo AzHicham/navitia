@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr import app, cache, memory_cache
 from navitiacommon import models
 from navitiacommon.default_traveler_profile_params import (
@@ -159,5 +159,5 @@ class TravelerProfile(object):
 
 default_traveler_profiles = {}  # type: Dict[Text, TravelerProfile]
 
-for (traveler_type_id, params) in default_traveler_profile_params.items():
+for (traveler_type_id, params) in list(default_traveler_profile_params.items()):
     default_traveler_profiles[traveler_type_id] = TravelerProfile(is_from_db=False, **params)  # type: ignore

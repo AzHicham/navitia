@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-from __future__ import absolute_import
+
 import os
 import json
 from flask_restful.inputs import boolean
@@ -80,7 +80,7 @@ CAR_PARK_PROVIDER = []
 # Equipment details service configuration
 EQUIPMENT_DETAILS_PROVIDERS = []
 
-for key, value in os.environ.items():
+for key, value in list(os.environ.items()):
     if key.startswith('JORMUNGANDR_BSS_PROVIDER_'):
         BSS_PROVIDER.append(json.loads(value))
     elif key.startswith('JORMUNGANDR_CAR_PARK_PROVIDER_'):

@@ -29,7 +29,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 try:
     from typing import Dict, Text, Deque, List, Tuple
@@ -51,7 +50,7 @@ from navitiacommon import models
 from importlib import import_module
 from jormungandr import cache, memory_cache, app, global_autocomplete
 from shapely import wkt, geometry
-from shapely.geos import PredicateError, ReadingError, TopologicalError
+from shapely.errors import PredicateError, TopologicalError, ReadingError
 from flask import g
 import flask
 import pybreaker
@@ -224,12 +223,12 @@ class Instance(object):
         backend = global_autocomplete.get(self.autocomplete_backend)
         if backend is None:
             raise RuntimeError(
-                'impossible to find autocomplete {} for instance {}'.format(self.autocomplete_backend, self.name)
+                f'impossible to find autocomplete {self.autocomplete_backend} for instance {self.name}'
             )
         return backend
 
     def stop_point_fallbacks(self):
-        return [a for a in global_autocomplete.values() if a.is_handling_stop_points()]
+        return [a for a in list(global_autocomplete.values()) if a.is_handling_stop_points()]
 
     def get_models(self):
         if self.name not in g.instances_model:
@@ -237,7 +236,7 @@ class Instance(object):
         return g.instances_model[self.name]
 
     def __repr__(self):
-        return 'instance.{}'.format(self.name)
+        return f'instance.{self.name}'
 
     @memory_cache.memoize(app.config[str('MEMORY_CACHE_CONFIGURATION')].get(str('TIMEOUT_PARAMS'), 30))
     @cache.memoize(app.config[str('CACHE_CONFIGURATION')].get(str('TIMEOUT_PARAMS'), 300))
@@ -262,10 +261,10 @@ class Instance(object):
             try:
                 # for the sake of backwards compatibility... some users may still be using experimental...
                 override_scenario = replace_experimental_scenario(override_scenario)
-                module = import_module('jormungandr.scenarios.{}'.format(override_scenario))
+                module = import_module(f'jormungandr.scenarios.{override_scenario}')
             except ImportError:
                 logger.exception('scenario not found')
-                abort(404, message='invalid scenario: {}'.format(override_scenario))
+                abort(404, message=f'invalid scenario: {override_scenario}')
             scenario = module.Scenario()
             # Save scenario_name and scenario
             self._scenario_name = override_scenario
@@ -283,7 +282,7 @@ class Instance(object):
             logger = logging.getLogger(__name__)
             logger.info('loading of scenario %s for instance %s', scenario_name, self.name)
             self._scenario_name = scenario_name
-            module = import_module('jormungandr.scenarios.{}'.format(scenario_name))
+            module = import_module(f'jormungandr.scenarios.{scenario_name}')
             self._scenario = module.Scenario()
 
         # we save the used scenario for future use
@@ -563,7 +562,7 @@ class Instance(object):
         d = copy.deepcopy(get_value_or_default('max_nb_crowfly_by_mode', instance_db, self.name))
         # In case we add a new max_nb_crowfly for an other mode than
         # the ones already present in the database.
-        for mode, duration in default_values.max_nb_crowfly_by_mode.items():
+        for mode, duration in list(default_values.max_nb_crowfly_by_mode.items()):
             if mode not in d:
                 d[mode] = duration
 
@@ -783,7 +782,7 @@ class Instance(object):
         req = request_pb2.Request()
         req.requested_api = type_pb2.place_code
         if type_ not in type_to_pttype:
-            raise ValueError("Can't call pt_code API with type: {}".format(type_))
+            raise ValueError(f"Can't call pt_code API with type: {type_}")
         req.place_code.type = type_to_pttype[type_]
         req.place_code.type_code = "external_code"
         req.place_code.code = id_
@@ -860,7 +859,7 @@ class Instance(object):
         else:
             # We get the name of the column in the database corresponding to the mode used in the request
             # And we get the value of this column for this instance
-            column_in_db = "street_network_{}".format(mode)
+            column_in_db = f"street_network_{mode}"
             streetnetwork_backend_conf = getattr(self, column_in_db)
             return self._streetnetwork_backend_manager.get_street_network_db(self, streetnetwork_backend_conf)
 
@@ -888,5 +887,5 @@ class Instance(object):
             return self.autocomplete
         autocomplete = global_autocomplete.get(requested_autocomplete)
         if not autocomplete:
-            raise TechnicalError('autocomplete {} not available'.format(requested_autocomplete))
+            raise TechnicalError(f'autocomplete {requested_autocomplete} not available')
         return autocomplete

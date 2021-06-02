@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 
 from jormungandr.interfaces.v1.make_links import create_external_link
 from jormungandr._version import __version__
@@ -99,7 +99,7 @@ class TechnicalStatus(ModuleResource):
                 resp_dict = {
                     "status": "dead",
                     "realtime_proxies": [],
-                    "error": {"code": "dead_socket", "value": "The region {} is dead".format(key_region)},
+                    "error": {"code": "dead_socket", "value": f"The region {key_region} is dead"},
                 }
             resp_dict['region_id'] = key_region
             response['regions'].append(resp_dict)

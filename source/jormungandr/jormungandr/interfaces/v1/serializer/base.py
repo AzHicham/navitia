@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr.interfaces.v1.serializer import jsonschema
 import serpy
 import six
@@ -328,7 +328,7 @@ class DoubleToStringField(Field):
 
     def to_value(self, value):
         # we don't want to loose precision while converting a double to string
-        return '%.16g' % value
+        return f'{value:.16g}'
 
 
 class DescribedField(LambdaField):

@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 import pytz
 from flask import g
@@ -51,7 +51,7 @@ def set_request_instance_timezone(instance):
         raise RegionNotFound()
 
     if not instance.timezone:
-        logger.warning("region {} has no timezone".format(instance.name))
+        logger.warning(f"region {instance.name} has no timezone")
         try:
             g.timezone = None
         except RuntimeError:
@@ -61,9 +61,7 @@ def set_request_instance_timezone(instance):
     tz = pytz.timezone(instance.timezone)
 
     if not tz:
-        logger.warning(
-            "impossible to find timezone: '{}' for region {}".format(instance.timezone, instance.name)
-        )
+        logger.warning(f"impossible to find timezone: '{instance.timezone}' for region {instance.name}")
 
     try:
         g.timezone = tz

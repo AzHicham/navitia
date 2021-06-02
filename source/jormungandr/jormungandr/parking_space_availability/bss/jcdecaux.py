@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 
 import logging
 import pybreaker
@@ -57,7 +57,7 @@ class JcdecauxProvider(CommonBssProvider):
         operators={'jcdecaux'},
         timeout=10,
         feed_publisher=DEFAULT_JCDECAUX_FEED_PUBLISHER,
-        **kwargs
+        **kwargs,
     ):
         self.network = network.lower()
         self.contract = contract
@@ -89,10 +89,10 @@ class JcdecauxProvider(CommonBssProvider):
                 stands[str(s['number'])] = s
             return stands
         except pybreaker.CircuitBreakerError as e:
-            logging.getLogger(__name__).error('JCDecaux service dead (error: {})'.format(e))
+            logging.getLogger(__name__).error(f'JCDecaux service dead (error: {e})')
             raise BssProxyError('circuit breaker open')
         except requests.Timeout as t:
-            logging.getLogger(__name__).error('JCDecaux service timeout (error: {})'.format(t))
+            logging.getLogger(__name__).error(f'JCDecaux service timeout (error: {t})')
             raise BssProxyError('timeout')
         except Exception as e:
             logging.getLogger(__name__).exception('JCDecaux error : {}'.format(str(e)))
@@ -121,4 +121,4 @@ class JcdecauxProvider(CommonBssProvider):
 
     def __repr__(self):
         # TODO: make this shit python 3 compatible
-        return ('jcdecaux-{}-{}'.format(self.network, self.contract)).encode('utf-8', 'backslashreplace')
+        return (f'jcdecaux-{self.network}-{self.contract}').encode('utf-8', 'backslashreplace')

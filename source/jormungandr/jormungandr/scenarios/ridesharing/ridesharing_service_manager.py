@@ -101,17 +101,17 @@ class RidesharingServiceManager(object):
         """
         try:
             if '.' not in klass:
-                self.logger.warning('impossible to build, wrongly formated class: {}'.format(klass))
+                self.logger.warning(f'impossible to build, wrongly formated class: {klass}')
 
             module_path, name = klass.rsplit('.', 1)
             module = import_module(module_path)
             attr = getattr(module, name)
             return attr(**arguments)
         except ImportError:
-            self.logger.warning('impossible to build, cannot find class: {}'.format(klass))
+            self.logger.warning(f'impossible to build, cannot find class: {klass}')
 
     def _update_ridesharing_service(self, service):
-        self.logger.info('updating/adding {} ridesharing service'.format(service.id))
+        self.logger.info(f'updating/adding {service.id} ridesharing service')
         try:
             self._ridesharing_services[service.id] = self._init_class(service.klass, service.args)
             self._ridesharing_services_last_update[service.id] = service.last_update()
@@ -262,8 +262,8 @@ class RidesharingServiceManager(object):
     def build_ridesharing_journeys(self, from_pt_obj, to_pt_obj, period_extremity, instance_params):
         from_coord = get_pt_object_coord(from_pt_obj)
         to_coord = get_pt_object_coord(to_pt_obj)
-        from_str = "{},{}".format(from_coord.lat, from_coord.lon)
-        to_str = "{},{}".format(to_coord.lat, to_coord.lon)
+        from_str = f"{from_coord.lat},{from_coord.lon}"
+        to_str = f"{to_coord.lat},{to_coord.lon}"
         try:
             rsjs, fps = self.get_ridesharing_journeys_with_feed_publishers(
                 from_str, to_str, period_extremity, instance_params
@@ -284,10 +284,10 @@ class RidesharingServiceManager(object):
         for rsj in rsjs:
             pb_rsj = response_pb2.Journey()
             pb_rsj_pickup = self.instance.georef.place(
-                "{};{}".format(rsj.pickup_place.lon, rsj.pickup_place.lat), request_id
+                f"{rsj.pickup_place.lon};{rsj.pickup_place.lat}", request_id
             )
             pb_rsj_dropoff = self.instance.georef.place(
-                "{};{}".format(rsj.dropoff_place.lon, rsj.dropoff_place.lat), request_id
+                f"{rsj.dropoff_place.lon};{rsj.dropoff_place.lat}", request_id
             )
             pickup_coord = get_pt_object_coord(pb_rsj_pickup)
             dropoff_coord = get_pt_object_coord(pb_rsj_dropoff)
@@ -301,7 +301,7 @@ class RidesharingServiceManager(object):
 
             # start teleport section
             start_teleport_section = pb_rsj.sections.add()
-            start_teleport_section.id = "section_{}".format(six.text_type(generate_id()))
+            start_teleport_section.id = f"section_{six.text_type(generate_id())}"
             start_teleport_section.street_network.mode = response_pb2.Walking
             start_teleport_section.origin.CopyFrom(from_pt_obj)
             start_teleport_section.destination.CopyFrom(pb_rsj_pickup)
@@ -341,7 +341,7 @@ class RidesharingServiceManager(object):
 
             # real ridesharing section
             rs_section = pb_rsj.sections.add()
-            rs_section.id = "section_{}".format(six.text_type(generate_id()))
+            rs_section.id = f"section_{six.text_type(generate_id())}"
             rs_section.type = response_pb2.RIDESHARING
             rs_section.origin.CopyFrom(pb_rsj_pickup)
             rs_section.destination.CopyFrom(pb_rsj_dropoff)
@@ -394,7 +394,7 @@ class RidesharingServiceManager(object):
 
             # end teleport section
             end_teleport_section = pb_rsj.sections.add()
-            end_teleport_section.id = "section_{}".format(six.text_type(generate_id()))
+            end_teleport_section.id = f"section_{six.text_type(generate_id())}"
             end_teleport_section.street_network.mode = response_pb2.Walking
             end_teleport_section.origin.CopyFrom(pb_rsj_dropoff)
             end_teleport_section.destination.CopyFrom(to_pt_obj)
@@ -435,10 +435,10 @@ class RidesharingServiceManager(object):
 
             # create ticket associated
             ticket = response_pb2.Ticket()
-            ticket.id = "ticket_{}".format(six.text_type(generate_id()))
-            ticket.name = "ridesharing_price_{}".format(ticket.id)
+            ticket.id = f"ticket_{six.text_type(generate_id())}"
+            ticket.name = f"ridesharing_price_{ticket.id}"
             ticket.found = True
-            ticket.comment = "Ridesharing price for section {}".format(rs_section.id)
+            ticket.comment = f"Ridesharing price for section {rs_section.id}"
             ticket.section_id.extend([rs_section.id])
             # also add fare to journey
             ticket.cost.value = rsj.price

@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from importlib import import_module
 import logging
 import datetime
@@ -61,13 +61,11 @@ class ExternalServiceManager(object):
             try:
                 service = utils.create_object(config)
             except KeyError as e:
-                self.logger.error('Impossible to create external service with missing key: {}'.format(str(e)))
-                raise KeyError('Impossible to create external service with missing key: {}'.format(str(e)))
+                self.logger.error(f'Impossible to create external service with missing key: {str(e)}')
+                raise KeyError(f'Impossible to create external service with missing key: {str(e)}')
             except Exception as e:
-                self.logger.error('Impossible to create external service with wrong class: {}'.format(str(e)))
-                raise ConfigException(
-                    'Impossible to create external service with wrong class: {}'.format(str(e))
-                )
+                self.logger.error(f'Impossible to create external service with wrong class: {str(e)}')
+                raise ConfigException(f'Impossible to create external service with wrong class: {str(e)}')
 
             self._external_services_legacy.setdefault(config['navitia_service'], []).append(service)
 
@@ -80,14 +78,14 @@ class ExternalServiceManager(object):
         """
         try:
             if '.' not in cls:
-                self.logger.warning('impossible to build, wrongly formated class: {}'.format(cls))
+                self.logger.warning(f'impossible to build, wrongly formated class: {cls}')
 
             module_path, name = cls.rsplit('.', 1)
             module = import_module(module_path)
             attr = getattr(module, name)
             return attr(**arguments)
         except ImportError:
-            self.logger.warning('impossible to build, cannot find class: {}'.format(cls))
+            self.logger.warning(f'impossible to build, cannot find class: {cls}')
 
     def _need_update(self, services):
         for service in services:
@@ -133,7 +131,7 @@ class ExternalServiceManager(object):
         self._external_services_legacy = self._external_services_from_db
 
     def _update_external_service(self, service):
-        self.logger.info('adding {} external service'.format(service.id))
+        self.logger.info(f'adding {service.id} external service')
         try:
             service_obj = self._init_class(service.klass, service.args)
             if service_obj not in self._external_services_from_db.get(service.navitia_service, []):

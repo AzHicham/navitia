@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr.tests.utils_test import user_set, FakeUser
 from navitiacommon import models
 import requests_mock
@@ -107,15 +107,15 @@ class FakeUserAuth(FakeUser):
 
     def _get_all_explicitly_authorized_instances(self):
         """mocked to avoid using the db"""
-        authorized_instance_names = [i for i, a in authorizations[self.login].items() if a['ALL']]
+        authorized_instance_names = [i for i, a in list(authorizations[self.login].items()) if a['ALL']]
         return [mock_instances[n] for n in authorized_instance_names]
 
     def _get_all_free_instances(self):
         """mocked to avoid using the db"""
-        return [i for i in mock_instances.values() if i.is_free]
+        return [i for i in list(mock_instances.values()) if i.is_free]
 
     def _get_all_instances(self):
-        return mock_instances.values()
+        return list(mock_instances.values())
 
 
 multipolygon = (
@@ -449,9 +449,7 @@ class TestOverlappingAuthentication(AbstractTestAuthentication):
             assert status == 403
 
             response, status = self.query_no_assert(
-                '/v1/journeys?from={from_coord}&to={to_coord}&datetime={d}'.format(
-                    from_coord=s_coord, to_coord=r_coord, d='20120614T08'
-                )
+                f'/v1/journeys?from={s_coord}&to={r_coord}&datetime=20120614T08'
             )
             assert 'error' in response
             assert response['error']['id'] == "no_origin_nor_destination"
@@ -505,7 +503,7 @@ class TestOverlappingAuthentication(AbstractTestAuthentication):
         Test coverage containing coordinates, bobitto user authorized
         """
         with user_set(app, FakeUserAuth, 'bobitto'):
-            response = self.query('v1/coverage/{coords}'.format(coords=s_coord))
+            response = self.query(f'v1/coverage/{s_coord}')
 
             r = get_not_null(response, 'regions')
 
@@ -515,7 +513,7 @@ class TestOverlappingAuthentication(AbstractTestAuthentication):
         """
         Test coverage containing coordinates, without user
         """
-        response_obj = self.app.get('/v1/coverage/{coords}'.format(coords=s_coord))
+        response_obj = self.app.get(f'/v1/coverage/{s_coord}')
         assert response_obj.status_code == 401
         assert 'WWW-Authenticate' in response_obj.headers
 
@@ -525,7 +523,7 @@ class TestOverlappingAuthentication(AbstractTestAuthentication):
         """
         with user_set(app, FakeUserAuth, 'bob'):
             # Coverage by coords
-            response = self.app.get('/v1/coverage/{coords}'.format(coords=s_coord))
+            response = self.app.get(f'/v1/coverage/{s_coord}')
             assert response.status_code == 200
 
     def test_unkown_region_coords(self):
@@ -545,13 +543,11 @@ class TestOverlappingAuthentication(AbstractTestAuthentication):
         """
         with user_set(app, FakeUserAuth, 'bobitto'):
             # By coords: All stops of main_routing_test coverage
-            response = self.query('v1/coverage/{coords}/stop_points'.format(coords=s_coord))
+            response = self.query(f'v1/coverage/{s_coord}/stop_points')
             stop_points = get_not_null(response, 'stop_points')
             assert len(stop_points) == 4
 
-            response = self.query(
-                'v1/coverage/{coords}/stop_points/{id}'.format(coords=s_coord, id='stop_point:stopB')
-            )
+            response = self.query(f"v1/coverage/{s_coord}/stop_points/stop_point:stopB")
             stop_points = get_not_null(response, 'stop_points')
             assert len(stop_points) == 1
             assert stop_points[0]['id'] == 'stop_point:stopB'

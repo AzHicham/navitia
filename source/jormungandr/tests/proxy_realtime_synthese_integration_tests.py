@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import mock
 from jormungandr.tests.utils_test import MockRequests
 from tests.check_utils import get_not_null
@@ -47,7 +47,7 @@ MOCKED_PROXY_CONF = [
 
 
 def _get_schedule(sched, sp_uri, route_uri):
-    """ small helper that extract the information from a route point stop schedule """
+    """small helper that extract the information from a route point stop schedule"""
     return [
         {'rt': r['data_freshness'] == 'realtime', 'dt': r['date_time']}
         for r in next(

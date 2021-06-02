@@ -27,7 +27,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import
+
 from jormungandr.street_network.geovelo import Geovelo
 from navitiacommon import type_pb2, response_pb2
 import pybreaker
@@ -389,13 +389,13 @@ def status_test():
     geovelo = Geovelo(
         instance=None,
         service_url='http://bob.com',
-        id=u"tata-é$~#@\"*!'`§èû",
+        id="tata-é$~#@\"*!'`§èû",
         modes=["walking", "bike", "car"],
         timeout=56,
     )
     status = geovelo.status()
     assert len(status) == 5
-    assert status['id'] == u'tata-é$~#@"*!\'`§èû'
+    assert status['id'] == 'tata-é$~#@"*!\'`§èû'
     assert status['class'] == "Geovelo"
     assert status['modes'] == ["walking", "bike", "car"]
     assert status['timeout'] == 56

@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 import logging.config
 import os
@@ -87,7 +87,9 @@ cache = Cache(app, config=app.config[str('CACHE_CONFIGURATION')])  # type: Cache
 memory_cache = Cache(app, config=app.config[str('MEMORY_CACHE_CONFIGURATION')])  # type: Cache
 
 if app.config[str('AUTOCOMPLETE_SYSTEMS')] is not None:
-    global_autocomplete = {k: utils.create_object(v) for k, v in app.config[str('AUTOCOMPLETE_SYSTEMS')].items()}
+    global_autocomplete = {
+        k: utils.create_object(v) for k, v in list(app.config[str('AUTOCOMPLETE_SYSTEMS')].items())
+    }
 else:
     from jormungandr.autocomplete.kraken import Kraken
 

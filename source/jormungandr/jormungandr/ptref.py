@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from navitiacommon import request_pb2, type_pb2
 import logging
 
@@ -62,24 +62,18 @@ class PtRef(object):
         req.ptref.count = 1
         req.ptref.start_page = 0
         req.ptref.depth = 1
-        req.ptref.filter = 'stop_point.has_code("{code_key}", "{code_value}")'.format(
-            code_key=code_key, code_value=code_value
-        )
+        req.ptref.filter = f'stop_point.has_code("{code_key}", "{code_value}")'
         if line_uri:
-            req.ptref.filter = req.ptref.filter + ' and line.uri="{}"'.format(line_uri)
+            req.ptref.filter = req.ptref.filter + f' and line.uri="{line_uri}"'
 
         result = self.instance.send_and_receive(req)
         if len(result.stop_points) == 0:
-            logging.getLogger(__name__).info(
-                'PtRef, Unable to find stop_point with filter {}'.format(req.ptref.filter)
-            )
+            logging.getLogger(__name__).info(f'PtRef, Unable to find stop_point with filter {req.ptref.filter}')
             return None
         if len(result.stop_points) == 1:
             return result.stop_points[0]
 
-        logging.getLogger(__name__).info(
-            'PtRef, Multiple stop_points found with filter {}'.format(req.ptref.filter)
-        )
+        logging.getLogger(__name__).info(f'PtRef, Multiple stop_points found with filter {req.ptref.filter}')
         return None
 
     def get_objs(self, pb_type, filter=''):
@@ -121,7 +115,7 @@ class PtRef(object):
         result = self.instance.send_and_receive(req)
 
         if result.HasField('error'):
-            raise PTRefException('impossible to find matching routes because {}'.format(result.error.message))
+            raise PTRefException(f'impossible to find matching routes because {result.error.message}')
 
         return result.routes
 

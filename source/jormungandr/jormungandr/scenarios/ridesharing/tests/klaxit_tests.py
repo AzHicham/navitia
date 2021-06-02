@@ -29,8 +29,6 @@
 # www.navitia.io
 
 
-from __future__ import absolute_import, print_function, unicode_literals, division
-
 from jormungandr.scenarios.ridesharing.klaxit import Klaxit, DEFAULT_KLAXIT_FEED_PUBLISHER
 from jormungandr.scenarios.ridesharing.ridesharing_service_manager import RidesharingServiceManager
 from jormungandr.scenarios.ridesharing.ridesharing_service import RsFeedPublisher, RidesharingServiceError
@@ -247,6 +245,6 @@ def test_request_journeys_should_raise_on_non_200():
                 DummyInstance(),
             )
 
-        exception_params = e.value.get_params().values()
+        exception_params = list(e.value.get_params().values())
         assert 401 in exception_params
         assert '{this is the http response}' in exception_params

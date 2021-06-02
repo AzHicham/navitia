@@ -74,10 +74,10 @@ def upgrade():
     # We create the keys for all the modes
     for mode in list_modes:
         op.create_foreign_key(
-            "fk_instance_street_network_backend_{}".format(mode),
+            f"fk_instance_street_network_backend_{mode}",
             "instance",
             "streetnetwork_backend",
-            ["street_network_{}".format(mode)],
+            [f"street_network_{mode}"],
             ["id"],
         )
 
@@ -85,7 +85,7 @@ def upgrade():
 def downgrade():
     # We drop the keys for all the modes
     for mode in list_modes:
-        op.drop_constraint("fk_instance_street_network_backend_{}".format(mode), 'instance', type_='foreignkey')
+        op.drop_constraint(f"fk_instance_street_network_backend_{mode}", 'instance', type_='foreignkey')
 
     op.drop_column('instance', 'street_network_taxi')
     op.drop_column('instance', 'street_network_ridesharing')

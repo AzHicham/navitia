@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from collections import defaultdict
 
 from flask_restful import reqparse, Resource
@@ -60,7 +60,7 @@ class ResourceUtc(object):
             tz_name = instance.timezone  # TODO store directly the tz?
 
             if not tz_name:
-                logging.Logger(__name__).warning("unknown timezone for region {}".format(self.region))
+                logging.Logger(__name__).warning(f"unknown timezone for region {self.region}")
                 return None
             self._tz = (pytz.timezone(tz_name),)
         return self._tz[0]

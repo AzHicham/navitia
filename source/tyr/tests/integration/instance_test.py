@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division
+
 from tests.check_utils import api_get, api_post, api_delete, api_put, _dt
 from tests.integration.equipment_providers_test import default_equipments_config
 import json
@@ -46,7 +46,7 @@ def create_instance():
 
 
 def check_traveler_profile(profile, params):
-    for key, param in params.items():
+    for key, param in list(params.items()):
         assert profile[key] == param
 
 
@@ -84,7 +84,7 @@ def test_get_instance(create_instance):
     assert len(resp) == 1
     assert resp[0]['name'] == 'fr'
     assert resp[0]['id'] == create_instance
-    resp = api_get('/v0/instances/{}'.format(create_instance))
+    resp = api_get(f'/v0/instances/{create_instance}')
     assert len(resp) == 1
     assert resp[0]['name'] == 'fr'
     assert resp[0]['id'] == create_instance
@@ -161,19 +161,17 @@ def test_update_instances(create_instance):
     }
 
     resp = api_put('/v0/instances/fr', data=json.dumps(params), content_type='application/json')
-    for key, param in params.items():
+    for key, param in list(params.items()):
         # Keys containing "street_network_" are urls
         if "street_network_" in key:
-            assert resp[key] == "http://localhost/v0/streetnetwork_backends/{}".format(param)
+            assert resp[key] == f"http://localhost/v0/streetnetwork_backends/{param}"
         else:
             assert resp[key] == param
 
-    resp = api_put(
-        '/v0/instances/{}'.format(create_instance), data=json.dumps(params), content_type='application/json'
-    )
-    for key, param in params.items():
+    resp = api_put(f'/v0/instances/{create_instance}', data=json.dumps(params), content_type='application/json')
+    for key, param in list(params.items()):
         if "street_network_" in key:
-            assert resp[key] == "http://localhost/v0/streetnetwork_backends/{}".format(param)
+            assert resp[key] == f"http://localhost/v0/streetnetwork_backends/{param}"
         else:
             assert resp[key] == param
 
@@ -193,37 +191,27 @@ def test_update_instances(create_instance):
 
 def test_update_instances_is_free(create_instance):
     params = {"is_free": True}
-    resp = api_put(
-        '/v0/instances/{}'.format(create_instance), data=json.dumps(params), content_type='application/json'
-    )
+    resp = api_put(f'/v0/instances/{create_instance}', data=json.dumps(params), content_type='application/json')
     assert resp['is_free'] == True
     assert resp['is_open_data'] == False
 
     params = {"is_free": False}
-    resp = api_put(
-        '/v0/instances/{}'.format(create_instance), data=json.dumps(params), content_type='application/json'
-    )
+    resp = api_put(f'/v0/instances/{create_instance}', data=json.dumps(params), content_type='application/json')
     assert resp['is_free'] == False
     assert resp['is_open_data'] == False
 
     params = {"is_open_data": True}
-    resp = api_put(
-        '/v0/instances/{}'.format(create_instance), data=json.dumps(params), content_type='application/json'
-    )
+    resp = api_put(f'/v0/instances/{create_instance}', data=json.dumps(params), content_type='application/json')
     assert resp['is_free'] == False
     assert resp['is_open_data'] == True
 
     params = {"is_open_data": False}
-    resp = api_put(
-        '/v0/instances/{}'.format(create_instance), data=json.dumps(params), content_type='application/json'
-    )
+    resp = api_put(f'/v0/instances/{create_instance}', data=json.dumps(params), content_type='application/json')
     assert resp['is_free'] == False
     assert resp['is_open_data'] == False
 
     params = {"is_open_data": True, 'is_free': True}
-    resp = api_put(
-        '/v0/instances/{}'.format(create_instance), data=json.dumps(params), content_type='application/json'
-    )
+    resp = api_put(f'/v0/instances/{create_instance}', data=json.dumps(params), content_type='application/json')
     assert resp['is_free'] == True
     assert resp['is_open_data'] == True
 
@@ -236,7 +224,7 @@ def test_update_instances_is_free(create_instance):
 
 
 def test_delete_instance_by_id(create_instance):
-    resp = api_delete('/v0/instances/{}'.format(create_instance))
+    resp = api_delete(f'/v0/instances/{create_instance}')
     assert resp['id'] == create_instance
     assert resp['discarded'] == True
 
@@ -245,11 +233,11 @@ def test_delete_instance_by_id(create_instance):
     assert resp == []
     resp = api_get('/v0/instances/fr')
     assert resp == []
-    resp = api_get('/v0/instances/{}'.format(create_instance))
+    resp = api_get(f'/v0/instances/{create_instance}')
     assert resp == []
 
     # delete by id is idempotent
-    resp, status = api_delete('/v0/instances/{}'.format(create_instance), check=False)
+    resp, status = api_delete(f'/v0/instances/{create_instance}', check=False)
     assert status == 200
 
 
@@ -465,11 +453,11 @@ def test_update_max_mode_direct_path_duration(create_instance):
         'max_ridesharing_direct_path_duration': 4456,
     }
     resp = api_put('/v0/instances/fr', data=json.dumps(params), content_type='application/json')
-    for key in params.keys():
+    for key in list(params.keys()):
         assert resp[key] == params[key]
 
     resp = api_get('/v0/instances/fr')
-    for key in params.keys():
+    for key in list(params.keys()):
         assert resp[0][key] == params[key]
 
 

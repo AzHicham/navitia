@@ -27,7 +27,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, division
+
 import datetime
 import mock
 import requests_mock
@@ -307,13 +307,13 @@ def get_passages_stop_time_with_is_realtime_test():
 
 def get_next_passage_for_route_point_with_requests_response_model_test():
     '''
-        We test a call on Timeo based on a real requests' response model object.
+    We test a call on Timeo based on a real requests' response model object.
 
-        requests.models.Response() behaves differently from our mock_response
-        as a boolean cast is performed on request.models.Response() to return True
-        if the http status code is less than 400.
+    requests.models.Response() behaves differently from our mock_response
+    as a boolean cast is performed on request.models.Response() to return True
+    if the http status code is less than 400.
 
-        Hence a Timeo request with a 404 response should raise an error !
+    Hence a Timeo request with a 404 response should raise an error !
     '''
     timeo_test_url = 'http://bob.com/tata'
 
@@ -493,10 +493,10 @@ def timeo_circuit_breaker_test():
 
 def status_test():
     timeo = Timeo(
-        id=u"tata-é$~#@\"*!'`§èû",
+        id="tata-é$~#@\"*!'`§èû",
         timezone='UTC',
         service_url='http://bob.com/',
         service_args={'a': 'bobette', 'b': '12'},
     )
     status = timeo.status()
-    assert status['id'] == u'tata-é$~#@"*!\'`§èû'
+    assert status['id'] == 'tata-é$~#@"*!\'`§èû'

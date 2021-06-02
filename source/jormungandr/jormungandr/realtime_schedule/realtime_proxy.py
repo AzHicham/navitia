@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from abc import abstractmethod, ABCMeta
 from copy import deepcopy
 from jormungandr.schedule import RoutePoint
@@ -165,7 +165,7 @@ class RealtimeProxy(six.with_metaclass(ABCMeta, object)):
             return
 
         logging.getLogger(__name__).debug(
-            'next passages: : {}'.format(["dt: {}".format(d.datetime) for d in next_realtime_passages])
+            f"next passages: : {[f'dt: {d.datetime}' for d in next_realtime_passages]}"
         )
 
         # we clean up the old schedule

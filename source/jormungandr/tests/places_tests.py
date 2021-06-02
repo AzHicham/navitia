@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 
 from .tests_mechanism import AbstractTestFixture, dataset
@@ -44,16 +44,16 @@ class TestPlaces(AbstractTestFixture):
     def test_places_by_id(self):
         """can we get the complete address from coords"""
         # we transform x,y to lon,lat using N_M_TO_DEG constant
-        lon = 10.0 / 111319.9
-        lat = 100.0 / 111319.9
-        response = self.query_region("places/{};{}".format(lon, lat))
+        lon = 10.0 / 111_319.9
+        lat = 100.0 / 111_319.9
+        response = self.query_region(f"places/{lon};{lat}")
 
         assert len(response['places']) == 1
         is_valid_places(response['places'])
         assert response['places'][0]['name'] == "42 rue kb (Condom)"
 
     def test_label_of_admin(self):
-        """ test label of admin "Condom (03430)" """
+        """test label of admin "Condom (03430)" """
         response = self.query_region("places?q=Condom&type[]=administrative_region")
 
         assert len(response['places']) == 1
@@ -61,7 +61,7 @@ class TestPlaces(AbstractTestFixture):
         assert response['places'][0]['name'] == "Condom (03430)"
 
     def test_places_invalid_encoding(self):
-        _, status = self.query_no_assert(u'/v1/coverage/main_routing_test/places/?q=ch\xe2teau'.encode('utf-8'))
+        _, status = self.query_no_assert('/v1/coverage/main_routing_test/places/?q=ch\xe2teau'.encode('utf-8'))
         assert status != 500
 
     def test_places_do_not_loose_precision(self):
@@ -70,7 +70,7 @@ class TestPlaces(AbstractTestFixture):
         # it should work for any id with 15 digits max on each coords
         # that returns a result
         id = "8.9831195195e-05;0.000898311281954"
-        response = self.query_region("places/{}".format(id))
+        response = self.query_region(f"places/{id}")
 
         assert len(response['places']) == 1
         is_valid_places(response['places'])
@@ -81,7 +81,7 @@ class TestPlaces(AbstractTestFixture):
         """check places_nearby"""
 
         id = "8.9831195195e-05;0.000898311281954"
-        response = self.query_region("places/{}/places_nearby".format(id), display=True)
+        response = self.query_region(f"places/{id}/places_nearby", display=True)
 
         assert len(response['places_nearby']) > 0
         is_valid_places(response['places_nearby'])
@@ -90,7 +90,7 @@ class TestPlaces(AbstractTestFixture):
         """check places_nearby with /coord"""
 
         id = "8.9831195195e-05;0.000898311281954"
-        response = self.query_region("coord/{}/places_nearby".format(id))
+        response = self.query_region(f"coord/{id}/places_nearby")
 
         assert len(response['places_nearby']) > 0
         is_valid_places(response['places_nearby'])
@@ -99,7 +99,7 @@ class TestPlaces(AbstractTestFixture):
         """check places_nearby with /coords"""
 
         id = "8.9831195195e-05;0.000898311281954"
-        response = self.query_region("coords/{}/places_nearby".format(id))
+        response = self.query_region(f"coords/{id}/places_nearby")
 
         assert len(response['places_nearby']) > 0
         is_valid_places(response['places_nearby'])
@@ -241,7 +241,7 @@ class TestPlaces(AbstractTestFixture):
         """places_nearby with _current_datetime"""
 
         id = "8.9831195195e-05;0.000898311281954"
-        response = self.query_region("coords/{}/places_nearby?_current_datetime=20120815T160000".format(id))
+        response = self.query_region(f"coords/{id}/places_nearby?_current_datetime=20120815T160000")
 
         assert len(response['places_nearby']) > 0
         is_valid_places(response['places_nearby'])
@@ -258,9 +258,9 @@ class TestPlaces(AbstractTestFixture):
     def test_wrong_places_nearby(self):
         """test that a wrongly formated query do not work on places_neaby"""
 
-        lon = 10.0 / 111319.9
-        lat = 100.0 / 111319.9
-        response, status = self.query_region("bob/{};{}/places_nearby".format(lon, lat), check=False)
+        lon = 10.0 / 111_319.9
+        lat = 100.0 / 111_319.9
+        response, status = self.query_region(f"bob/{lon};{lat}/places_nearby", check=False)
 
         assert status == 404
         # Note: it's not a canonical Navitia error with an Id and a message, but it don't seems to be
@@ -276,18 +276,18 @@ class TestPlaces(AbstractTestFixture):
     def test_non_existent_places_nearby(self):
         """test that a non existing place URI"""
         place_id = "I_am_not_existent"
-        response, status = self.query_region("places/{}/places_nearby".format(place_id), check=False)
+        response, status = self.query_region(f"places/{place_id}/places_nearby", check=False)
 
-        assert response["error"]["message"] == "The entry point: {} is not valid".format(place_id)
+        assert response["error"]["message"] == f"The entry point: {place_id} is not valid"
 
     def test_non_existent_addresse(self):
         """test that a non existent addresse"""
         place_id = "-1.5348252000000002;47.2554241"
-        response, status = self.query_region("places/{}".format(place_id), check=False)
-        assert response["error"]["message"] == u'Unable to find place: -1.5348252000000002;47.2554241'
+        response, status = self.query_region(f"places/{place_id}", check=False)
+        assert response["error"]["message"] == 'Unable to find place: -1.5348252000000002;47.2554241'
 
     def test_line_forbidden(self):
-        """ test that line is not an allowed type """
+        """test that line is not an allowed type"""
         response, status = self.query_region("places?q=A&type[]=line", check=False)
 
         assert status == 400
@@ -298,20 +298,20 @@ class TestPlaces(AbstractTestFixture):
         """places_nearby with disable_disruption"""
 
         id = "8.9831195195e-05;0.000898311281954"
-        response = self.query_region("coords/{}/places_nearby?_current_datetime=20120815T160000".format(id))
+        response = self.query_region(f"coords/{id}/places_nearby?_current_datetime=20120815T160000")
         assert len(response['places_nearby']) > 0
         is_valid_places(response['places_nearby'])
         assert len(response['disruptions']) == 2
 
         response = self.query_region(
-            "coords/{}/places_nearby?_current_datetime=20120815T160000" "&disable_disruption=true".format(id)
+            f"coords/{id}/places_nearby?_current_datetime=20120815T160000&disable_disruption=true"
         )
         assert len(response['places_nearby']) > 0
         is_valid_places(response['places_nearby'])
         assert len(response['disruptions']) == 0
 
         response = self.query_region(
-            "coords/{}/places_nearby?_current_datetime=20120815T160000" "&disable_disruption=false".format(id)
+            f"coords/{id}/places_nearby?_current_datetime=20120815T160000&disable_disruption=false"
         )
         assert len(response['places_nearby']) > 0
         is_valid_places(response['places_nearby'])
@@ -360,7 +360,7 @@ class TestPlaces(AbstractTestFixture):
         assert 'distance' not in places[0]
 
     def test_stop_area_attributes_with_different_depth(self):
-        """ verify that stop_area contains lines in all apis with depth>2 """
+        """verify that stop_area contains lines in all apis with depth>2"""
         # API places without depth
         response = self.query_region("places?type[]=stop_area&q=stopA")
         places = response['places']
@@ -391,21 +391,21 @@ class TestPlaces(AbstractTestFixture):
     def test_places_with_empty_q(self):
         response, status = self.query_region("places?q=", check=False)
         assert status == 400
-        assert response["message"] == u'Search word absent'
+        assert response["message"] == 'Search word absent'
 
     def test_places_with_1025_char(self):
         q = "K" * 1025
-        response, status = self.query_region("places?q={q}".format(q=q), check=False)
+        response, status = self.query_region(f"places?q={q}", check=False)
         assert status == 413
-        assert response["message"] == u'Number of characters allowed for the search is 1024'
+        assert response["message"] == 'Number of characters allowed for the search is 1024'
 
     def test_places_with_1024_char(self):
         q = "K" * 1024
-        response, status = self.query_region("places?q={q}".format(q=q), check=False)
+        response, status = self.query_region(f"places?q={q}", check=False)
         assert status == 200
 
     def test_stop_point_attributes_with_different_depth(self):
-        """ verify that stop_area contains lines in all apis with depth>2 """
+        """verify that stop_area contains lines in all apis with depth>2"""
         # API places without depth
         response = self.query_region("places?type[]=stop_point&q=stopA")
         places = response['places']

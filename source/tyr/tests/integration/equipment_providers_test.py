@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division, unicode_literals
 
 from tyr import app
 from navitiacommon import models
@@ -107,7 +106,7 @@ def test_equipments_provider_put(default_equipments_config):
     assert status == 201
     assert 'equipments_provider' in resp
     assert len(resp['equipments_provider']) == 1
-    for key in new_provider.keys():
+    for key in list(new_provider.keys()):
         assert resp['equipments_provider'][0][key] == new_provider[key]
 
     resp = api_get('/v0/equipments_providers')
@@ -121,7 +120,7 @@ def test_equipments_provider_put(default_equipments_config):
     )
     assert 'equipments_provider' in resp
     assert len(resp['equipments_provider']) == 1
-    for key in new_provider.keys():
+    for key in list(new_provider.keys()):
         assert resp['equipments_provider'][0][key] == new_provider[key]
 
     resp = api_get('/v0/equipments_providers/sytral3')
@@ -170,14 +169,14 @@ def test_equipments_provider_schema():
 
     def send_and_check(provider_id, json_data, missing_param):
         resp, status = api_put(
-            url='v0/equipments_providers/{}'.format(provider_id),
+            url=f'v0/equipments_providers/{provider_id}',
             data=ujson.dumps(json_data),
             content_type='application/json',
             check=False,
         )
         assert status == 400
         assert 'message' in resp
-        assert resp['message'] == "'{}' is a required property".format(missing_param)
+        assert resp['message'] == f"'{missing_param}' is a required property"
         assert 'status' in resp
         assert resp['status'] == "invalid data"
 

@@ -29,7 +29,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
 
 ENUM_SHAPE_SCOPE = ('admin', 'street', 'addr', 'poi', 'stop')
 DEFAULT_SHAPE_SCOPE = ('admin', 'street', 'addr', 'poi')

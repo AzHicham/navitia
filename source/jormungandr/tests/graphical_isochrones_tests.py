@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from .tests_mechanism import AbstractTestFixture, dataset, config, NewDefaultScenarioAbstractTestFixture
 from .check_utils import *
@@ -47,7 +46,7 @@ class TestGraphicalIsochrone(AbstractTestFixture):
         query = "v1/coverage/main_routing_test/isochrones?from={}&datetime={}&max_duration={}"
         query = query.format(s_coord, "20120614T080000", "3600")
         response = self.query(query)
-        origin = Point(0.0000898312, 0.0000898312)
+        origin = Point(0.000_089_831_2, 0.000_089_831_2)
         max_duration = response['isochrones'][0]['max_duration']
         requested_datetime = response['isochrones'][0]['requested_date_time']
         min_datetime = response['isochrones'][0]['min_date_time']
@@ -67,7 +66,7 @@ class TestGraphicalIsochrone(AbstractTestFixture):
         query = "v1/coverage/main_routing_test/isochrones?to={}&datetime={}&max_duration={}"
         query = query.format(s_coord, "20120614T080000", "3600")
         response = self.query(query)
-        destination = Point(0.0000898312, 0.0000898312)
+        destination = Point(0.000_089_831_2, 0.000_089_831_2)
         d = response['isochrones'][0]['geojson']
         multi_poly = asShape(d)
 
@@ -78,7 +77,7 @@ class TestGraphicalIsochrone(AbstractTestFixture):
         q = "v1/coverage/main_routing_test/isochrones?datetime={}&from={}&max_duration={}"
         q = q.format('20120614T080000', 'stopA', '3600')
         response = self.query(q)
-        stopA = Point(0.000718649585564, 0.00107797437835)
+        stopA = Point(0.000_718_649_585_564, 0.001_077_974_378_35)
         d = response['isochrones'][0]['geojson']
         multi_poly = asShape(d)
 
@@ -89,7 +88,7 @@ class TestGraphicalIsochrone(AbstractTestFixture):
         q = "v1/coverage/main_routing_test/isochrones?datetime={}&to={}&max_duration={}"
         q = q.format('20120614T080000', 'stopA', '3600')
         response = self.query(q)
-        stopA = Point(0.000718649585564, 0.00107797437835)
+        stopA = Point(0.000_718_649_585_564, 0.001_077_974_378_35)
         d = response['isochrones'][0]['geojson']
         multi_poly = asShape(d)
 
@@ -105,7 +104,7 @@ class TestGraphicalIsochrone(AbstractTestFixture):
         excepted_context = {'current_datetime': current_datetime, 'timezone': 'UTC'}
         self.check_context(response_no_dt)
 
-        for key, value in excepted_context.items():
+        for key, value in list(excepted_context.items()):
             assert response_no_dt['context'][key] == value
 
         q_dt = "v1/coverage/main_routing_test/isochrones?from={}&datetime={}&max_duration={}"
@@ -383,7 +382,7 @@ class TestGraphicalIsochrone(AbstractTestFixture):
         q = "v1/coverage/main_routing_test/isochrones?datetime={}&from={}"
         q = q.format('20120614T080000', r_coord)
         for i in range(20):
-            q += "&boundary_duration[]={}".format(i * 60)
+            q += f"&boundary_duration[]={i * 60}"
         normal_response, error_code = self.query_no_assert(q)
 
         assert error_code == 400

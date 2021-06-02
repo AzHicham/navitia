@@ -28,7 +28,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr.interfaces.v1.ResourceUri import complete_links
 
 
@@ -97,11 +97,11 @@ def test_complete_links():
     assert "exceptions" in response
     assert len(response["exceptions"]) == 2
     assert len(response["notes"]) == 1
-    for item in response["notes"][0].keys():
+    for item in list(response["notes"][0].keys()):
         assert item in ["category", "type", "id", "value", "comment_type"]
 
     for exception in response["exceptions"]:
-        for item in exception.keys():
+        for item in list(exception.keys()):
             assert item in ["date", "type", "id"]
 
     assert len(response["stop_schedules"]) == 1
@@ -112,6 +112,6 @@ def test_complete_links():
 
     for dt in stop_schedules[0]["date_times"]:
         for link in dt["links"]:
-            items = link.keys()
+            items = list(link.keys())
             for key in items:
                 assert key in ["category", "internal", "rel", "type", "id"]

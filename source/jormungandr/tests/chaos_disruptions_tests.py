@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from . import gtfs_realtime_pb2
 from .tests_mechanism import dataset
 from .check_utils import *
@@ -218,10 +218,10 @@ class TestChaosDisruptionsLineSection(ChaosDisruptionsFixture):
 
         def query_on_date(q, **kwargs):
             """We do the query on a dt inside the disruption application period"""
-            return self.query_region('{q}?_current_datetime=20120614T120000'.format(q=q), **kwargs)
+            return self.query_region(f'{q}?_current_datetime=20120614T120000', **kwargs)
 
         def has_dis(obj_get, dis):
-            r = query_on_date('{col}/{uri}'.format(col=obj_get.collection, uri=obj_get.uri))
+            r = query_on_date(f'{obj_get.collection}/{obj_get.uri}')
             return has_disruption(r, obj_get, dis)
 
         response = self.query_region('disruptions')
@@ -266,10 +266,10 @@ class TestChaosDisruptionsLineSectionOnOneStop(ChaosDisruptionsFixture):
 
         def query_on_date(q, **kwargs):
             """We do the query on a dt inside the disruption application period"""
-            return self.query_region('{q}?_current_datetime=20120614T120000'.format(q=q), **kwargs)
+            return self.query_region(f'{q}?_current_datetime=20120614T120000', **kwargs)
 
         def has_dis(obj_get, dis):
-            r = query_on_date('{col}/{uri}'.format(col=obj_get.collection, uri=obj_get.uri))
+            r = query_on_date(f'{obj_get.collection}/{obj_get.uri}')
             return has_disruption(r, obj_get, dis)
 
         response = self.query_region('disruptions')
@@ -323,10 +323,10 @@ class TestChaosDisruptionsLineSectionOnOneStopWithRoute(ChaosDisruptionsFixture)
 
         def query_on_date(q, **kwargs):
             """We do the query on a dt inside the disruption application period"""
-            return self.query_region('{q}?_current_datetime=20120614T120000'.format(q=q), **kwargs)
+            return self.query_region(f'{q}?_current_datetime=20120614T120000', **kwargs)
 
         def has_dis(obj_get, dis):
-            r = query_on_date('{col}/{uri}'.format(col=obj_get.collection, uri=obj_get.uri))
+            r = query_on_date(f'{obj_get.collection}/{obj_get.uri}')
             return has_disruption(r, obj_get, dis)
 
         response = self.query_region('disruptions')
@@ -542,7 +542,7 @@ class TestChaosDisruptionsBlocking(ChaosDisruptionsFixture):
         )
         journey_query_2_to_format += "&datetime={datetime}"
         start_period = "20120615T080000"
-        disruption_uri = "blocking_{}_disruption".format(type_)
+        disruption_uri = f"blocking_{type_}_disruption"
 
         def get_type_id(k, v):
             if (k != "links" or "type" not in v or "id" not in v or v["type"] != type_) and (
@@ -1200,8 +1200,8 @@ def make_mock_chaos_item(
     impact = disruption.impacts.add()
     impact.id = "impact_" + disruption_name + "_1"
     enums_impact = gtfs_realtime_pb2.Alert.DESCRIPTOR.enum_values_by_name
-    impact.created_at = utils.str_to_time_stamp(u'20160405T150623')
-    impact.updated_at = utils.str_to_time_stamp(u'20160405T150733')
+    impact.created_at = utils.str_to_time_stamp('20160405T150623')
+    impact.updated_at = utils.str_to_time_stamp('20160405T150733')
     if blocking:
         impact.severity.effect = enums_impact["NO_SERVICE"].number
         impact.severity.id = 'blocking'

@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from jormungandr.street_network.tests.streetnetwork_test_utils import MockKraken
 from jormungandr.street_network.tests.streetnetwork_backend_mock import StreetNetworkBackendMock

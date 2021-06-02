@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from flask import request, g
 from functools import wraps
 from navitiacommon import stat_pb2
@@ -142,6 +142,7 @@ class StatManager(object):
         connection to rabbitmq and initialize queues
         """
         self.connection = kombu.Connection(self.broker_url, connect_timeout=self.connection_timeout)
+        self.connection.connect()
         self.exchange = kombu.Exchange(self.exchange_name, type="topic", auto_delete=auto_delete)
         self.producer = self.connection.Producer(exchange=self.exchange)
 
@@ -244,7 +245,7 @@ class StatManager(object):
                 stat_parameter.value = six.text_type(value)
 
         if hasattr(g, 'stat_interpreted_parameters'):
-            for item in g.stat_interpreted_parameters.items():
+            for item in list(g.stat_interpreted_parameters.items()):
                 if isinstance(item[1], list):
                     for value in item[1]:
                         stat_parameter = stat_request.interpreted_parameters.add()
@@ -293,7 +294,7 @@ class StatManager(object):
             stat_error.message = error['message']
 
     def fill_journey(self, stat_journey, resp_journey):
-        """"
+        """ "
         Fill journey and all sections from resp_journey.
         resp_journey is a OrderedDict and contains information
         of the node journeys in the result.

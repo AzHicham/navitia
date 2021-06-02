@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import pytest
 
 from jormungandr.tests.utils_test import MockResponse
@@ -354,8 +354,8 @@ class TestHere(NewDefaultScenarioAbstractTestFixture):
         assert sections[1].get('duration') == 2
         assert sections[1].get('type') == 'public_transport'
 
-        assert sections[2].get('departure_date_time') == u'20120614T080102'
-        assert sections[2].get('arrival_date_time') == u'20120614T080202'
+        assert sections[2].get('departure_date_time') == '20120614T080102'
+        assert sections[2].get('arrival_date_time') == '20120614T080202'
         assert sections[2].get('duration') == 60
         assert sections[2].get('type') == 'street_network'
         assert sections[2].get('mode') == 'car'

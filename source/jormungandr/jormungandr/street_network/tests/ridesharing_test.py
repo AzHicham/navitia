@@ -35,14 +35,14 @@ def status_test():
     ridesharing = Ridesharing(
         instance=None,
         service_url=None,
-        id=u"tata-é$~#@\"*!'`§èû",
+        id="tata-é$~#@\"*!'`§èû",
         modes=["ridesharing"],
         street_network={"class": "jormungandr.street_network.kraken.Kraken", "args": {}},
     )
 
     status = ridesharing.status()
     assert len(status) == 4
-    assert status['id'] == u'tata-é$~#@"*!\'`§èû'
+    assert status['id'] == 'tata-é$~#@"*!\'`§èû'
     assert status['class'] == "Ridesharing"
     assert status['modes'] == ["ridesharing"]
     assert status['backend_class'] == "Kraken"

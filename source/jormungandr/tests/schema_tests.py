@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 
 import json
 import logging
@@ -57,15 +57,15 @@ def collect_all_errors(validation_error):
     def _collect(err, key):
         errors = {}
         if isinstance(err, dict):
-            for k, v in err.items():
+            for k, v in list(err.items()):
                 if k == 'default_factory':
                     continue
-                errors.update(_collect(v, key='{prev}.{k}'.format(prev=key, k=k)))
+                errors.update(_collect(v, key=f'{key}.{k}'))
             return errors
 
         if isinstance(err, list):
             for i, e in enumerate(err):
-                errors.update(_collect(e, key='{k}[{i}]'.format(k=key, i=i)))
+                errors.update(_collect(e, key=f'{key}[{i}]'))
             return errors
 
         return {key: err}
@@ -78,7 +78,7 @@ def additional_properties_false_adder(dict_var):
     if dict_var.get('type') == 'object' and 'additionalProperties' not in dict_var:
         dict_var['additionalProperties'] = False
 
-    for v in dict_var.values():
+    for v in list(dict_var.values()):
         if isinstance(v, dict):
             additional_properties_false_adder(v)
         if isinstance(v, list):
@@ -128,7 +128,7 @@ class SchemaChecker:
 
         params = get_params(response)
 
-        for name, param in params.items():
+        for name, param in list(params.items()):
             assert 'name' in param
             assert 'description' in param, (
                 "API parameter '" + param['name'] + "' should have a description in the schema!"
@@ -186,7 +186,7 @@ class TestSwaggerSchema(AbstractTestFixture, SchemaChecker):
     def get_api_schema(self, url):
         response = self.tester.options(url)
 
-        assert response, "response for url {} is null".format(url)
+        assert response, f"response for url {url} is null"
         assert response.status_code == 200
         data = json.loads(response.data, encoding='utf-8')
 
@@ -283,7 +283,7 @@ class TestSwaggerSchema(AbstractTestFixture, SchemaChecker):
         )
         # we have some errors, but only on additional_informations
         assert len(errors) == 4
-        for k, e in errors.items():
+        for k, e in list(errors.items()):
             assert k.endswith('additional_informations[0].type[0]')
             assert pattern_error.match(e)
 
@@ -311,7 +311,7 @@ class TestSwaggerSchema(AbstractTestFixture, SchemaChecker):
         )
         # we have some errors, but only on additional_informations
         assert len(errors) == 1
-        for k, e in errors.items():
+        for k, e in list(errors.items()):
             assert k.endswith('additional_informations[0].type[0]')
             assert pattern_error.match(e)
 
@@ -355,7 +355,7 @@ class TestSwaggerSchema(AbstractTestFixture, SchemaChecker):
             "Got value `None` of type `null`. Value must be of type\(s\): `\(u?'integer',\)`"
         )
 
-        for k, e in errors.items():
+        for k, e in list(errors.items()):
             assert pattern.match(k)
             assert pattern_error.match(e)
 
@@ -397,7 +397,7 @@ class TestSwaggerSchemaDepartureBoard(AbstractTestFixture, SchemaChecker):
 
         # we have some errors, but only on additional_informations
         assert len(errors) == 10
-        for k, e in errors.items():
+        for k, e in list(errors.items()):
             assert k.endswith('additional_informations[0].type[0]')
             assert "Got value `None` of type `null`. Value must be of type(s):" in e
 

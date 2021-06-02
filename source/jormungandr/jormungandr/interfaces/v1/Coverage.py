@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr import i_manager
 from jormungandr.interfaces.v1.StatedResource import StatedResource
 from jormungandr.interfaces.v1.decorators import get_serializer
@@ -60,7 +60,7 @@ class Coverage(StatedResource):
     def get(self, region=None, lon=None, lat=None):
         args = self.parsers["get"].parse_args()
 
-        request_id = "coverage_{}".format(flask.request.id)
+        request_id = f"coverage_{flask.request.id}"
         resp = i_manager.regions(region, lon, lat, request_id=request_id)
         if 'regions' in resp:
             resp['regions'] = sorted(resp['regions'], key=lambda r: r.get('name', r.get('region_id')))

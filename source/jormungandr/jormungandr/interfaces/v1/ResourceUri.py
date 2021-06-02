@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from flask_restful import abort
 from jormungandr.interfaces.v1.converters_collection_type import collections_to_resource_type
 from jormungandr.interfaces.v1.converters_collection_type import resource_type_to_collection
@@ -67,13 +67,13 @@ class ResourceUri(StatedResource):
 
         # handle headsign
         if args.get("headsign"):
-            f = u"vehicle_journey.has_headsign({})".format(protect(args["headsign"]))
+            f = "vehicle_journey.has_headsign({})".format(protect(args["headsign"]))
             if args.get("filter"):
-                args["filter"] = '({}) and {}'.format(args["filter"], f)
+                args["filter"] = f"({args['filter']}) and {f}"
             else:
                 args["filter"] = f
 
-        filter_list = ['({})'.format(args["filter"])] if args.get("filter") else []
+        filter_list = [f"({args['filter']})"] if args.get("filter") else []
         type_ = None
 
         for item in items:
@@ -83,7 +83,7 @@ class ResourceUri(StatedResource):
                         type_ = 'calendar'
                     else:
                         if item not in collections_to_resource_type:
-                            abort(400, message="unknown type: {}".format(item))
+                            abort(400, message=f"unknown type: {item}")
                         type_ = collections_to_resource_type[item]
                 else:
                     type_ = "coord"
@@ -107,7 +107,7 @@ class ResourceUri(StatedResource):
         # handle tags
         tags = args.get("tags[]", [])
         if tags:
-            filter_list.append('disruption.tags({})'.format(' ,'.join([protect(t) for t in tags])))
+            filter_list.append(f"disruption.tags({' ,'.join([protect(t) for t in tags])})")
         return " and ".join(filter_list)
 
 

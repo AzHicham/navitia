@@ -28,7 +28,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import jmespath
 
 from jormungandr.parking_space_availability.car.parking_places import ParkingPlaces
@@ -46,7 +46,7 @@ class SytralProvider(CommonCarParkProvider):
         super(SytralProvider, self).__init__(url, operators, dataset, timeout, feed_publisher, **kwargs)
 
     def process_data(self, data, poi):
-        park = jmespath.search('records[?car_park_id==`{}`]|[0]'.format(poi['properties']['ref']), data)
+        park = jmespath.search(f"records[?car_park_id==`{poi['properties']['ref']}`]|[0]", data)
         if park:
             return ParkingPlaces(
                 park['available'], park['occupied'], park['available_PRM'], park['occupied_PRM']

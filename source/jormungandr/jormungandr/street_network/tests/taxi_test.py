@@ -35,14 +35,14 @@ def status_test():
     taxi = Taxi(
         instance=None,
         service_url=None,
-        id=u"tata-é$~#@\"*!'`§èû",
+        id="tata-é$~#@\"*!'`§èû",
         modes=["taxi"],
         street_network={"class": "jormungandr.street_network.kraken.Kraken", "args": {}},
     )
 
     status = taxi.status()
     assert len(status) == 4
-    assert status['id'] == u'tata-é$~#@"*!\'`§èû'
+    assert status['id'] == 'tata-é$~#@"*!\'`§èû'
     assert status['class'] == "Taxi"
     assert status['modes'] == ["taxi"]
     assert status['backend_class'] == "Kraken"

@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import uuid
 from .check_utils import get_not_null
 from .tests_mechanism import AbstractTestFixture
@@ -38,7 +38,7 @@ import os
 
 
 # we need to generate a unique topic not to have conflict between tests
-rt_topic = 'rt_test_{}'.format(uuid.uuid1())
+rt_topic = f'rt_test_{uuid.uuid1()}'
 
 
 class RabbitMQCnxFixture(AbstractTestFixture):

@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import calendar
 from collections import deque, namedtuple
 from datetime import datetime
@@ -62,7 +62,7 @@ NOT_A_DATE_TIME = "not-a-date-time"
 def get_uri_pt_object(pt_object):
     if pt_object.embedded_type == type_pb2.ADDRESS:
         coords = pt_object.uri.split(';')
-        return "coord:{}:{}".format(coords[0], coords[1])
+        return f"coord:{coords[0]}:{coords[1]}"
     return pt_object.uri
 
 
@@ -176,7 +176,7 @@ def timestamp_to_datetime(timestamp, tz=None):
     Convert a timestamp to datetime
     if timestamp > MAX_INT we return None
     """
-    maxint = 9223372036854775807
+    maxint = 9_223_372_036_854_775_807
     # when a date is > 2038-01-19 03:14:07
     # we receive a timestamp = 18446744071562142720 (64 bits) > 9223372036854775807 (MAX_INT 32 bits)
     # And ValueError: timestamp out of range for platform time_t is raised
@@ -220,7 +220,7 @@ def walk_dict(tree, visitor):
             for val in elt:
                 queue.append((name, val))
         elif hasattr(elt, 'items'):
-            for k, v in elt.items():
+            for k, v in list(elt.items()):
                 queue.append((k, v))
         elif first:  # for the first elt, we add it even if it is no collection
             queue.append((name, elt))
@@ -308,7 +308,7 @@ def realtime_level_to_pbf(level):
 # we can't use reverse(enumerate(list)) without creating a temporary
 # list, so we define our own reverse enumerate
 def reverse_enumerate(l):
-    return zip(range(len(l) - 1, -1, -1), reversed(l))
+    return list(zip(list(range(len(l) - 1, -1, -1)), reversed(l)))
 
 
 def pb_del_if(l, pred):
@@ -342,23 +342,23 @@ def create_object(configuration):
 
     try:
         if '.' not in class_path:
-            log.warning('impossible to build object {}, wrongly formated class'.format(class_path))
+            log.warning(f'impossible to build object {class_path}, wrongly formated class')
             raise ConfigException(class_path)
 
         module_path, name = class_path.rsplit('.', 1)
         module = import_module(module_path)
         attr = getattr(module, name)
     except AttributeError as e:
-        log.warning('impossible to build object {} : {}'.format(class_path, e))
+        log.warning(f'impossible to build object {class_path} : {e}')
         raise ConfigException(class_path)
     except ImportError:
-        log.exception('impossible to build object {}, cannot find class'.format(class_path))
+        log.exception(f'impossible to build object {class_path}, cannot find class')
         raise ConfigException(class_path)
 
     try:
         obj = attr(**kwargs)  # call to the contructor, with all the args
     except TypeError as e:
-        log.warning('impossible to build object {}, wrong arguments: {}'.format(class_path, e.message))
+        log.warning(f'impossible to build object {class_path}, wrong arguments: {e.message}')
         raise ConfigException(class_path)
 
     return obj
@@ -401,14 +401,14 @@ def get_pt_object_coord(pt_object):
     coord = getattr(attr, "coord", None)
 
     if not coord:
-        logging.getLogger(__name__).error('Invalid coord for ptobject type: {}'.format(pt_object.embedded_type))
-        raise UnableToParse('Invalid coord for ptobject type: {}'.format(pt_object.embedded_type))
+        logging.getLogger(__name__).error(f'Invalid coord for ptobject type: {pt_object.embedded_type}')
+        raise UnableToParse(f'Invalid coord for ptobject type: {pt_object.embedded_type}')
     return coord
 
 
 def record_external_failure(message, connector_type, connector_name):
-    params = {'{}_system_id'.format(connector_type): six.text_type(connector_name), 'message': message}
-    new_relic.record_custom_event('{}_external_failure'.format(connector_type), params)
+    params = {f'{connector_type}_system_id': six.text_type(connector_name), 'message': message}
+    new_relic.record_custom_event(f'{connector_type}_external_failure', params)
 
 
 def decode_polyline(encoded, precision=6):
@@ -440,7 +440,7 @@ def decode_polyline(encoded, precision=6):
             previous[j] = ll[j]
         # scale by the precision and chop off long coords also flip the positions so
         # #its the far more standard lon,lat instead of lat,lon
-        decoded.append([float('%.6f' % (ll[1] * inv)), float('%.6f' % (ll[0] * inv))])
+        decoded.append([float(f'{ll[1] * inv:.6f}'), float(f'{ll[0] * inv:.6f}')])
         # hand back the list of coordinates
     return decoded
 

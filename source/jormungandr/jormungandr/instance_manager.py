@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from flask import json
 
 from shapely import geometry
@@ -132,7 +132,7 @@ class InstanceManager(object):
             - zmq socket
         """
         self.instances.clear()
-        for key, value in os.environ.items():
+        for key, value in list(os.environ.items()):
             if key.startswith('JORMUNGANDR_INSTANCE_'):
                 logging.getLogger(__name__).info("Initialisation, reading: %s", key)
                 config_data = json.loads(value)
@@ -195,7 +195,7 @@ class InstanceManager(object):
         """
         futures = []
         purge_cache_needed = False
-        for instance in self.instances.values():
+        for instance in list(self.instances.values()):
             if not instance.is_initialized:
                 futures.append(gevent.spawn(instance.init))
 
@@ -243,7 +243,7 @@ class InstanceManager(object):
             )
 
     def reap_sockets(self):
-        for instance in self.instances.values():
+        for instance in list(self.instances.values()):
             instance.reap_socket(self.socket_ttl)
             gevent.idle(-1)  # request handling has the priority
 
@@ -256,7 +256,7 @@ class InstanceManager(object):
         """
         fetch krakens metadata
         """
-        while [i for i in self.instances.values() if not i.is_initialized]:
+        while [i for i in list(self.instances.values()) if not i.is_initialized]:
             self.init_kraken_instances()
             gevent.sleep(timer)
         logging.getLogger(__name__).debug('end of ping thread')
@@ -294,9 +294,9 @@ class InstanceManager(object):
     def _all_keys_of_id(self, object_id):
         instances = []
         futures = {}
-        for name, instance in self.instances.items():
+        for name, instance in list(self.instances.items()):
             futures[name] = gevent.spawn(instance.has_id, object_id)
-        for name, future in futures.items():
+        for name, future in list(futures.items()):
             if future.get():
                 instances.append(name)
 
@@ -306,10 +306,8 @@ class InstanceManager(object):
 
     def _all_keys_of_coord(self, lon, lat):
         p = geometry.Point(lon, lat)
-        instances = [i.name for i in self.instances.values() if i.has_point(p)]
-        logging.getLogger(__name__).debug(
-            "all_keys_of_coord(self, {}, {}) returns {}".format(lon, lat, instances)
-        )
+        instances = [i.name for i in list(self.instances.values()) if i.has_point(p)]
+        logging.getLogger(__name__).debug(f"all_keys_of_coord(self, {lon}, {lat}) returns {instances}")
         if not instances:
             raise RegionNotFound(lon=lon, lat=lat)
         return instances
@@ -366,7 +364,7 @@ class InstanceManager(object):
             except DeadSocketException:
                 resp_dict = {
                     "status": "dead",
-                    "error": {"code": "dead_socket", "value": "The region {} is dead".format(key_region)},
+                    "error": {"code": "dead_socket", "value": f"The region {key_region} is dead"},
                 }
             if resp_dict.get('status') == 'no_data' and not region and not lon and not lat:
                 continue

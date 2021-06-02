@@ -42,7 +42,7 @@ def status_test():
         instance=FakeInstance(),
         service_url=None,
         asgard_socket="asgard_socket",
-        id=u"tata-é$~#@\"*!'`§èû",
+        id="tata-é$~#@\"*!'`§èû",
         modes=["walking", "bike", "car"],
         timeout=77,
         socket_ttl=60,
@@ -50,7 +50,7 @@ def status_test():
 
     status = asgard.status()
     assert len(status) == 6
-    assert status['id'] == u'tata-é$~#@"*!\'`§èû'
+    assert status['id'] == 'tata-é$~#@"*!\'`§èû'
     assert status['class'] == "Asgard"
     assert status['modes'] == ["walking", "bike", "car"]
     assert status['timeout'] == 77

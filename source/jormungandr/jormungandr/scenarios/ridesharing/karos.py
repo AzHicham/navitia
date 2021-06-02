@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 import logging
 import pybreaker
@@ -83,7 +82,7 @@ class Karos(AbstractRidesharingService):
             rating_scale_max=self.rating_scale_max,
         )
 
-        self.logger = logging.getLogger("{} {}".format(__name__, self.system_id))
+        self.logger = logging.getLogger(f"{__name__} {self.system_id}")
 
         self.breaker = pybreaker.CircuitBreaker(
             fail_max=app.config.get(str('CIRCUIT_BREAKER_MAX_KAROS_FAIL'), 4),
@@ -199,7 +198,7 @@ class Karos(AbstractRidesharingService):
             'arrivalRadius': self.arrival_radius,
         }
 
-        headers = {'Authentication': 'key={}'.format(self.api_key)}
+        headers = {'Authentication': f'key={self.api_key}'}
 
         resp = self._call_service(params=params, headers=headers)
 

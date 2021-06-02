@@ -28,7 +28,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from six.moves.urllib.parse import quote, quote_plus
 from six.moves.urllib.parse import urlencode
 from .tests_mechanism import dataset, AbstractTestFixture
@@ -210,10 +210,10 @@ class TestPtRef(AbstractTestFixture):
         assert code == 400
         assert response['message'] == 'unknown type: AAAAAA'
 
-        coord = "{lon};{lat}".format(lon=1.2, lat=3.4)
-        response, code = self.query_region("{coord}/stop_areas".format(coord=coord), check=False)
+        coord = f"{1.2};{3.4}"
+        response, code = self.query_region(f"{coord}/stop_areas", check=False)
         assert code == 400
-        assert response['message'] == 'unknown type: {coord}'.format(coord=coord)
+        assert response['message'] == f'unknown type: {coord}'
 
     def test_ptref_with_current_datetime(self):
         """
@@ -226,7 +226,7 @@ class TestPtRef(AbstractTestFixture):
         local_date_time = '20140116T005959'
         timezone = 'Europe/Paris'
 
-        response = self.query_region("stop_areas/stop_area:stop1?_current_datetime={}".format(utc_datetime))
+        response = self.query_region(f"stop_areas/stop_area:stop1?_current_datetime={utc_datetime}")
 
         disruptions = get_not_null(response, 'disruptions')
 
@@ -367,7 +367,7 @@ class TestPtRef(AbstractTestFixture):
         """test line group formating"""
         # Test for each possible range to ensure main_line is always at a depth of 0
         for depth in range(0, 3):
-            response = self.query_region("line_groups?depth={0}".format(depth))
+            response = self.query_region(f"line_groups?depth={depth}")
 
             line_groups = get_not_null(response, 'line_groups')
 
@@ -586,7 +586,7 @@ class TestPtRef(AbstractTestFixture):
         assert get_not_null(pt_objs[0], 'name') == 'network:CaRoule line:Ça roule'
 
     def test_query_with_strange_char(self):
-        q = u'stop_points/stop_point:stop_with name bob \" , é'.encode('utf-8')
+        q = 'stop_points/stop_point:stop_with name bob \" , é'.encode('utf-8')
         encoded_q = quote(q)
         response = self.query_region(encoded_q)
 
@@ -595,7 +595,7 @@ class TestPtRef(AbstractTestFixture):
         assert len(stops) == 1
 
         is_valid_stop_point(stops[0], depth_check=1)
-        assert stops[0]["id"] == u'stop_point:stop_with name bob \" , é'
+        assert stops[0]["id"] == 'stop_point:stop_with name bob \" , é'
 
     def test_filter_query_with_strange_char(self):
         """test that the ptref mechanism works an object with a weird id"""
@@ -618,8 +618,8 @@ class TestPtRef(AbstractTestFixture):
     def test_journey_with_strange_char(self):
         # we use an encoded url to be able to check the links
         query = 'journeys?from={}&to={}&datetime=20140105T070000'.format(
-            quote_plus(u'stop_with name bob \" , é'.encode('utf-8')),
-            quote_plus(u'stop_area:stop1'.encode('utf-8')),
+            quote_plus('stop_with name bob \" , é'.encode('utf-8')),
+            quote_plus('stop_area:stop1'.encode('utf-8')),
         )
         response = self.query_region(query, display=True)
 
@@ -732,19 +732,19 @@ class TestPtRef(AbstractTestFixture):
         stop_area:stop1 with and without disable_disruption
         """
         current_datetime = '20140115T235959'
-        response = self.query_region("stop_areas/stop_area:stop1?_current_datetime={}".format(current_datetime))
+        response = self.query_region(f"stop_areas/stop_area:stop1?_current_datetime={current_datetime}")
 
         disruptions = get_not_null(response, 'disruptions')
 
         assert len(disruptions) == 1
 
         response = self.query_region(
-            "stop_areas/stop_area:stop1?_current_datetime={}&disable_disruption=true".format(current_datetime)
+            f"stop_areas/stop_area:stop1?_current_datetime={current_datetime}&disable_disruption=true"
         )
         assert len(response['disruptions']) == 0
 
         response = self.query_region(
-            "stop_areas/stop_area:stop1?_current_datetime={}&disable_disruption=false".format(current_datetime)
+            f"stop_areas/stop_area:stop1?_current_datetime={current_datetime}&disable_disruption=false"
         )
         assert len(response['disruptions']) == 1
 
@@ -937,7 +937,7 @@ class TestPtRefRoutingAndPtrefCov(AbstractTestFixture):
 class TestPtRefRoutingCov(AbstractTestFixture):
     def test_with_coords(self):
         """test with a coord in the pt call, so a place nearby is actually called"""
-        response = self.query_region("coords/{coord}/stop_areas".format(coord=r_coord))
+        response = self.query_region(f"coords/{r_coord}/stop_areas")
 
         stops = get_not_null(response, 'stop_areas')
 
@@ -951,7 +951,7 @@ class TestPtRefRoutingCov(AbstractTestFixture):
 
     def test_with_coord(self):
         """some but with coord and not coords"""
-        response = self.query_region("coord/{coord}/stop_areas".format(coord=r_coord))
+        response = self.query_region(f"coord/{r_coord}/stop_areas")
 
         stops = get_not_null(response, 'stop_areas')
 
@@ -965,7 +965,7 @@ class TestPtRefRoutingCov(AbstractTestFixture):
 
     def test_with_coord_distance_different(self):
         """same as test_with_coord, but with 300m radius. so we find all stops"""
-        response = self.query_region("coords/{coord}/stop_areas?distance=300".format(coord=r_coord))
+        response = self.query_region(f"coords/{r_coord}/stop_areas?distance=300")
 
         stops = get_not_null(response, 'stop_areas')
 
@@ -983,8 +983,7 @@ class TestPtRefRoutingCov(AbstractTestFixture):
         Note: the metro is physical_mode:0x1
         """
         response = self.query_region(
-            "physical_modes/physical_mode:0x1/coords/{coord}/stop_areas" "?distance=300".format(coord=r_coord),
-            display=True,
+            f"physical_modes/physical_mode:0x1/coords/{r_coord}/stop_areas?distance=300", display=True
         )
 
         stops = get_not_null(response, 'stop_areas')

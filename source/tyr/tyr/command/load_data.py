@@ -47,10 +47,10 @@ class LoadDataCommand(Command):
         instance = models.Instance.query_existing().filter_by(name=instance_name).first()
 
         if not instance:
-            raise Exception("cannot find instance {}".format(instance_name))
+            raise Exception(f"cannot find instance {instance_name}")
 
         data_dirs = data_dir.split(',')
-        logging.info("loading data dir : {}".format(data_dirs))
+        logging.info(f"loading data dir : {data_dirs}")
 
         # this api is only used in artemis and artemis wants to know when this
         # task is finished, so the easiest way for the moment is to wait for

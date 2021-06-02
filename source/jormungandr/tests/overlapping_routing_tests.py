@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 from navitiacommon import models
 
@@ -65,16 +65,16 @@ class TestOverlappingCoverage(AbstractTestFixture):
         the empty region should be chosen first and after having returned no journey the real region should be called
         ==> ie we must have a journey in the end
         """
-        response = self.query("/v1/{q}".format(q=journey_basic_query))
+        response = self.query(f"/v1/{journey_basic_query}")
 
         self.is_valid_journey_response(response, journey_basic_query)
 
         assert len(response['feed_publishers']) == 1
-        assert response['feed_publishers'][0]['name'] == u'routing api data'
+        assert response['feed_publishers'][0]['name'] == 'routing api data'
 
         # with the initial response we cannot specifically check that the empty_routing_test region
         # has been called, so we call it back with debug and then we can check the region called field
-        debug_query = "/v1/{q}&debug=true".format(q=journey_basic_query)
+        debug_query = f"/v1/{journey_basic_query}&debug=true"
         response = self.query(debug_query)
         self.is_valid_journey_response(response, debug_query)
         assert response['debug']['regions_called'][0]['name'] == 'empty_routing_test'
@@ -87,7 +87,7 @@ class TestOverlappingCoverage(AbstractTestFixture):
         explicit call to the empty region should not work
         """
         response, error_code = self.query_no_assert(
-            "/v1/coverage/empty_routing_test/{q}".format(q=journey_basic_query), display=False
+            f"/v1/coverage/empty_routing_test/{journey_basic_query}", display=False
         )
 
         assert not 'journeys' in response or len(response['journeys']) == 0
@@ -107,7 +107,7 @@ class TestOverlappingCoverage(AbstractTestFixture):
             to_coord="0.00188646;0.00071865",  # coordinate of R in the dataset
             datetime="19800614T080000",
         )
-        response, error_code = self.query_no_assert("/v1/{q}".format(q=journey_query), display=False)
+        response, error_code = self.query_no_assert(f"/v1/{journey_query}", display=False)
 
         assert not 'journeys' in response or len(response['journeys']) == 0
         assert error_code == 404
@@ -125,7 +125,7 @@ class TestOverlappingCoverage(AbstractTestFixture):
         we call the api with debug=true so we must get a 'debug' node with the error by regions
         """
         response, error_code = self.query_no_assert(
-            "v1/{query}&max_duration_to_pt=20&debug=true".format(query=journey_basic_query), display=False
+            f"v1/{journey_basic_query}&max_duration_to_pt=20&debug=true", display=False
         )
 
         assert not 'journeys' in response or len(response['journeys']) == 0
@@ -152,7 +152,7 @@ class TestOverlappingCoverage(AbstractTestFixture):
 
     def test_journeys_no_debug(self):
         """no debug in query, no debug in answer"""
-        response = self.query("/v1/{q}".format(q=journey_basic_query), display=False)
+        response = self.query(f"/v1/{journey_basic_query}", display=False)
 
         assert not 'debug' in response
 

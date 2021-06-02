@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import pytest
 from jormungandr import i_manager
 from jormungandr.exceptions import RegionNotFound
@@ -102,7 +102,7 @@ class TestMultiCoverage:
             compute_regions(self.args)
 
     def test_multi_coverage_no_region_peru(self):
-        """no orig """
+        """no orig"""
         self._mock_function(None, ['peru'])
 
         with pytest.raises(RegionNotFound):
@@ -139,7 +139,7 @@ class TestMultiCoverage:
         regions = compute_regions(self.args)
 
         assert len(regions) == 2
-        print("regions ==> {}".format(regions))
+        print(f"regions ==> {regions}")
 
         assert regions[0] == self.regions['france'].name
         assert regions[1] == self.regions['equador'].name
@@ -154,7 +154,7 @@ class TestMultiCoverage:
         regions = compute_regions(self.args)
 
         assert len(regions) == 4
-        print("regions ==> {}".format(regions))
+        print(f"regions ==> {regions}")
 
         assert set([regions[0], regions[1]]) == set([self.regions['france'].name, self.regions['peru'].name])
         assert set([regions[2], regions[3]]) == set([self.regions['equador'].name, self.regions['bolivia'].name])
@@ -169,7 +169,7 @@ class TestMultiCoverage:
         regions = compute_regions(self.args)
 
         assert len(regions) == 3
-        print("regions ==> {}".format(regions))
+        print(f"regions ==> {regions}")
 
         assert regions[0] == self.regions['germany'].name
         assert regions[1] == self.regions['netherlands'].name
@@ -188,7 +188,7 @@ class TestMultiCoverage:
         regions = compute_regions(self.args)
 
         assert len(regions) == 4
-        print("regions ==> {}".format(regions))
+        print(f"regions ==> {regions}")
 
         assert regions[0] == self.regions['brazil'].name
         assert regions[1] == self.regions['netherlands'].name
@@ -203,7 +203,7 @@ class TestMultiCoverage:
         self.regions.pop('peru')
         self.regions.pop('bolivia')
 
-        regions = sort_regions(self.regions.values())
+        regions = sort_regions(list(self.regions.values()))
         assert len(regions) == 5
         assert regions[0].name == self.regions['brazil'].name
         assert regions[1].name == self.regions['germany'].name

@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 from jormungandr.exceptions import TechnicalError
 from jormungandr import app
@@ -54,7 +54,7 @@ class Asgard(TransientSocket, Kraken):
         timeout=10,
         api_key=None,
         socket_ttl=app.config['ASGARD_ZMQ_SOCKET_TTL_SECONDS'],
-        **kwargs
+        **kwargs,
     ):
         super(Asgard, self).__init__(
             name=instance.name,
@@ -67,7 +67,7 @@ class Asgard(TransientSocket, Kraken):
             id=id or 'asgard',
             timeout=timeout,
             api_key=api_key,
-            **kwargs
+            **kwargs,
         )
         self.asgard_socket = asgard_socket
         self.timeout = timeout
@@ -185,12 +185,12 @@ class Asgard(TransientSocket, Kraken):
                     socket.setsockopt(zmq.LINGER, 0)
                     socket.close()
                     self.logger.error('request on %s failed: %s', self.asgard_socket, six.text_type(request))
-                    raise TechnicalError('asgard on {} failed'.format(self.asgard_socket))
+                    raise TechnicalError(f'asgard on {self.asgard_socket} failed')
 
         try:
             return self.breaker.call(_request)
         except pybreaker.CircuitBreakerError as e:
-            self.logger.error('Asgard routing service dead (error: {})'.format(e))
+            self.logger.error(f'Asgard routing service dead (error: {e})')
             self.record_external_failure('circuit breaker open')
             raise
         except Exception as e:

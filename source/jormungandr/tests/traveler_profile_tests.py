@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from jormungandr.travelers_profile import TravelerProfile, default_traveler_profiles
 from jormungandr import cache
@@ -36,9 +35,9 @@ from six.moves import map
 
 def test_get_traveler_profile_and_override():
     """
-     Test traveler profile's factory method make_traveler_profile and override_params
+    Test traveler profile's factory method make_traveler_profile and override_params
 
-     when overriding args, only non-defined args will be overrided.
+    when overriding args, only non-defined args will be overrided.
 
     """
     region = 'default'

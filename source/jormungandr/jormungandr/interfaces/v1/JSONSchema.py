@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import
+
 import re
 
 from flask_restful import Resource
@@ -54,7 +54,7 @@ def format_args(rule):
     return formatted_rule
 
 
-base_path_regexp = re.compile('^/{base}'.format(base=BASE_PATH))
+base_path_regexp = re.compile(f'^/{BASE_PATH}')
 
 
 def get_all_described_paths():
@@ -62,7 +62,7 @@ def get_all_described_paths():
     fetch the description of all api routes that have an 'OPTIONS' endpoint
     """
     swagger = Swagger()
-    for endpoint, rules in app.url_map._rules_by_endpoint.items():
+    for endpoint, rules in list(app.url_map._rules_by_endpoint.items()):
         for rule in rules:
             if 'OPTIONS' not in rule.methods or rule.provide_automatic_options:
                 continue
@@ -127,7 +127,7 @@ class JsonSchemaEndpointsSerializer(serpy.Serializer):
     security = LiteralField([{'basicAuth': []}])
 
     def get_paths(self, obj):
-        return {k: SwaggerPathSerializer(v).data for k, v in obj.paths.items()}
+        return {k: SwaggerPathSerializer(v).data for k, v in list(obj.paths.items())}
 
 
 class Schema(Resource):

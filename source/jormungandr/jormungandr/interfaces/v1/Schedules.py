@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from flask_restful import reqparse, abort
 from flask import request, g
 from jormungandr import i_manager, utils
@@ -192,7 +192,7 @@ class Schedules(ResourceUri, ResourceUtc):
                         direction_type
                     ),
                 )
-            return 'route.has_direction_type({})'.format(values)
+            return f'route.has_direction_type({values})'
 
         if filter:
             return '({}) and ({})'.format(filter, create_direction_type_filter(direction_type))

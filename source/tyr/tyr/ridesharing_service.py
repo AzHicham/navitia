@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division, unicode_literals
+
 from flask import request
 import flask_restful
 from flask_restful import marshal_with, marshal, abort
@@ -63,7 +63,7 @@ class RidesharingService(flask_restful.Resource):
             service = models.RidesharingService.find_by_id(id)
             status = 200
         except sqlalchemy.orm.exc.NoResultFound:
-            logging.getLogger(__name__).info("Create new service {}".format(id))
+            logging.getLogger(__name__).info(f"Create new service {id}")
             service = models.RidesharingService(id)
             models.db.session.add(service)
             status = 201

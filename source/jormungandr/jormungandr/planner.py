@@ -16,7 +16,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr import utils
 from navitiacommon import request_pb2, type_pb2, default_values
 
@@ -101,12 +101,12 @@ class Kraken(object):
     ):
         req = request_pb2.Request()
         req.requested_api = type_pb2.pt_planner
-        for stop_point_id, access_duration in origins.items():
+        for stop_point_id, access_duration in list(origins.items()):
             location = req.journeys.origin.add()
             location.place = stop_point_id
             location.access_duration = access_duration
 
-        for stop_point_id, access_duration in destinations.items():
+        for stop_point_id, access_duration in list(destinations.items()):
             location = req.journeys.destination.add()
             location.place = stop_point_id
             location.access_duration = access_duration

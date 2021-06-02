@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, division
+
 from tests.check_utils import api_get
 from tyr import app
 
@@ -47,5 +47,5 @@ def test_index_ok():
     """
     resp = api_get('/')
     assert resp is not None
-    for endpoint in resp.keys():
+    for endpoint in list(resp.keys()):
         assert 'href' in resp[endpoint]

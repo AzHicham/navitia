@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
+
 import uuid
 import re
 from navitiacommon.sqlalchemy import SQLAlchemy
@@ -161,7 +161,7 @@ class User(db.Model):  # type: ignore
         return self.type == 'super_user'
 
     def __repr__(self):
-        return '<User {}-{}>'.format(self.id, self.email)
+        return f'<User {self.id}-{self.email}>'
 
     def add_key(self, app_name, valid_until=None):
         """
@@ -239,7 +239,7 @@ class Key(db.Model):  # type: ignore
         self.valid_until = valid_until
 
     def __repr__(self):
-        return '<Key %r>' % self.token
+        return f'<Key {self.token!r}>'
 
     @classmethod
     def get_by_token(cls, token):
@@ -646,7 +646,7 @@ class Instance(db.Model):  # type: ignore
     )
     # max_waiting_duration default value 4h: 4*60*60 = 14400 minutes
     max_waiting_duration = db.Column(
-        db.Integer, nullable=False, server_default='{}'.format(default_values.max_waiting_duration)
+        db.Integer, nullable=False, server_default=f'{default_values.max_waiting_duration}'
     )
 
     def __init__(self, name=None, is_free=False, authorizations=None, jobs=None):
@@ -778,7 +778,7 @@ class Instance(db.Model):  # type: ignore
         return [dataset.name for dataset in old_datasets if dataset.name not in dataset_file_to_keep]
 
     def __repr__(self):
-        return '<Instance %r>' % self.name
+        return f'<Instance {self.name!r}>'
 
 
 class TravelerProfile(db.Model):  # type: ignore
@@ -859,7 +859,7 @@ class Api(db.Model):  # type: ignore
         self.name = name
 
     def __repr__(self):
-        return '<Api %r>' % self.name
+        return f'<Api {self.name!r}>'
 
 
 class Authorization(db.Model):  # type: ignore
@@ -873,7 +873,7 @@ class Authorization(db.Model):  # type: ignore
         self.api_id = api_id
 
     def __repr__(self):
-        return '<Authorization %r-%r-%r>' % (self.user_id, self.instance_id, self.api_id)
+        return f'<Authorization {self.user_id!r}-{self.instance_id!r}-{self.api_id!r}>'
 
 
 class Job(db.Model, TimestampMixin):  # type: ignore
@@ -889,7 +889,7 @@ class Job(db.Model, TimestampMixin):  # type: ignore
     metrics = db.relationship('Metric', backref='job', lazy='dynamic', cascade='delete')
 
     def __repr__(self):
-        return '<Job %r>' % self.id
+        return f'<Job {self.id!r}>'
 
     @classmethod
     def get(cls, id=None):
@@ -910,7 +910,7 @@ class Metric(db.Model):  # type: ignore
     dataset = db.relationship('DataSet', lazy='joined')
 
     def __repr__(self):
-        return '<Metric {}>'.format(self.id)
+        return f'<Metric {self.id}>'
 
 
 class DataSet(db.Model):  # type: ignore
@@ -939,7 +939,7 @@ class DataSet(db.Model):  # type: ignore
         return cls.query.filter(cls.job_id == job_id, cls.type == dataset_type).first()
 
     def __repr__(self):
-        return '<DataSet %r>' % self.id
+        return f'<DataSet {self.id!r}>'
 
 
 class BillingPlan(db.Model):  # type: ignore
@@ -1024,7 +1024,7 @@ class AutocompleteParameter(db.Model, TimestampMixin):  # type: ignore
         return result
 
     def __repr__(self):
-        return '<AutocompleteParameter %r>' % self.name
+        return f'<AutocompleteParameter {self.name!r}>'
 
 
 # import at the end to prevent circular dependencies

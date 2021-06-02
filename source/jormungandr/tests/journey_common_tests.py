@@ -28,7 +28,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 import pytest
 from six.moves.urllib.parse import quote
@@ -93,7 +92,7 @@ class JourneyCommon(object):
             is_valid_address(address, depth_check=0)
 
     def test_error_on_journeys_out_of_bounds(self):
-        """ if we got an error with kraken, an error should be returned"""
+        """if we got an error with kraken, an error should be returned"""
 
         query_out_of_production_bound = "journeys?from={from_coord}&to={to_coord}&datetime={datetime}".format(
             from_coord="0.0000898312;0.0000898312",  # coordinate of S in the dataset
@@ -112,7 +111,7 @@ class JourneyCommon(object):
         assert 'journeys' not in response or len(response['journeys']) == 0
 
     def test_error_on_journeys_too_early(self):
-        """ datetime is > 1970y """
+        """datetime is > 1970y"""
 
         query_out_of_production_bound = "journeys?from={from_coord}&to={to_coord}&datetime={datetime}".format(
             from_coord="0.0000898312;0.0000898312", to_coord="0.00188646;0.00071865", datetime="19700101T000000"
@@ -141,7 +140,7 @@ class JourneyCommon(object):
 
     def test_best_filtering(self):
         """Filter to get the best journey, we should have only one journey, the best one"""
-        query = "{query}&type=best".format(query=journey_basic_query)
+        query = f"{journey_basic_query}&type=best"
         response = self.query_region(query)
         check_best(response)
         self.is_valid_journey_response(response, query)
@@ -156,7 +155,7 @@ class JourneyCommon(object):
     def test_other_filtering(self):
         """the basic query return a non pt walk journey and a best journey. we test the filtering of the non pt"""
 
-        query = "{query}&type=non_pt_walk".format(query=journey_basic_query)
+        query = f"{journey_basic_query}&type=non_pt_walk"
         response = self.query_region(query)
         # no best as non_pt_walk
         self.is_valid_journey_response(response, query)
@@ -167,7 +166,7 @@ class JourneyCommon(object):
     def test_speed_factor_direct_path(self):
         """We test the coherence of the non pt walk solution with a speed factor"""
 
-        query = "{query}&type=non_pt_walk&walking_speed=1.5".format(query=journey_basic_query)
+        query = f"{journey_basic_query}&type=non_pt_walk&walking_speed=1.5"
         response = self.query_region(query)
         # no best as non_pt_walk
         self.is_valid_journey_response(response, query)
@@ -190,7 +189,7 @@ class JourneyCommon(object):
     def test_not_existent_filtering(self):
         """if we filter with a real type but not present, we don't get any journey, but we got a nice error"""
 
-        response = self.query_region("{query}&type=car".format(query=journey_basic_query))
+        response = self.query_region(f"{journey_basic_query}&type=car")
 
         assert not 'journeys' in response or len(response['journeys']) == 0
         assert 'error' in response
@@ -200,9 +199,7 @@ class JourneyCommon(object):
     def test_dumb_filtering(self):
         """if we filter with non existent type, we get an error"""
 
-        response, status = self.query_region(
-            "{query}&type=sponge_bob".format(query=journey_basic_query), check=False
-        )
+        response, status = self.query_region(f"{journey_basic_query}&type=sponge_bob", check=False)
 
         assert status == 400, "the response should not be valid"
 
@@ -279,7 +276,7 @@ class JourneyCommon(object):
         so we have a 'not un production period error'
         """
 
-        query = "journeys?from={from_coord}&to={to_coord}".format(from_coord=s_coord, to_coord=r_coord)
+        query = f"journeys?from={s_coord}&to={r_coord}"
 
         response, status_code = self.query_no_assert("v1/coverage/main_routing_test/" + query)
 
@@ -291,9 +288,7 @@ class JourneyCommon(object):
     def test_journeys_date_no_second(self):
         """giving no second in the date we should not be a problem"""
 
-        query = "journeys?from={from_coord}&to={to_coord}&datetime={d}".format(
-            from_coord=s_coord, to_coord=r_coord, d="20120614T0800"
-        )
+        query = f"journeys?from={s_coord}&to={r_coord}&datetime=20120614T0800"
 
         response = self.query_region(query)
         check_best(response)
@@ -306,9 +301,7 @@ class JourneyCommon(object):
     def test_journeys_date_no_minute_no_second(self):
         """giving no minutes and no second in the date we should not be a problem"""
 
-        query = "journeys?from={from_coord}&to={to_coord}&datetime={d}".format(
-            from_coord=s_coord, to_coord=r_coord, d="20120614T08"
-        )
+        query = f"journeys?from={s_coord}&to={r_coord}&datetime=20120614T08"
 
         response = self.query_region(query)
         check_best(response)
@@ -321,9 +314,7 @@ class JourneyCommon(object):
     def test_journeys_date_too_long(self):
         """giving an invalid date (too long) should be a problem"""
 
-        query = "journeys?from={from_coord}&to={to_coord}&datetime={d}".format(
-            from_coord=s_coord, to_coord=r_coord, d="20120614T0812345"
-        )
+        query = f"journeys?from={s_coord}&to={r_coord}&datetime=20120614T0812345"
 
         response, status_code = self.query_no_assert("v1/coverage/main_routing_test/" + query)
 
@@ -334,9 +325,7 @@ class JourneyCommon(object):
     def test_journeys_date_invalid(self):
         """giving the date with mmsshh (56 45 12) should be a problem"""
 
-        query = "journeys?from={from_coord}&to={to_coord}&datetime={d}".format(
-            from_coord=s_coord, to_coord=r_coord, d="20120614T564512"
-        )
+        query = f"journeys?from={s_coord}&to={r_coord}&datetime=20120614T564512"
 
         response, status_code = self.query_no_assert("v1/coverage/main_routing_test/" + query)
 
@@ -347,9 +336,7 @@ class JourneyCommon(object):
     def test_journeys_date_valid_invalid(self):
         """some format of date are bizarrely interpreted, and can result in date in 800"""
 
-        query = "journeys?from={from_coord}&to={to_coord}&datetime={d}".format(
-            from_coord=s_coord, to_coord=r_coord, d="T0800"
-        )
+        query = f"journeys?from={s_coord}&to={r_coord}&datetime=T0800"
 
         response, status_code = self.query_no_assert("v1/coverage/main_routing_test/" + query)
 
@@ -377,18 +364,14 @@ class JourneyCommon(object):
                 assert not 'journeys' in response
                 assert 'message' in response
                 assert (
-                    "The {sn}_speed argument has to be in range [{speed_min}, {speed_max}], you gave : {speed}".format(
-                        sn=sn, speed=speed, speed_min=speed_min, speed_max=speed_max
-                    )
+                    f"The {sn}_speed argument has to be in range [{speed_min}, {speed_max}], you gave : {speed}"
                     in response['message']
                 )
 
     def test_journeys_date_valid_not_zeropadded(self):
         """giving the date with non zero padded month should be a problem"""
 
-        query = "journeys?from={from_coord}&to={to_coord}&datetime={d}".format(
-            from_coord=s_coord, to_coord=r_coord, d="2012614T081025"
-        )
+        query = f"journeys?from={s_coord}&to={r_coord}&datetime=2012614T081025"
 
         response, status_code = self.query_no_assert("v1/coverage/main_routing_test/" + query)
 
@@ -397,9 +380,7 @@ class JourneyCommon(object):
         assert "Unable to parse datetime, year" in response['message']
 
     def _check_id_precision(self, coord_from, coord_to):
-        query = "journeys?from={coord_from}&to={coord_to}&datetime={d}".format(
-            coord_from=coord_from, coord_to=coord_to, d="20120614T080000"
-        )
+        query = f"journeys?from={coord_from}&to={coord_to}&datetime=20120614T080000"
         response = self.query_region(query)
         # no best as non_pt_walk
         self.is_valid_journey_response(response, query)
@@ -528,8 +509,8 @@ class JourneyCommon(object):
         check_best(response)
         self.is_valid_journey_response(response, query)
         assert len(response['journeys']) == 1
-        assert response['journeys'][0]['departure_date_time'] == u'20120615T080100'
-        assert response['journeys'][0]['arrival_date_time'] == u'20120615T080102'
+        assert response['journeys'][0]['departure_date_time'] == '20120615T080100'
+        assert response['journeys'][0]['arrival_date_time'] == '20120615T080102'
 
     @mock.patch.object(i_manager, 'dispatch')
     def test_max_duration_to_pt(self, mock):
@@ -812,9 +793,7 @@ class JourneyCommon(object):
         """
         When the departure is stop_area:A and the destination is stop_point:B belonging to stop_area:B
         """
-        query = "journeys?from={from_sa}&to={to_sa}&datetime={datetime}".format(
-            from_sa='stopA', to_sa='stop_point:stopB', datetime="20120614T080000"
-        )
+        query = "journeys?from=stopA&to=stop_point:stopB&datetime=20120614T080000"
         response = self.query_region(query)
         check_best(response)
         self.is_valid_journey_response(response, query)
@@ -834,8 +813,8 @@ class JourneyCommon(object):
         )
         response = self.query_region(query, check=False)
         assert response[1] == 404
-        assert response[0]['error']['message'] == u'The entry point: stop_area:non_valid is not valid'
-        assert response[0]['error']['id'] == u'unknown_object'
+        assert response[0]['error']['message'] == 'The entry point: stop_area:non_valid is not valid'
+        assert response[0]['error']['id'] == 'unknown_object'
 
     def test_crow_fly_sections(self):
         """
@@ -1052,13 +1031,11 @@ class JourneyCommon(object):
         """
         When the departure is not a Place, the response status should be 404
         """
-        query = "vehicle_journeys/vehicle_journey:SNC/journeys?datetime={datetime}".format(
-            datetime="20120614T080000"
-        )
+        query = "vehicle_journeys/vehicle_journey:SNC/journeys?datetime=20120614T080000"
         response, status = self.query_region(query, check=False)
         assert status == 404
-        assert response['error']['id'] == u'unknown_object'
-        assert response['error']['message'] == u'The entry point: vehicle_journey:SNC is not valid'
+        assert response['error']['id'] == 'unknown_object'
+        assert response['error']['message'] == 'The entry point: vehicle_journey:SNC is not valid'
 
     def test_free_radius_from(self):
         # The coordinates of departure and the stop point are separated by 20m
@@ -1226,8 +1203,10 @@ class JourneyCommon(object):
                 in response[0]['message']
             )
 
-        query = "journeys?from={from_sa}&to={to_sa}&datetime={datetime}&min_nb_journeys={min_nb_journeys}".format(
-            from_sa="stopA", to_sa="stopB", datetime="20120614T223000", min_nb_journeys=int(-42)
+        query = (
+            "journeys?from={from_sa}&to={to_sa}&datetime={datetime}&min_nb_journeys={min_nb_journeys}".format(
+                from_sa="stopA", to_sa="stopB", datetime="20120614T223000", min_nb_journeys=int(-42)
+            )
         )
 
         response = self.query_region(query, check=False)
@@ -1290,13 +1269,13 @@ class JourneyCommon(object):
 class AddErrorFieldInJormun(object):
     def test_add_error_field(self):
         """
-            The goal of this test is to put forward the addition of the error
-            in the Jormungandr part.
-            Kraken send journeys but after the Jormungandr filtering, there is
-            no more journeys field. So Jormungandr have to add an error field
-            with "no_solution" id and "no solution found for this journey"
-            message.
-            """
+        The goal of this test is to put forward the addition of the error
+        in the Jormungandr part.
+        Kraken send journeys but after the Jormungandr filtering, there is
+        no more journeys field. So Jormungandr have to add an error field
+        with "no_solution" id and "no solution found for this journey"
+        message.
+        """
         query = (
             "journeys?from={from_sp}&to={to_sp}&datetime={datetime}"
             "&datetime_represents=arrival&_max_successive_physical_mode=3&_max_additional_connections=10".format(
@@ -1461,9 +1440,7 @@ class OnBasicRouting:
         with a too long waiting duration.
         The second call to kraken must return a valid journey
         """
-        query = "journeys?from={from_sa}&to={to_sa}&datetime={datetime}".format(
-            from_sa="A", to_sa="D", datetime="20120614T080000"
-        )
+        query = "journeys?from=A&to=D&datetime=20120614T080000"
 
         response = self.query_region(query, display=False)
         check_best(response)
@@ -1492,9 +1469,7 @@ class OnBasicRouting:
         """
         departure from '5.;5.' coordinates outside street network
         """
-        query = "journeys?from={coord}&to={to_sa}&datetime={datetime}".format(
-            coord="5.;5.", to_sa="H", datetime="20120615T170000"
-        )
+        query = "journeys?from=5.;5.&to=H&datetime=20120615T170000"
 
         response = self.query_region(query)
         check_best(response)
@@ -1517,9 +1492,7 @@ class OnBasicRouting:
         The second call to kraken must return a valid journey
         We had a debug argument, hence 2 journeys are returned, only one is typed
         """
-        query = "journeys?from={from_sa}&to={to_sa}&datetime={datetime}&debug=true".format(
-            from_sa="A", to_sa="D", datetime="20120614T080000"
-        )
+        query = "journeys?from=A&to=D&datetime=20120614T080000&debug=true"
         response = self.query_region(query, display=True)
         check_best(response)
         assert len(response['journeys']) == 2
@@ -1534,12 +1507,7 @@ class OnBasicRouting:
         """
 
         def journey(dt):
-            return self.query_region(
-                "journeys?from={from_sa}&to={to_sa}&datetime={datetime}&debug=true".format(
-                    from_sa="A", to_sa="D", datetime=dt
-                ),
-                check=False,
-            )
+            return self.query_region(f"journeys?from=A&to=D&datetime={dt}&debug=true", check=False)
 
         # invalid month
         resp, code = journey("20121501T100000")
@@ -1556,11 +1524,7 @@ class OnBasicRouting:
         """
 
         def journey(dt):
-            return self.query_region(
-                "journeys?from={from_sa}&to={to_sa}&datetime={datetime}&debug=true".format(
-                    from_sa="A", to_sa="D", datetime=dt
-                )
-            )
+            return self.query_region(f"journeys?from=A&to=D&datetime={dt}&debug=true")
 
         # those should not raise an error
         journey("20120615T080000Z")
@@ -1575,15 +1539,13 @@ class OnBasicRouting:
         long waiting duration, therefore it must be deleted.
         The second one must be returned
         """
-        query = "journeys?from={from_sa}&to={to_sa}&datetime={datetime}".format(
-            from_sa="A", to_sa="D", datetime="20120615T080000"
-        )
+        query = "journeys?from=A&to=D&datetime=20120615T080000"
 
         response = self.query_region(query, display=False)
         check_best(response)
         self.is_valid_journey_response(response, query)
         assert len(response['journeys']) == 1
-        assert response['journeys'][0]['arrival_date_time'] == u'20120615T151000'
+        assert response['journeys'][0]['arrival_date_time'] == '20120615T151000'
         assert response['journeys'][0]['type'] == "best"
 
     def test_max_attemps(self):
@@ -1591,9 +1553,7 @@ class OnBasicRouting:
         Kraken always retrieves journeys with non_pt_duration > max_non_pt_duration
         No journeys should be typed, but get_journeys should stop quickly
         """
-        query = "journeys?from={from_sa}&to={to_sa}&datetime={datetime}".format(
-            from_sa="E", to_sa="H", datetime="20120615T080000"
-        )
+        query = "journeys?from=E&to=H&datetime=20120615T080000"
 
         response = self.query_region(query, display=False)
         assert not "journeys" in response or len(response['journeys']) == 0
@@ -1604,9 +1564,7 @@ class OnBasicRouting:
         No journeys should be typed, but get_journeys should stop quickly
         We had the debug argument, hence a non-typed journey is returned
         """
-        query = "journeys?from={from_sa}&to={to_sa}&datetime={datetime}&debug=true".format(
-            from_sa="E", to_sa="H", datetime="20120615T080000"
-        )
+        query = "journeys?from=E&to=H&datetime=20120615T080000&debug=true"
 
         response = self.query_region(query, display=False)
         self.is_valid_journey_response(response, query)
@@ -1816,9 +1774,7 @@ class JourneyMinBikeMinCar(object):
         assert response['journeys'][1]['sections'][0]['duration'] == 276
 
     def test_last_section_mode_bike_only(self):
-        query = '{sub_query}&last_section_mode[]=bike&datetime={datetime}'.format(
-            sub_query=sub_query, datetime="20120614T080000"
-        )
+        query = f'{sub_query}&last_section_mode[]=bike&datetime=20120614T080000'
         response = self.query_region(query)
         self.is_valid_journey_response(response, query)
         assert len(response['journeys']) == 2
@@ -1845,9 +1801,7 @@ class JourneyMinBikeMinCar(object):
         assert response['journeys'][0]['sections'][0]['duration'] == 62
 
     def test_first_section_mode_bike_only(self):
-        query = '{sub_query}&first_section_mode[]=bike&datetime={datetime}'.format(
-            sub_query=sub_query, datetime="20120614T080000"
-        )
+        query = f'{sub_query}&first_section_mode[]=bike&datetime=20120614T080000'
         response = self.query_region(query)
         self.is_valid_journey_response(response, query)
         assert len(response['journeys']) == 1
@@ -1906,9 +1860,7 @@ class JourneyMinBikeMinCar(object):
             'first_section_mode[]=car&first_section_mode[]=walking',
         ]
         for mode in modes:
-            query = '{sub_query}&{mode}&datetime={datetime}'.format(
-                sub_query=sub_query, mode=mode, datetime="20120614T080000"
-            )
+            query = f'{sub_query}&{mode}&datetime=20120614T080000'
             response = self.query_region(query)
             self.is_valid_journey_response(response, query)
             assert len(response['journeys']) == 2
@@ -1925,15 +1877,13 @@ class JourneyMinBikeMinCar(object):
             assert response['journeys'][1]['sections'][0]['duration'] == 276
 
     def test_min_nb_transfers(self):
-        query = '{sub_query}&datetime={datetime}'.format(sub_query=sub_query, datetime="20120614T080000")
+        query = f"{sub_query}&datetime=20120614T080000"
         response = self.query_region(query)
         self.is_valid_journey_response(response, query)
         assert len(response['journeys']) == 2
 
         # set the min_nb_transfers to 1
-        query = '{sub_query}&datetime={datetime}&min_nb_transfers=1&debug=true'.format(
-            sub_query=sub_query, datetime="20120614T080000"
-        )
+        query = f'{sub_query}&datetime=20120614T080000&min_nb_transfers=1&debug=true'
         response = self.query_region(query)
         self.is_valid_journey_response(response, query)
         # Among two direct_path with same duration and path, one is eliminated.
@@ -2103,8 +2053,8 @@ class JourneysTimeFrameDuration:
         response = self.query_region(query)
         assert 2 <= len(response['journeys'])
 
-        assert response['journeys'][0]['departure_date_time'] == u'20180315T083000'
-        assert response['journeys'][1]['departure_date_time'] == u'20180315T082000'
+        assert response['journeys'][0]['departure_date_time'] == '20180315T083000'
+        assert response['journeys'][1]['departure_date_time'] == '20180315T082000'
 
     def test_timeframe_duration_with_minimum_value(self):
         """

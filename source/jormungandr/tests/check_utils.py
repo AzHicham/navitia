@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from collections import defaultdict, namedtuple
 from functools import partial
 from future.moves.itertools import zip_longest
@@ -58,7 +58,7 @@ def check_url(tester, url, might_have_additional_args=False, **kwargs):
     """
     response = tester.get(url, **kwargs)
 
-    assert response, "response for url {} is null".format(url)
+    assert response, f"response for url {url} is null"
     if might_have_additional_args:
         assert response.status_code != 404, "unreachable url {}".format(
             json.dumps(json.loads(response.data), indent=2)
@@ -79,7 +79,7 @@ def get_not_null(dict, field):
     if type(val) == int:
         return val  # no check for integer
 
-    assert val, "value of field {} is null".format(field)
+    assert val, f"value of field {field} is null"
     return val
 
 
@@ -149,7 +149,7 @@ def get_valid_datetime(str, possible_errors=False):
         if possible_errors:
             assert str == "not-a-date-time"
             return None
-        logging.error("string '{}' is no valid datetime".format(str))
+        logging.error(f"string '{str}' is no valid datetime")
         assert False
 
 
@@ -177,7 +177,7 @@ def get_valid_time(str):
         # AD:we use a datetime anyway because I don't know what to use instead
         return datetime.strptime(str, "%H%M%S")
     except ValueError:
-        logging.error("string '{}' is no valid time".format(str))
+        logging.error(f"string '{str}' is no valid time")
         assert False
 
 
@@ -199,7 +199,7 @@ def is_valid_date(str):
     try:
         datetime.strptime(str, "%Y%m%d")
     except ValueError:
-        logging.error("string '{}' is no valid date".format(str))
+        logging.error(f"string '{str}' is no valid date")
         return False
     return True
 
@@ -221,7 +221,7 @@ def get_valid_float(str):
     try:
         return float(str)
     except ValueError:
-        assert "cannot convert {} to float".format(str)
+        assert f"cannot convert {str} to float"
 
 
 def get_valid_int(str):
@@ -287,10 +287,10 @@ def check_links(object, tester, href_mandatory=True):
     """
     links = get_links_dict(object)
 
-    for link_name, link in links.items():
+    for link_name, link in list(links.items()):
 
         def get_bool(name):
-            """ give boolean if in dict, else False"""
+            """give boolean if in dict, else False"""
             if name in link:
                 assert is_valid_bool(link[name])
                 if bool(link[name]):
@@ -376,7 +376,7 @@ class unique_dict(dict):
         self.key_name = key_name
 
     def __setitem__(self, key, value):
-        assert not key in self, "the {} if must be unique, but '{}' is not".format(self.key_name, key)
+        assert not key in self, f"the {self.key_name} if must be unique, but '{key}' is not"
         dict.__setitem__(self, key, value)
 
 
@@ -462,7 +462,7 @@ def is_valid_isochrone(journey, tester, query):
     assert 'journeys' in journey_links
 
     additional_args = query_from_str(journey_links['journeys']['href'])
-    for k, v in query.items():
+    for k, v in list(query.items()):
         assert additional_args[k] == v
 
 
@@ -882,7 +882,7 @@ def is_valid_place(place, depth_check=1):
     elif type == "administrative_region":
         is_valid_admin(get_not_null(place, "administrative_region"), depth_check)
     else:
-        assert False, "invalid type {}".format(type)
+        assert False, f"invalid type {type}"
 
 
 def is_valid_pt_objects_response(response, depth_check=1):
@@ -1221,7 +1221,7 @@ def has_disruption(response, object_get, disruption_uri):
     object_spec is a ObjGetter
     """
     o = next((s for s in response[object_get.collection] if s['id'] == object_get.uri), None)
-    assert o, 'impossible to find object {}'.format(object_get)
+    assert o, f'impossible to find object {object_get}'
 
     disruptions = get_disruptions(o, response) or []
 
@@ -1234,16 +1234,14 @@ stopA_coord = "0.00107797;0.00071865"
 stopB_coord = "0.0000898312;0.00026949"
 
 # default journey query used in various test
-journey_basic_query = "journeys?from={from_coord}&to={to_coord}&datetime={datetime}".format(
-    from_coord=s_coord, to_coord=r_coord, datetime="20120614T080000"
-)
+journey_basic_query = f"journeys?from={s_coord}&to={r_coord}&datetime=20120614T080000"
 isochrone_basic_query = "isochrones?from={from_coord}&datetime={datetime}&max_duration={max_duration}".format(
     from_coord=s_coord, datetime="20120614T080000", max_duration="3600"
 )
 heat_map_basic_query = "heat_maps?from={from_coord}&datetime={datetime}&max_duration={max_duration}".format(
     from_coord=s_coord, datetime="20120614T080000", max_duration="3600"
 )
-sub_query = 'journeys?from={from_coord}&to={to_coord}'.format(from_coord=s_coord, to_coord=r_coord)
+sub_query = f'journeys?from={s_coord}&to={r_coord}'
 
 
 def get_all_element_disruptions(elem, response):
@@ -1361,7 +1359,7 @@ def check_journey(journey, ref_journey):
 
 
 def generate_pt_journeys(response):
-    """ generate all journeys with at least a public transport section """
+    """generate all journeys with at least a public transport section"""
     for j in response.get('journeys', []):
         if any(s for s in j.get('sections', []) if s['type'] == 'public_transport'):
             yield j
@@ -1401,7 +1399,7 @@ def has_the_disruption(response, disrupt_id):
 
 
 def get_departure(dep, sp_uri, line_code):
-    """ small helper that extract the information from a route point departures """
+    """small helper that extract the information from a route point departures"""
     return [
         {
             'rt': r['stop_date_time']['data_freshness'] == 'realtime',
@@ -1413,7 +1411,7 @@ def get_departure(dep, sp_uri, line_code):
 
 
 def get_schedule(scs, sp_uri, line_code):
-    """ small helper that extract the information from a route point stop schedule """
+    """small helper that extract the information from a route point stop schedule"""
     return [
         {'rt': r['data_freshness'] == 'realtime', 'dt': r['date_time']}
         for r in next(

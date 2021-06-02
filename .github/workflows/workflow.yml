@@ -36,7 +36,7 @@ jobs:
 
     strategy:
         matrix:
-            docker_image: [navitia/debian8_dev, navitia/debian9_dev, navitia/debian10_dev]
+            docker_image: [azhicham/navitia]
 
     container:
         image: ${{matrix.docker_image}}
@@ -46,57 +46,45 @@ jobs:
         image: rabbitmq:3-alpine
         ports:
           - 5672:5672
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
 
     steps:
     - uses: actions/checkout@v2
       with:
           submodules: 'recursive'
-    - name: Install dependencies for python2
-      run: pip install -r source/jormungandr/requirements_dev.txt
     - name: configure for Release
       run: cmake -DSTRIP_SYMBOLS=ON source
     - name: run
-      run: make -j $(nproc)
-    - name: Tests python2
-      run: |
-        export JORMUNGANDR_BROKER_URL='amqp://guest:guest@rabbitmq:5672//'
-        export KRAKEN_RABBITMQ_HOST='rabbitmq'
-        ctest --output-on-failure
+      run:  make -j $(nproc)
     - name: Tests python3
       run: |
-        pip install virtualenv -U
-        virtualenv -p /usr/local/bin/python3.6 navitia_py3
+        apt update && apt install -y libpq-dev git
+        pip3 install virtualenv -U
+        virtualenv -p python3.8 navitia_py3
         . navitia_py3/bin/activate
         python -V
-        pip install -r source/jormungandr/requirements_dev.txt
+        pip3 install -r source/jormungandr/requirements_dev.txt
         export JORMUNGANDR_BROKER_URL='amqp://guest:guest@rabbitmq:5672//'
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
-        ctest --output-on-failure
-        deactivate
+        ctest --output-on-failure --verbose
     - name: remove useless tests
       run: |
         rm -rf tests/mock_kraken kraken/tests ed/tests fare/tests routing/tests calendar/tests
         rm -rf georef/tests proximity_list/tests time_tables/tests equipment/tests
         rm -rf ptreferential/tests
-    - name: install Tyr dependencies for python2
-      run: |
-        pip install -r source/tyr/requirements_dev.txt
-        pip install -r source/sql/requirements.txt
-    - name: docker_test for python2
-      run: |
-        python -V
-        export NAVITIA_CHAOS_DUMP_PATH=$(echo $GITHUB_WORKSPACE/source/tests/chaos/chaos_loading.sql.gz | sed -e 's#__w#home/runner/work#')
-        echo $NAVITIA_CHAOS_DUMP_PATH
-        make docker_test
-      env:
-        NAVITIA_DOCKER_NETWORK: ${{ job.container.network }}
-        TYR_CELERY_BROKER_URL: 'amqp://guest:guest@rabbitmq:5672//'
     - name: docker_test for python3
       run: |
         . navitia_py3/bin/activate
-        python -V
-        pip install -r source/tyr/requirements_dev.txt
-        pip install -r source/sql/requirements.txt
+        pip3 install -r source/tyr/requirements_dev.txt
+        pip3 install -r source/sql/requirements.txt
         export NAVITIA_CHAOS_DUMP_PATH=$(echo $GITHUB_WORKSPACE/source/tests/chaos/chaos_loading.sql.gz | sed -e 's#__w#home/runner/work#')
         echo $NAVITIA_CHAOS_DUMP_PATH
         make docker_test
@@ -115,8 +103,13 @@ jobs:
     - uses: actions/checkout@v1
     - name: install dependencies
       run: |
-        apt update && apt install -y protobuf-compiler python python-pip python3  python3-pip clang-format-6.0 git 2to3
-        pip install -r requirements_pre-commit.txt --upgrade
+        apt update && apt install -y libpq-dev python3.8 python3.8-dev python3.8-distutils python3.8-venv python3-pip clang-format-6.0 git 2to3 protobuf-compiler
+        pip3 install virtualenv -U
+        virtualenv -p python3.8 navitia_py3
+        . navitia_py3/bin/activate
+        python -V
+        pip3 install -r source/jormungandr/requirements_dev.txt
+        pip3 install -r requirements_pre-commit.txt --upgrade
     - name: get submodule
       run: |
         sed -i 's,git\@github.com:\([^/]*\)/\(.*\).git,https://github.com/\1/\2,' .gitmodules
@@ -128,6 +121,7 @@ jobs:
         LC_ALL: C.UTF-8
         LANG: C.UTF-8
       run: |
+        pip3 install pre-commit
         pre-commit install --install-hooks
         pre-commit run --all --show-diff-on-failure
   release_script_tests:

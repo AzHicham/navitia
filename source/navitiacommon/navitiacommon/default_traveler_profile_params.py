@@ -126,4 +126,4 @@ default_traveler_profile_params = {
     },
 }
 
-acceptable_traveler_types = default_traveler_profile_params.keys()
+acceptable_traveler_types = list(default_traveler_profile_params.keys())

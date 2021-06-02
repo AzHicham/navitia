@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from navitiacommon import response_pb2
 import logging
 import pybreaker
@@ -60,7 +60,7 @@ class Valhalla(AbstractStreetNetworkService):
         self.instance = instance
         self.sn_system_id = id
         if not is_url(service_url):
-            raise ValueError('service_url {} is not a valid url'.format(service_url))
+            raise ValueError(f'service_url {service_url} is not a valid url')
         self.service_url = service_url
         self.api_key = api_key
         self.timeout = timeout
@@ -91,18 +91,18 @@ class Valhalla(AbstractStreetNetworkService):
         }
 
     def _call_valhalla(self, url, method=requests.post, data=None):
-        logging.getLogger(__name__).debug('Valhalla routing service , call url : {}'.format(url))
-        logging.getLogger(__name__).debug('data : {}'.format(data))
+        logging.getLogger(__name__).debug(f'Valhalla routing service , call url : {url}')
+        logging.getLogger(__name__).debug(f'data : {data}')
         headers = {}
         if self.api_key:
             headers['api_key'] = self.api_key
         try:
             return self.breaker.call(method, url, timeout=self.timeout, data=data, headers=headers)
         except pybreaker.CircuitBreakerError as e:
-            logging.getLogger(__name__).error('Valhalla routing service dead (error: {})'.format(e))
+            logging.getLogger(__name__).error(f'Valhalla routing service dead (error: {e})')
             self.record_external_failure('circuit breaker open')
         except requests.Timeout as t:
-            logging.getLogger(__name__).error('Valhalla routing service dead (error: {})'.format(t))
+            logging.getLogger(__name__).error(f'Valhalla routing service dead (error: {t})')
             self.record_external_failure('timeout')
         except Exception as e:
             logging.getLogger(__name__).exception('Valhalla routing error')
@@ -112,8 +112,8 @@ class Valhalla(AbstractStreetNetworkService):
     @classmethod
     def _format_coord(cls, pt_object, api='route'):
         if api not in ['route', 'sources_to_targets']:
-            logging.getLogger(__name__).error('Valhalla routing service , invalid api {}'.format(api))
-            raise ApiNotFound('Valhalla routing service , invalid api {}'.format(api))
+            logging.getLogger(__name__).error(f'Valhalla routing service , invalid api {api}')
+            raise ApiNotFound(f'Valhalla routing service , invalid api {api}')
 
         coord = get_pt_object_coord(pt_object)
         dict_coord = {"lat": coord.lat, "lon": coord.lon}
@@ -202,7 +202,7 @@ class Valhalla(AbstractStreetNetworkService):
             section.end_date_time = section.begin_date_time + section.duration
             previous_section_endtime = section.end_date_time
 
-            section.id = 'section_{}'.format(index)
+            section.id = f'section_{index}'
             section.length = int(kilometers_to_meters(leg['summary']['length']))
 
             if index == 0:
@@ -243,8 +243,8 @@ class Valhalla(AbstractStreetNetworkService):
     def _get_valhalla_mode(cls, kraken_mode):
         map_mode = {"walking": "pedestrian", "car": "auto", "car_no_park": "auto", "bike": "bicycle"}
         if kraken_mode not in map_mode:
-            logging.getLogger(__name__).error('Valhalla, mode {} not implemented'.format(kraken_mode))
-            raise InvalidArguments('Valhalla, mode {} not implemented'.format(kraken_mode))
+            logging.getLogger(__name__).error(f'Valhalla, mode {kraken_mode} not implemented')
+            raise InvalidArguments(f'Valhalla, mode {kraken_mode} not implemented')
         return map_mode.get(kraken_mode)
 
     def _make_request_arguments(
@@ -268,7 +268,7 @@ class Valhalla(AbstractStreetNetworkService):
             args['sources'] = [self._format_coord(origin, api) for origin in pt_object_origins]
             args['targets'] = [self._format_coord(destination, api) for destination in pt_object_destinations]
 
-            for key, value in self.directions_options.items():
+            for key, value in list(self.directions_options.items()):
                 args[key] = value
         return json.dumps(args)
 
@@ -281,7 +281,7 @@ class Valhalla(AbstractStreetNetworkService):
                 'Valhalla service unavailable, impossible to query : {}'
                 ' with response : {}'.format(response.url, response.text)
             )
-            raise TechnicalError('Valhalla service unavailable, impossible to query : {}'.format(response.url))
+            raise TechnicalError(f'Valhalla service unavailable, impossible to query : {response.url}')
 
     def _direct_path(
         self,
@@ -297,7 +297,7 @@ class Valhalla(AbstractStreetNetworkService):
         data = self._make_request_arguments(
             mode, [pt_object_origin], [pt_object_destination], request, api='route'
         )
-        r = self._call_valhalla('{}/{}'.format(self.service_url, 'route'), requests.post, data)
+        r = self._call_valhalla(f"{self.service_url}/route", requests.post, data)
         if r is not None and r.status_code == 400 and r.json()['error_code'] == 442:
             # error_code == 442 => No path could be found for input
             resp = response_pb2.Response()
@@ -345,7 +345,7 @@ class Valhalla(AbstractStreetNetworkService):
                 raise TechnicalError('routing matrix error, no unique center point')
 
         data = self._make_request_arguments(mode, origins, destinations, request, api='sources_to_targets')
-        r = self._call_valhalla('{}/{}'.format(self.service_url, 'sources_to_targets'), requests.post, data)
+        r = self._call_valhalla(f"{self.service_url}/sources_to_targets", requests.post, data)
         self._check_response(r)
         resp_json = r.json()
         return self._get_matrix(resp_json, mode_park_cost=self.mode_park_cost.get(mode))

@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 import logging
 import pybreaker
@@ -83,7 +82,7 @@ class Klaxit(AbstractRidesharingService):
             rating_scale_max=self.rating_scale_max,
         )
 
-        self.logger = logging.getLogger("{} {}".format(__name__, self.system_id))
+        self.logger = logging.getLogger(f"{__name__} {self.system_id}")
 
         self.breaker = pybreaker.CircuitBreaker(
             fail_max=app.config.get(str('CIRCUIT_BREAKER_MAX_KLAXIT_FAIL'), 4),

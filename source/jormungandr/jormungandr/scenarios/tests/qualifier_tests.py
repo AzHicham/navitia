@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr.scenarios import qualifier
 import navitiacommon.response_pb2 as response_pb2
 from jormungandr.utils import str_to_time_stamp

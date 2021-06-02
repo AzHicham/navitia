@@ -25,7 +25,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
+
 import serpy
 import logging
 from jormungandr.interfaces.v1.serializer import jsonschema
@@ -80,7 +80,7 @@ class CoordId(jsonschema.Field):
     def generate_coord_id(self, obj):
         coords = value_by_path(obj, 'geometry.coordinates')
         if coords and len(coords) >= 2:
-            return '{};{}'.format(coords[0], coords[1])
+            return f'{coords[0]};{coords[1]}'
         return None
 
 
@@ -122,7 +122,7 @@ class AdministrativeRegionsSerializer(serpy.Field):
                 "id": None,
                 "zip_code": None,
             }
-            for level, name in admins.items()
+            for level, name in list(admins.items())
         ]
 
 
@@ -285,12 +285,12 @@ class GeocodePlacesSerializer(serpy.DictSerializer):
             geocoding = feature.get('properties', {}).get('geocoding', {})
             type_ = geocoding.get('type')
             if not type_ or type_ not in map_serializer:
-                logging.getLogger(__name__).error('Place not serialized (unknown type): {}'.format(feature))
+                logging.getLogger(__name__).error(f'Place not serialized (unknown type): {feature}')
                 continue
             zone_type = geocoding.get('zone_type')
             # TODO: do something smart with other zone type
             if type_ == 'zone' and zone_type != 'city':
-                logging.getLogger(__name__).error('Place not serialized (invalid zone type): {}'.format(feature))
+                logging.getLogger(__name__).error(f'Place not serialized (invalid zone type): {feature}')
                 continue
             res.append(map_serializer[type_](feature).data)
         return res

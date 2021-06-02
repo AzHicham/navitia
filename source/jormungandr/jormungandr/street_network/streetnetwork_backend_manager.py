@@ -120,7 +120,7 @@ class StreetNetworkBackendManager(object):
 
     def _update_sn_backend(self, sn_backend, instance):
         # type: (StreetNetworkBackend, Instance) -> None
-        self.logger.info('Updating / Adding {} streetnetwork backend'.format(sn_backend.id))
+        self.logger.info(f'Updating / Adding {sn_backend.id} streetnetwork backend')
         try:
             self._streetnetwork_backends[sn_backend.id] = self._create_backend_from_db(sn_backend, instance)
             self._streetnetwork_backends_last_update[sn_backend.id] = sn_backend.last_update()
@@ -182,7 +182,7 @@ class StreetNetworkBackendManager(object):
         # We have to set them manually here
         all_street_networks_with_modes = defaultdict(list)  # type: Dict[AbstractStreetNetworkService, List[str]]
         for mode in fm.all_fallback_modes:
-            streetnetwork_backend_conf = getattr(instance, "street_network_{}".format(mode))
+            streetnetwork_backend_conf = getattr(instance, f"street_network_{mode}")
             sn = self._streetnetwork_backends.get(
                 streetnetwork_backend_conf, None
             )  # type: Optional[AbstractStreetNetworkService]
@@ -190,7 +190,7 @@ class StreetNetworkBackendManager(object):
                 continue
             all_street_networks_with_modes[sn].append(mode)
 
-        for sn, modes in all_street_networks_with_modes.items():
+        for sn, modes in list(all_street_networks_with_modes.items()):
             sn.modes = modes
 
         return [sn for sn in all_street_networks_with_modes]
@@ -210,9 +210,7 @@ class StreetNetworkBackendManager(object):
 
         sn = next((s for s in self._streetnetwork_backends_by_instance_legacy[instance] if predicate(s)), None)
         if sn is None:
-            raise TechnicalError(
-                'impossible to find a streetnetwork module for {} ({})'.format(mode, overriden_sn_id)
-            )
+            raise TechnicalError(f'impossible to find a streetnetwork module for {mode} ({overriden_sn_id})')
         return sn
 
     def get_all_street_networks_legacy(self, instance):

@@ -30,7 +30,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import importlib
 from flask_restful.representations import json
 from flask import request, make_response
@@ -74,7 +74,7 @@ def access_log(response, *args, **kwargs):
         'status': response.status_code,
         'external_request_id': request.headers.get('x-request-id'),
     }
-    logger.info(u'"%(method)s %(path)s?%(query_string)s" %(status)s', d, extra=d)
+    logger.info('"%(method)s %(path)s?%(query_string)s" %(status)s', d, extra=d)
     return response
 
 
@@ -107,7 +107,7 @@ def add_info_newrelic(response, *args, **kwargs):
 # If modules are configured, then load and run them
 if 'MODULES' in rest_api.app.config:
     rest_api.module_loader = ModulesLoader(rest_api)
-    for prefix, module_info in rest_api.app.config['MODULES'].items():
+    for prefix, module_info in list(rest_api.app.config['MODULES'].items()):
         module_file = importlib.import_module(module_info['import_path'])
         module = getattr(module_file, module_info['class_name'])
         rest_api.module_loader.load(module(rest_api, prefix))

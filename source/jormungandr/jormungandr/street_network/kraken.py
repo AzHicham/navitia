@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 import copy
 
@@ -123,8 +123,8 @@ class Kraken(AbstractStreetNetworkService):
             # max_{mode}_direct_path_duration / 2.0
             from jormungandr.fallback_modes import FallbackModes as fm
 
-            direct_path_request['max_{mode}_duration_to_pt'.format(mode=mode)] = int(
-                request['max_{mode}_direct_path_duration'.format(mode=mode)] / 2
+            direct_path_request[f'max_{mode}_duration_to_pt'] = int(
+                request[f'max_{mode}_direct_path_duration'] / 2
             )
             # if the crowfly distance between origin and destination is too large, there is no need to call kraken
             crowfly_distance = crowfly_distance_between(
@@ -136,8 +136,8 @@ class Kraken(AbstractStreetNetworkService):
                 return response_pb2.Response()
 
             if (
-                crowfly_distance / float(direct_path_request['{mode}_speed'.format(mode=mode)])
-                > request['max_{mode}_direct_path_duration'.format(mode=mode)]
+                crowfly_distance / float(direct_path_request[f'{mode}_speed'])
+                > request[f'max_{mode}_direct_path_duration']
             ):
                 return response_pb2.Response()
 
@@ -204,9 +204,9 @@ class Kraken(AbstractStreetNetworkService):
             FallbackModes.car_no_park.name,
             FallbackModes.car.name,
         ):
-            req.direct_path.streetnetwork_params.car_no_park_speed = request['{}_speed'.format(mode)]
+            req.direct_path.streetnetwork_params.car_no_park_speed = request[f'{mode}_speed']
             req.direct_path.streetnetwork_params.max_car_no_park_duration_to_pt = request[
-                'max_{}_duration_to_pt'.format(mode)
+                f'max_{mode}_duration_to_pt'
             ]
         for attr in ("bss_rent_duration", "bss_rent_penalty", "bss_return_duration", "bss_return_penalty"):
             setattr(req.direct_path.streetnetwork_params, attr, request[attr])
@@ -276,9 +276,7 @@ class Kraken(AbstractStreetNetworkService):
 
     def _check_for_error_and_raise(self, res):
         if res is None or res.HasField('error'):
-            logging.getLogger(__name__).error(
-                'routing matrix query error {}'.format(res.error if res else "Unknown")
-            )
+            logging.getLogger(__name__).error(f"routing matrix query error {res.error if res else 'Unknown'}")
             raise TechnicalError('routing matrix fail')
 
     def make_path_key(self, mode, orig_uri, dest_uri, streetnetwork_path_type, period_extremity):

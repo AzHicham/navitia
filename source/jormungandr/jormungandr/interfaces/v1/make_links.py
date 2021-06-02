@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from flask import url_for, request
 from collections import OrderedDict
 from functools import wraps
@@ -82,7 +82,7 @@ def create_internal_link(rel, _type, id, templated=False, description=None):
 
 
 def make_external_service_link(url, rel, _type, templated=False, **kwargs):
-    call_params = "&".join(["{}={}".format(key, value) for key, value in kwargs.items()])
+    call_params = "&".join([f"{key}={value}" for key, value in list(kwargs.items())])
     return {"href": url + call_params, "rel": rel, "type": _type, "templated": templated}
 
 
@@ -210,12 +210,12 @@ class add_coverage_link(generate_links):
                 kwargs["templated"] = True
                 for link in self.links:
                     kwargs["rel"] = link
-                    data["links"].append(create_external_link("v1.{}".format(link), **kwargs))
-                for link, uri in self.links_uri.items():
+                    data["links"].append(create_external_link(f"v1.{link}", **kwargs))
+                for link, uri in list(self.links_uri.items()):
                     kwargs["rel"] = link
                     if uri is not None:
                         kwargs["uri"] = uri
-                    data["links"].append(create_external_link("v1.{}".format(link), **kwargs))
+                    data["links"].append(create_external_link(f"v1.{link}", **kwargs))
             if isinstance(objects, tuple):
                 return data, code, header
             else:
@@ -244,9 +244,7 @@ class add_collection_links(generate_links):
                 kwargs["templated"] = True
                 for collection in self.collections:
                     kwargs["rel"] = collection
-                    data["links"].append(
-                        create_external_link("v1.{c}.collection".format(c=collection), **kwargs)
-                    )
+                    data["links"].append(create_external_link(f"v1.{collection}.collection", **kwargs))
             if isinstance(objects, tuple):
                 return data, code, header
             else:
@@ -288,7 +286,7 @@ class add_id_links(generate_links):
 
                     endpoint = "v1." + kwargs["collection"] + ".id"
                     collection = kwargs["collection"]
-                    to_pass = {k: v for k, v in kwargs.items() if k != "collection"}
+                    to_pass = {k: v for k, v in list(kwargs.items()) if k != "collection"}
                     to_pass["_type"] = obj
                     to_pass["templated"] = True
                     to_pass["rel"] = collection
@@ -306,7 +304,7 @@ class add_id_links(generate_links):
                 self.data.add(data["type"])
             if "id" in data and ("href" not in data) and collection_name:
                 self.data.add(collection_name)
-            for key, value in data.items():
+            for key, value in list(data.items()):
                 self.get_objets(value, key)
         if isinstance(data, (list, tuple)):
             for item in data:

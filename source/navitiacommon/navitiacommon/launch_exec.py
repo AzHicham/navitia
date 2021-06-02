@@ -31,7 +31,7 @@
 """
 Function to launch a bin
 """
-from __future__ import absolute_import, unicode_literals
+
 
 import subprocess
 import os
@@ -88,7 +88,7 @@ def read_async(fd):
 
 
 def hide_args(whole_args, args_to_be_hidden):
-    """ hide the given args' contents.
+    """hide the given args' contents.
 
     >>> hide_args(["--toto", "12345", "--titi", "my almighty password"], ["--titi"])
     ['--toto', '12345', '--titi', 'xxxxxxxxx']
@@ -102,7 +102,7 @@ def hide_args(whole_args, args_to_be_hidden):
 
 
 def launch_exec_traces(exec_name, args, logger):
-    """ Launch an exec with args, log the outputs """
+    """Launch an exec with args, log the outputs"""
     hidden_args = hide_args(args, ["--cities-connection-string"])
     log = 'Launching ' + exec_name + ' ' + ' '.join(hidden_args)
     # we hide the password in logs
@@ -124,7 +124,7 @@ def launch_exec_traces(exec_name, args, logger):
                     logs, line = parse_log(log_pipe.decode("utf-8"))
                     for l in logs:
                         logger.log(l.level, l.msg)
-                        traces += "##  {}  ##".format(l.msg)
+                        traces += f"##  {l.msg}  ##"
 
             if proc.poll() is not None:
                 break

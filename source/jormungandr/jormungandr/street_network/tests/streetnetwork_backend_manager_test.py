@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
+
 import pytest
 from jormungandr.instance import Instance
 from jormungandr.street_network.streetnetwork_backend_manager import StreetNetworkBackendManager

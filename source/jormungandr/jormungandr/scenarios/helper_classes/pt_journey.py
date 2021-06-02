@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import
+
 from jormungandr import utils, new_relic
 from jormungandr.utils import date_to_timestamp
 from jormungandr.street_network.street_network import StreetNetworkPathType
@@ -158,7 +158,7 @@ class PtJourney:
 
         self._logger.debug("requesting public transport journey with dep_mode: %s", mode)
 
-        fallback_durations = {k: v.duration for k, v in fallback_duration_status.items()}
+        fallback_durations = {k: v.duration for k, v in list(fallback_duration_status.items())}
 
         if not fallback_durations or not self._request.get('max_duration', 0):
             return None

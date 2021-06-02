@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr.interfaces.v1 import (
     Uri,
     Coverage,
@@ -58,7 +58,7 @@ from jormungandr.modules.v1_routing.resources import Index
 
 
 class RegionConverter(BaseConverter):
-    """ The region you want to query"""
+    """The region you want to query"""
 
     type_ = str
     regex = '[^(/;)]+'
@@ -68,7 +68,7 @@ class RegionConverter(BaseConverter):
 
 
 class LonConverter(FloatConverter):
-    """ The longitude of where the coord you want to query"""
+    """The longitude of where the coord you want to query"""
 
     type_ = float
     regex = '-?\\d+(\\.\\d+)?'
@@ -78,7 +78,7 @@ class LonConverter(FloatConverter):
 
 
 class LatConverter(FloatConverter):
-    """ The latitude of where the coord you want to query"""
+    """The latitude of where the coord you want to query"""
 
     type_ = float
     regex = '-?\\d+(\\.\\d+)?'

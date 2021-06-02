@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr import i_manager, fallback_modes, partner_services
 from jormungandr.interfaces.v1.ResourceUri import ResourceUri
 from datetime import datetime
@@ -63,7 +63,7 @@ class DatetimeRepresents(CustomSchemaType):
             return False
         if value == "departure":
             return True
-        raise ValueError("Unable to parse {}".format(name))
+        raise ValueError(f"Unable to parse {name}")
 
     def schema(self):
         return TypeSchema(type=str, metadata={'enum': ['arrival', 'departure'], 'default': 'departure'})

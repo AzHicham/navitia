@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from .tests_mechanism import AbstractTestFixture, dataset
 from .check_utils import (
     get_not_null,
@@ -174,9 +174,7 @@ class TestDisruptions(AbstractTestFixture):
         # we should also we able to find the disruption with a place_nerby
         # (since the coords in the # datasets are very close, we find all)
 
-        coord_traffic_report = self.query_region(
-            'coords/{s}/traffic_reports?{dt_filter}'.format(s=s_coord, dt_filter=default_date_filter)
-        )
+        coord_traffic_report = self.query_region(f'coords/{s_coord}/traffic_reports?{default_date_filter}')
 
         check_response(get_not_null(coord_traffic_report, 'traffic_reports'))
 
@@ -272,13 +270,13 @@ class TestDisruptions(AbstractTestFixture):
         # Line not impacted shouldn't return a disruption
         not_impacted_lines = set(departures_lines) - set(disruption_lines)
         for line in not_impacted_lines:
-            not_impacted_departure = jmespath.search("[?route.line.name=='{}']".format(line), departures)
+            not_impacted_departure = jmespath.search(f"[?route.line.name=='{line}']", departures)
             departure_disruptions = get_all_element_disruptions(not_impacted_departure[0], response)
             assert not departure_disruptions
 
         impacted_lines = set(departures_lines) - set(not_impacted_lines)
         for l in impacted_lines:
-            departure = jmespath.search("[?route.line.name=='{}']".format(l), departures)
+            departure = jmespath.search(f"[?route.line.name=='{l}']", departures)
             departure_disruptions = get_all_element_disruptions(departure, response)
             if self.is_in_disprution_time(
                 departure[0]['stop_date_time'], disruptions[0]['application_periods'][0]
@@ -316,13 +314,13 @@ class TestDisruptions(AbstractTestFixture):
         # Line not impacted shouldn't return a disruption
         not_impacted_lines = set(arrivals_lines) - set(disruption_lines)
         for line in not_impacted_lines:
-            not_impacted_departure = jmespath.search("[?route.line.name=='{}']".format(line), arrivals)
+            not_impacted_departure = jmespath.search(f"[?route.line.name=='{line}']", arrivals)
             departure_disruptions = get_all_element_disruptions(not_impacted_departure[0], response)
             assert not departure_disruptions
 
         impacted_lines = set(arrivals_lines) - set(not_impacted_lines)
         for l in impacted_lines:
-            departure = jmespath.search("[?route.line.name=='{}']".format(l), arrivals)
+            departure = jmespath.search(f"[?route.line.name=='{l}']", arrivals)
             departure_disruptions = get_all_element_disruptions(departure, response)
             if self.is_in_disprution_time(
                 departure[0]['stop_date_time'], disruptions[0]['application_periods'][0]
@@ -875,7 +873,7 @@ class TestDisruptions(AbstractTestFixture):
         )
 
         assert code == 400
-        assert response["message"] == u'until must be >= since'
+        assert response["message"] == 'until must be >= since'
 
 
 @dataset({"line_sections_test": {}})

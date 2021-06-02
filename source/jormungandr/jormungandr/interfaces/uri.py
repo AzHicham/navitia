@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr import i_manager
 
 collections_to_resource_type = {
@@ -48,7 +48,7 @@ collections_to_resource_type = {
 }
 
 resource_type_to_collection = dict(
-    (resource_type, collection) for (collection, resource_type) in collections_to_resource_type.items()
+    (resource_type, collection) for (collection, resource_type) in list(collections_to_resource_type.items())
 )
 
 types_not_ptrefable = ["addresses", "administrative_regions"]

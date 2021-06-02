@@ -29,7 +29,6 @@
 # www.navitia.io
 
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 import navitiacommon.response_pb2 as response_pb2
 import navitiacommon.type_pb2 as type_pb2
 from jormungandr.utils import str_to_time_stamp

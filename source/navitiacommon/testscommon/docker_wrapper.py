@@ -71,9 +71,7 @@ class DbParams(object):
 
         :return: the connection string
         """
-        return 'postgresql://{u}:{pwd}@{h}/{dbname}'.format(
-            h=self.host, u=self.user, dbname=self.dbname, pwd=self.password
-        )
+        return f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}'
 
     def old_school_cnx_string(self):
         # type: () -> str
@@ -137,13 +135,11 @@ class DockerWrapper(object):
                 logger.warning(
                     "[docker server error] A server error occcured, maybe missing internet connection?"
                 )
-                logger.warning("[docker server error] Details: {}".format(e))
-                logger.warning(
-                    "[docker server error] Checking if '{}' docker image is already built".format(image_name)
-                )
+                logger.warning(f"[docker server error] Details: {e}")
+                logger.warning(f"[docker server error] Checking if '{image_name}' docker image is already built")
                 self.docker_client.images.get(image_name)
                 logger.warning(
-                    "[docker server error] Going on, as '{}' docker image is already built".format(image_name)
+                    f"[docker server error] Going on, as '{image_name}' docker image is already built"
                 )
             else:
                 raise
@@ -155,7 +151,7 @@ class DockerWrapper(object):
         self.container = self.docker_client.containers.create(
             image_name, name=self.container_name, environment=self.env_vars, mounts=self.mounts, **kwargs
         )
-        logger.info("docker id is {}".format(self.container.id))
+        logger.info(f"docker id is {self.container.id}")
         logger.info("starting the temporary docker")
         self.container.start()
         container_info = self.docker_api_client.inspect_container(self.container.id)
@@ -172,7 +168,7 @@ class DockerWrapper(object):
         logging.debug('container inspect %s', container_info)
 
         if not self.ip_addr:
-            logger.error("temporary docker {} not started".format(self.container.id))
+            logger.error(f"temporary docker {self.container.id} not started")
             exit(1)
 
         # we poll to ensure that the database is ready

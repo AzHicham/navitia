@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import
+
 import logging
 from .helper_utils import complete_pt_journey, compute_fallback, _build_crowflies, timed_logger
 from .helper_exceptions import InvalidDateBoundException
@@ -151,7 +151,7 @@ def wait_and_complete_pt_journey(
 
     logger = logging.getLogger(__name__)
     # launch fallback direct path asynchronously
-    sub_request_id = "{}_fallback".format(request_id)
+    sub_request_id = f"{request_id}_fallback"
     with timed_logger(logger, 'compute_fallback', sub_request_id):
 
         compute_fallback(

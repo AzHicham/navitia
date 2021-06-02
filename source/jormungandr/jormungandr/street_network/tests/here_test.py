@@ -27,7 +27,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import pytest
 import requests
 import requests_mock
@@ -190,13 +190,13 @@ def status_test():
     here = Here(
         instance=None,
         service_base_url='http://bob.com',
-        id=u"tata-é$~#@\"*!'`§èû",
+        id="tata-é$~#@\"*!'`§èû",
         modes=["walking", "bike", "car"],
         timeout=89,
     )
     status = here.status()
     assert len(status) == 11
-    assert status['id'] == u'tata-é$~#@"*!\'`§èû'
+    assert status['id'] == 'tata-é$~#@"*!\'`§èû'
     assert status['class'] == "Here"
     assert status['modes'] == ["walking", "bike", "car"]
     assert status['timeout'] == 89

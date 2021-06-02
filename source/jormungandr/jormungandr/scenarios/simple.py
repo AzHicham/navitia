@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from flask_restful import abort
 from flask.globals import request
 import flask
@@ -236,7 +236,7 @@ class Scenario(object):
         if request["type[]"]:
             for type in request["type[]"]:
                 if type not in places_type:
-                    abort(422, message="{} is not an acceptable type".format(type))
+                    abort(422, message=f"{type} is not an acceptable type")
 
                 req.places_nearby.types.append(places_type[type])
         req.places_nearby.filter = request["filter"]

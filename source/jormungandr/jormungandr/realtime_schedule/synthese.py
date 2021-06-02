@@ -28,7 +28,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import itertools
 
 from jormungandr.realtime_schedule.realtime_proxy import RealtimeProxy, RealtimeProxyError
@@ -63,7 +63,7 @@ class SyntheseRoutePoint(object):
         return self.__key() == other.__key()
 
     def __repr__(self):
-        return "SyntheseRoutePoint({})".format(self.__key())
+        return f"SyntheseRoutePoint({self.__key()})"
 
 
 class Synthese(RealtimeProxy):
@@ -100,7 +100,7 @@ class Synthese(RealtimeProxy):
         redis_password=None,
         max_requests_by_second=15,
         redis_namespace='jormungandr.rate_limiter',
-        **kwargs
+        **kwargs,
     ):
         self.service_url = service_url
         self.timeout = timeout  # timeout in seconds
@@ -127,7 +127,7 @@ class Synthese(RealtimeProxy):
 
     def __repr__(self):
         """
-         used as the cache key. we use the rt_system_id to share the cache between servers in production
+        used as the cache key. we use the rt_system_id to share the cache between servers in production
         """
         try:
             return self.rt_system_id.encode('utf-8', 'backslashreplace')
@@ -144,14 +144,10 @@ class Synthese(RealtimeProxy):
                 raise RealtimeProxyError('maximum rate reached')
             return self.breaker.call(requests.get, url, timeout=self.timeout)
         except pybreaker.CircuitBreakerError as e:
-            logging.getLogger(__name__).error(
-                'Synthese RT service dead, using base ' 'schedule (error: {}'.format(e)
-            )
+            logging.getLogger(__name__).error(f'Synthese RT service dead, using base ' f'schedule (error: {e}')
             raise RealtimeProxyError('circuit breaker open')
         except requests.Timeout as t:
-            logging.getLogger(__name__).error(
-                'Synthese RT service timeout, using base ' 'schedule (error: {}'.format(t)
-            )
+            logging.getLogger(__name__).error(f'Synthese RT service timeout, using base schedule (error: {t}')
             raise RealtimeProxyError('timeout')
         except redis.ConnectionError:
             logging.getLogger(__name__).exception('there is an error with Redis')
@@ -166,20 +162,18 @@ class Synthese(RealtimeProxy):
         url = self._make_url(route_point, count, from_dt)
         if not url:
             return None
-        logging.getLogger(__name__).debug('Synthese RT service , call url : {}'.format(url))
+        logging.getLogger(__name__).debug(f'Synthese RT service , call url : {url}')
         r = self._call_synthese(url)
         if not r:
             return None
 
         if r.status_code != 200:
             # TODO better error handling, the response might be in 200 but in error
-            logging.getLogger(__name__).error(
-                'Synthese RT service unavailable, impossible to query : {}'.format(r.url)
-            )
+            logging.getLogger(__name__).error(f'Synthese RT service unavailable, impossible to query : {r.url}')
             raise RealtimeProxyError('non 200 response')
             return None
 
-        logging.getLogger(__name__).debug("synthese response: {}".format(r.text))
+        logging.getLogger(__name__).debug(f"synthese response: {r.text}")
         passages = self._get_synthese_passages(r.content)
 
         return self._find_route_point_passages(route_point, passages)
@@ -193,31 +187,23 @@ class Synthese(RealtimeProxy):
 
         if not stop_id:
             # one a the id is missing, we'll not find any realtime
-            logging.getLogger(__name__).debug(
-                'missing realtime id for {obj}: stop code={s}'.format(obj=route_point, s=stop_id)
-            )
+            logging.getLogger(__name__).debug(f'missing realtime id for {route_point}: stop code={stop_id}')
             self.record_internal_failure('missing id')
             return None
 
-        count_param = '&rn={c}'.format(c=count) if count else ''
+        count_param = f'&rn={count}' if count else ''
 
         # if a custom datetime is provided we give it to timeo
-        dt_param = (
-            '&date={dt}'.format(dt=self._timestamp_to_date(from_dt).strftime('%Y-%m-%d %H:%M'))
-            if from_dt
-            else ''
-        )
+        dt_param = f"&date={self._timestamp_to_date(from_dt).strftime('%Y-%m-%d %H:%M')}" if from_dt else ''
 
-        url = "{base_url}?SERVICE=tdg&roid={stop_id}{count}{date}".format(
-            base_url=self.service_url, stop_id=stop_id, count=count_param, date=dt_param
-        )
+        url = f"{self.service_url}?SERVICE=tdg&roid={stop_id}{count_param}{dt_param}"
 
         return url
 
     def _get_value(self, item, xpath, val):
         value = item.find(xpath)
         if value is None:
-            logging.getLogger(__name__).debug("Path not found: {path}".format(path=xpath))
+            logging.getLogger(__name__).debug(f"Path not found: {xpath}")
             return None
         return value.get(val)
 
@@ -239,7 +225,7 @@ class Synthese(RealtimeProxy):
         try:
             root = et.fromstring(xml)
         except et.ParseError as e:
-            logging.getLogger(__name__).error("invalid xml: {}".format(e))
+            logging.getLogger(__name__).error(f"invalid xml: {e}")
             raise
         for xml_journey in root.findall('journey'):
             yield xml_journey
@@ -296,7 +282,7 @@ class Synthese(RealtimeProxy):
         is_same_route = lambda syn_rp: syn_rp.syn_route_id in route_point.fetch_all_route_id(self.object_id_tag)
         route_passages = [
             p
-            for syn_rp, p in passages.items()
+            for syn_rp, p in list(passages.items())
             if is_same_route(syn_rp) and stop_point_id == syn_rp.syn_stop_point_id
         ]
 
@@ -322,7 +308,7 @@ class Synthese(RealtimeProxy):
             # we can concatenate all synthese's route of this line
             line_passages = [
                 p
-                for syn_rp, p in passages.items()
+                for syn_rp, p in list(passages.items())
                 if syn_rp.syn_line_id == route_point.fetch_line_id(self.object_id_tag)
             ]
 
@@ -337,11 +323,11 @@ class Synthese(RealtimeProxy):
                     l=route_point.fetch_line_uri(),
                     l_codes=route_point.fetch_line_id(self.object_id_tag),
                     nb_syn_r=len(passages),
-                    syn_lines=[l.syn_line_id for l in passages.keys()],
+                    syn_lines=[l.syn_line_id for l in list(passages.keys())],
                 )
             )
 
         if passages:
-            log.info('impossible to find a valid passage for {} (passage = {})'.format(route_point, passages))
+            log.info(f'impossible to find a valid passage for {route_point} (passage = {passages})')
 
         return None

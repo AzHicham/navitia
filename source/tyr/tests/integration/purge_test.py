@@ -27,7 +27,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals
+
 import os
 import glob
 import pytest
@@ -40,7 +40,7 @@ from tests.check_utils import api_get, api_delete
 
 # TODO : need to clean that after full migration to python3
 try:
-    import ConfigParser
+    import configparser
 except:
     import configparser as ConfigParser  # type: ignore
 
@@ -48,12 +48,12 @@ except:
 def create_dataset(dataset_type, dir):
     dataset = models.DataSet()
     dataset.type = dataset_type
-    dataset.family_type = '{}_family'.format(dataset_type)
-    dataset.name = '{}/dataset'.format(dir)
+    dataset.family_type = f'{dataset_type}_family'
+    dataset.name = f'{dir}/dataset'
     models.db.session.add(dataset)
 
     metric = models.Metric()
-    metric.type = '{}2ed'.format(dataset_type)
+    metric.type = f'{dataset_type}2ed'
     metric.dataset = dataset
     models.db.session.add(metric)
 
@@ -130,13 +130,13 @@ def create_instance_with_one_type_dataset(name, backup_dir):
 
 
 def init_test():
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
 
     files = os.listdir(app.config['INSTANCES_DIR'])
     for index, f in enumerate(files):
         if os.path.splitext(f)[1] == '.ini':
             instance_name = os.path.splitext(f)[0]
-            config.read(os.path.realpath('{}/{}'.format(app.config['INSTANCES_DIR'], f)))
+            config.read(os.path.realpath(f"{app.config['INSTANCES_DIR']}/{f}"))
             backup_dir = config.get('instance', 'backup-directory')
 
     return instance_name, backup_dir
@@ -155,18 +155,18 @@ def test_purge_old_jobs():
     instances_resp = api_get('/v0/instances')
     assert len(instances_resp) == 1
 
-    jobs_resp = api_get('/v0/jobs/{}'.format(instances_resp[0]['name']))
+    jobs_resp = api_get(f"/v0/jobs/{instances_resp[0]['name']}")
     assert len(jobs_resp['jobs']) == 3
 
-    folders = set(glob.glob('{}/*'.format(backup_dir)))
+    folders = set(glob.glob(f'{backup_dir}/*'))
     assert len(folders) == 3
 
     tasks.purge_jobs()
 
-    jobs_resp = api_get('/v0/jobs/{}'.format(instances_resp[0]['name']))
+    jobs_resp = api_get(f"/v0/jobs/{instances_resp[0]['name']}")
     assert len(jobs_resp['jobs']) == 1
 
-    folders = set(glob.glob('{}/*'.format(backup_dir)))
+    folders = set(glob.glob(f'{backup_dir}/*'))
     assert len(folders) == 1
 
 
@@ -185,18 +185,18 @@ def test_purge_old_jobs_no_delete():
     instances_resp = api_get('/v0/instances')
     assert len(instances_resp) == 1
 
-    jobs_resp = api_get('/v0/jobs/{}'.format(instances_resp[0]['name']))
+    jobs_resp = api_get(f"/v0/jobs/{instances_resp[0]['name']}")
     assert len(jobs_resp['jobs']) == 3
 
-    folders = set(glob.glob('{}/*'.format(backup_dir)))
+    folders = set(glob.glob(f'{backup_dir}/*'))
     assert len(folders) == 3
 
     tasks.purge_jobs()
 
-    jobs_resp = api_get('/v0/jobs/{}'.format(instances_resp[0]['name']))
+    jobs_resp = api_get(f"/v0/jobs/{instances_resp[0]['name']}")
     assert len(jobs_resp['jobs']) == 3
 
-    folders = set(glob.glob('{}/*'.format(backup_dir)))
+    folders = set(glob.glob(f'{backup_dir}/*'))
     assert len(folders) == 3
 
 
@@ -214,18 +214,18 @@ def test_purge_old_jobs_same_dataset():
     instances_resp = api_get('/v0/instances')
     assert len(instances_resp) == 1
 
-    jobs_resp = api_get('/v0/jobs/{}'.format(instances_resp[0]['name']))
+    jobs_resp = api_get(f"/v0/jobs/{instances_resp[0]['name']}")
     assert len(jobs_resp['jobs']) == 3
 
-    folders = set(glob.glob('{}/*'.format(backup_dir)))
+    folders = set(glob.glob(f'{backup_dir}/*'))
     assert len(folders) == 1
 
     tasks.purge_jobs()
 
-    jobs_resp = api_get('/v0/jobs/{}'.format(instances_resp[0]['name']))
+    jobs_resp = api_get(f"/v0/jobs/{instances_resp[0]['name']}")
     assert len(jobs_resp['jobs']) == 1
 
-    folders = set(glob.glob('{}/*'.format(backup_dir)))
+    folders = set(glob.glob(f'{backup_dir}/*'))
     assert len(folders) == 1
 
 
@@ -274,14 +274,14 @@ def test_purge_old_jobs_with_diff_job_states():
     instances_resp = api_get('/v0/instances')
     assert len(instances_resp) == 1
 
-    jobs_resp = api_get('/v0/jobs/{}'.format(instances_resp[0]['name']))
+    jobs_resp = api_get(f"/v0/jobs/{instances_resp[0]['name']}")
     assert len(jobs_resp['jobs']) == 3
 
-    last_datasets = api_get('/v0/instances/{}/last_datasets'.format(instances_resp[0]['name']))
+    last_datasets = api_get(f"/v0/instances/{instances_resp[0]['name']}/last_datasets")
     assert len(last_datasets) == 1
     # Purge old jobs
     tasks.purge_jobs()
-    jobs_resp = api_get('/v0/jobs/{}'.format(instances_resp[0]['name']))
+    jobs_resp = api_get(f"/v0/jobs/{instances_resp[0]['name']}")
     assert len(jobs_resp['jobs']) == 1
 
     # Add three more jobs with state = 'running'. Purge shouldn't delete these jobs
@@ -309,27 +309,27 @@ def test_purge_instance_jobs():
     instances_resp = api_get('/v0/instances')
     assert len(instances_resp) == 1
 
-    jobs_resp = api_get('/v0/jobs/{}'.format(instances_resp[0]['name']))
+    jobs_resp = api_get(f"/v0/jobs/{instances_resp[0]['name']}")
     assert len(jobs_resp['jobs']) == 6
 
-    folders = set(glob.glob('{}/*'.format(backup_dir)))
+    folders = set(glob.glob(f'{backup_dir}/*'))
     assert len(folders) == 6
 
-    last_datasets = api_get('/v0/instances/{}/last_datasets'.format(instances_resp[0]['name']))
+    last_datasets = api_get(f"/v0/instances/{instances_resp[0]['name']}/last_datasets")
     assert len(last_datasets) == 2
 
     tasks.purge_instance(instances_resp[0]['id'], 1)
 
-    folders = set(glob.glob('{}/*'.format(backup_dir)))
+    folders = set(glob.glob(f'{backup_dir}/*'))
     assert len(folders) == 4
 
     # No job is deleted in the table 'job'
-    jobs_resp = api_get('/v0/jobs/{}'.format(instances_resp[0]['name']))
+    jobs_resp = api_get(f"/v0/jobs/{instances_resp[0]['name']}")
     assert len(jobs_resp['jobs']) == 6
 
     # if we use the task purge_jobs, data related to old jobs also deleted from the table 'job'
     tasks.purge_jobs()
-    jobs_resp = api_get('/v0/jobs/{}'.format(instances_resp[0]['name']))
+    jobs_resp = api_get(f"/v0/jobs/{instances_resp[0]['name']}")
     assert len(jobs_resp['jobs']) == 4
 
 
@@ -348,7 +348,7 @@ def test_purge_cities_job():
         dataset = models.DataSet()
         dataset.type = 'cities'
         dataset.family_type = 'cities_family'
-        dataset.name = '{}'.format(dataset_backup_dir)
+        dataset.name = f'{dataset_backup_dir}'
         models.db.session.add(dataset)
 
         job.data_sets.append(dataset)
@@ -371,7 +371,7 @@ def test_purge_cities_job():
         assert 'jobs' in jobs_resp
         assert len(jobs_resp['jobs']) == 4
 
-        folders = set(glob.glob('{}/*'.format(cities_file_dir)))
+        folders = set(glob.glob(f'{cities_file_dir}/*'))
         assert len(folders) == 3
 
         app.config['DATASET_MAX_BACKUPS_TO_KEEP'] = 3
@@ -381,7 +381,7 @@ def test_purge_cities_job():
         assert 'jobs' in jobs_resp
         assert len(jobs_resp['jobs']) == 3
 
-        folders = set(glob.glob('{}/*'.format(cities_file_dir)))
+        folders = set(glob.glob(f'{cities_file_dir}/*'))
         assert len(folders) == 2
 
         app.config['DATASET_MAX_BACKUPS_TO_KEEP'] = 1
@@ -391,5 +391,5 @@ def test_purge_cities_job():
         assert 'jobs' in jobs_resp
         assert len(jobs_resp['jobs']) == 1
 
-        folders = set(glob.glob('{}/*'.format(cities_file_dir)))
+        folders = set(glob.glob(f'{cities_file_dir}/*'))
         assert len(folders) == 1

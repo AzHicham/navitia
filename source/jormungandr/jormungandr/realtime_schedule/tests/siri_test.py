@@ -27,7 +27,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, division
+
 import datetime
 from dateutil.parser import parse
 import mock
@@ -334,6 +334,6 @@ def next_passage_for_route_point_good_response_with_error_test():
 
 
 def status_test():
-    siri = Siri(id=u"tata-é$~#@\"*!'`§èû", service_url='http://bob.com/', requestor_ref='Stibada')
+    siri = Siri(id="tata-é$~#@\"*!'`§èû", service_url='http://bob.com/', requestor_ref='Stibada')
     status = siri.status()
-    assert status['id'] == u'tata-é$~#@"*!\'`§èû'
+    assert status['id'] == 'tata-é$~#@"*!\'`§èû'

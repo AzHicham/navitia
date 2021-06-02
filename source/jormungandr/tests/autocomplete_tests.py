@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import logging
 
 from .tests_mechanism import AbstractTestFixture, dataset
@@ -34,7 +34,7 @@ from .check_utils import *
 
 
 def valid_autocomplete_with_one_stop_area(response):
-    """ response contains 1 stop_areas "gare" """
+    """response contains 1 stop_areas "gare" """
     assert len(response['links']) == 1
     links = get_not_null(response, 'links')
     places = get_not_null(response, 'places')
@@ -102,19 +102,15 @@ class TestAutocomplete(AbstractTestFixture):
         valid_autocomplete_with_multi_object(response)
 
     def test_places_coords(self):
-        coords = '{lon};{lat}'.format(lon=2, lat=3)
-        response = self.query(
-            'v1/coverage/{coords}/places?q={q}&type[]=stop_point'.format(coords=coords, q='Becharles')
-        )
+        coords = f'{2};{3}'
+        response = self.query(f"v1/coverage/{coords}/places?q=Becharles&type[]=stop_point")
         places = get_not_null(response, 'places')
         assert len(places) == 1
         assert places[0]['id'] == 'stop_point:Becharles'
 
     def test_place_uri_coords(self):
-        coords = '{lon};{lat}'.format(lon=2, lat=3)
-        response = self.query(
-            'v1/coverage/{coords}/places/{id}'.format(coords=coords, id='stop_point:Becharles')
-        )
+        coords = f'{2};{3}'
+        response = self.query(f"v1/coverage/{coords}/places/stop_point:Becharles")
         places = get_not_null(response, 'places')
         assert len(places) == 1
         assert places[0]['id'] == 'stop_point:Becharles'
@@ -122,7 +118,7 @@ class TestAutocomplete(AbstractTestFixture):
     def test_place_ok_shape(self):
         shape = '{"type":"Feature","geometry":{"type":"Polygon","coordinates":\
         [[[2.283,48.896],[2.280,48.818],[2.417,48.818],[2.416,48.897],[2.283,48.896]]]}}'
-        _ = self.query_region("places?q=Gare&shape={}".format(shape))
+        _ = self.query_region(f"places?q=Gare&shape={shape}")
 
     def test_place_ko_shape_with_empty_json_object(self):
         _, status = self.query_no_assert('/v1/coverage/main_autocomplete_test/places?q=Gare&shape={}')
@@ -137,7 +133,7 @@ class TestAutocomplete(AbstractTestFixture):
         [[[[2.4,48.6],[2.8,48.6],[2.7,48.9],[2.4,48.6]]],\
         [[[2.1,48.9],[2.2,48.6],[2.4,48.9],[2.1,48.9]]]]}}'
         _, status = self.query_no_assert(
-            '/v1/coverage/main_autocomplete_test/places?q=Gare&shape={}'.format(multipolygon)
+            f'/v1/coverage/main_autocomplete_test/places?q=Gare&shape={multipolygon}'
         )
         assert status == 400
 

@@ -27,7 +27,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from copy import deepcopy
 import itertools
@@ -434,7 +433,17 @@ def _get_sorted_solutions_indexes(selected_sections_matrix, nb_journeys_to_find,
         selected_journeys_matrix[i] = c
 
     collections.deque(
-        map(f, zip(range(shape[0]), gen_all_combin(selected_sections_matrix.shape[0], nb_journeys_to_find))),
+        list(
+            map(
+                f,
+                list(
+                    zip(
+                        list(range(shape[0])),
+                        gen_all_combin(selected_sections_matrix.shape[0], nb_journeys_to_find),
+                    )
+                ),
+            )
+        ),
         maxlen=0,
     )
     """
@@ -489,8 +498,8 @@ def _get_sorted_solutions_indexes(selected_sections_matrix, nb_journeys_to_find,
         np.logical_and(nb_sections == nb_sections[the_best_idx], integrity == integrity[the_best_idx])
     )[0]
 
-    logger.debug("Best Itegrity: {0}".format(integrity[the_best_idx]))
-    logger.debug("Best Nb sections: {0}".format(nb_sections[the_best_idx]))
+    logger.debug(f"Best Itegrity: {integrity[the_best_idx]}")
+    logger.debug(f"Best Nb sections: {nb_sections[the_best_idx]}")
 
     return best_indexes, selection_matrix
 
@@ -588,7 +597,7 @@ def culling_journeys(resp, request):
     )
 
     nb_journeys_must_have = len(idx_of_jrnys_must_keep)
-    logger.debug("There are {0} journeys we must keep".format(nb_journeys_must_have))
+    logger.debug(f"There are {nb_journeys_must_have} journeys we must keep")
 
     if max_nb_journeys <= nb_journeys_must_have:
         # At this point, max_nb_journeys is smaller than nb_journeys_must_have, we have to make choices
@@ -628,7 +637,7 @@ def culling_journeys(resp, request):
         journey_filter.delete_journeys((resp,), request)
         return
 
-    logger.debug('Trying to find {0} journeys from {1}'.format(max_nb_journeys, candidates_pool.shape[0]))
+    logger.debug(f'Trying to find {max_nb_journeys} journeys from {candidates_pool.shape[0]}')
 
     """
     Ex:
@@ -649,7 +658,7 @@ def culling_journeys(resp, request):
         selected_sections_matrix, max_nb_journeys, idx_of_jrnys_must_keep
     )
 
-    logger.debug("Nb best solutions: {0}".format(best_indexes.shape[0]))
+    logger.debug(f"Nb best solutions: {best_indexes.shape[0]}")
 
     the_best_index = best_indexes[0]
 
@@ -846,7 +855,7 @@ def merge_responses(responses, debug):
         elif len(errors) > 1:
             merged_response.error.id = response_pb2.Error.no_solution
             merged_response.error.message = "several errors occured: \n * {}".format(
-                "\n * ".join([m.message for m in errors.values()])
+                "\n * ".join([m.message for m in list(errors.values())])
             )
 
     return merged_response
@@ -873,7 +882,7 @@ def get_kraken_id(entrypoint_detail):
         # no coordinate, we keep the original id
         return None
 
-    return '{};{}'.format(coord['lon'], coord['lat'])
+    return f"{coord['lon']};{coord['lat']}"
 
 
 def aggregate_journeys(journeys):
@@ -999,10 +1008,10 @@ class Scenario(simple.Scenario):
 
         # sometimes we need to change the entrypoint id (eg if the id is from another autocomplete system)
         origin_detail = self.get_entrypoint_detail(
-            api_request.get('origin'), instance, request_id="{}_origin_detail".format(request_id)
+            api_request.get('origin'), instance, request_id=f"{request_id}_origin_detail"
         )
         destination_detail = self.get_entrypoint_detail(
-            api_request.get('destination'), instance, request_id="{}_dest_detail".format(request_id)
+            api_request.get('destination'), instance, request_id=f"{request_id}_dest_detail"
         )
         # we store the origin/destination detail in g to be able to use them after the marshall
         g.origin_detail = origin_detail
@@ -1061,12 +1070,7 @@ class Scenario(simple.Scenario):
                 request['min_nb_journeys'] = max(0, min_nb_journeys_left)
 
             new_resp = self.call_kraken(
-                request_type,
-                request,
-                instance,
-                krakens_call,
-                "{}_try_{}".format(request_id, nb_try),
-                distributed_context,
+                request_type, request, instance, krakens_call, f"{request_id}_try_{nb_try}", distributed_context
             )
 
             _tag_by_mode(new_resp)
@@ -1113,7 +1117,7 @@ class Scenario(simple.Scenario):
         pb_resp = merge_responses(responses, api_request['debug'])
 
         sort_journeys(pb_resp, instance.journey_order, api_request['clockwise'])
-        compute_car_co2_emission(pb_resp, api_request, instance, "{}_car_co2".format(request_id))
+        compute_car_co2_emission(pb_resp, api_request, instance, f"{request_id}_car_co2")
         tag_journeys(pb_resp)
 
         # Handle ridesharing service
@@ -1163,7 +1167,7 @@ class Scenario(simple.Scenario):
             # for log purpose we put and id in each journeys
             self.nb_kraken_calls += 1
             for idx, j in enumerate(local_resp.journeys):
-                j.internal_id = "{resp}-{j}".format(resp=self.nb_kraken_calls, j=idx)
+                j.internal_id = f"{self.nb_kraken_calls}-{idx}"
 
             if dep_mode == 'ridesharing':
                 switch_back_to_ridesharing(local_resp, True)
@@ -1267,7 +1271,9 @@ class Scenario(simple.Scenario):
 
     @staticmethod
     def __get_best_for_criteria(journeys, criteria):
-        return min_from_criteria(filter(has_pt, journeys), [criteria, duration_crit, transfers_crit, nonTC_crit])
+        return min_from_criteria(
+            list(filter(has_pt, journeys)), [criteria, duration_crit, transfers_crit, nonTC_crit]
+        )
 
     def get_best(self, journeys, clockwise):
         if clockwise:
@@ -1300,7 +1306,7 @@ class Scenario(simple.Scenario):
         return best.arrival_date_time - one_second
 
     def get_entrypoint_detail(self, entrypoint, instance, request_id):
-        logging.debug("calling autocomplete {} for {}".format(instance.autocomplete, entrypoint))
+        logging.debug(f"calling autocomplete {instance.autocomplete} for {entrypoint}")
         detail = instance.autocomplete.get_object_by_uri(entrypoint, instances=[instance], request_id=request_id)
 
         if detail:

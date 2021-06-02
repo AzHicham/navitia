@@ -26,5 +26,5 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, division
+
 from jormungandr.parking_space_availability.car.car_park_provider_manager import CarParkingProviderManager

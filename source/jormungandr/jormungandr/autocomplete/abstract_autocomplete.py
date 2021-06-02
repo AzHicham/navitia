@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from abc import abstractmethod, ABCMeta
 from jormungandr.exceptions import UnknownObject, TechnicalError, log_exception
 import six

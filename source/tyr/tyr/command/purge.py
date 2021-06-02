@@ -40,7 +40,7 @@ def purge_instance(instance_name, nb_to_keep, background=False):
     instance = models.Instance.query_existing().filter_by(name=instance_name).first()
 
     if not instance:
-        raise Exception("cannot find instance {}".format(instance_name))
+        raise Exception(f"cannot find instance {instance_name}")
     if background:
         tasks.purge_instance.delay(instance.id, nb_to_keep)
     else:

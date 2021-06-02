@@ -29,7 +29,6 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
 
 from jormungandr.street_network.asgard import Asgard
 from jormungandr.street_network.geovelo import Geovelo

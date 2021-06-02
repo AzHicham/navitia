@@ -40,7 +40,7 @@ def last_dataset(instance_name):
     instance = models.Instance.query_existing().filter_by(name=instance_name).first()
 
     if not instance:
-        raise Exception("cannot find instance {}".format(instance_name))
+        raise Exception(f"cannot find instance {instance_name}")
 
     for d in instance.last_datasets(1):
-        print('{}|{}'.format(d.name, d.family_type))
+        print(f'{d.name}|{d.family_type}')

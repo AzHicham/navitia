@@ -29,7 +29,7 @@
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from jormungandr.resources_utils import DocumentedResource
 from flask_restful import Resource
 
@@ -49,7 +49,7 @@ class ModuleResourcesManager(object):
                 of ModuleResource
         """
         if not isinstance(resource, ModuleResource):
-            raise TypeError('Expected type ModuleResource, got %s instead' % resource.__class__.__name__)
+            raise TypeError(f'Expected type ModuleResource, got {resource.__class__.__name__} instead')
         resource.associate_to(self.module)
         self.resources.append(resource)
 

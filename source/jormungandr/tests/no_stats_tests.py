@@ -26,7 +26,7 @@
 # channel `#navitia` on riot https://riot.im/app/#/room/#navitia:matrix.org
 # https://groups.google.com/d/forum/navitia
 # www.navitia.io
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 from .tests_mechanism import AbstractTestFixture, dataset
 from .check_utils import *
 from jormungandr import stat_manager
@@ -45,7 +45,7 @@ def always_in_error(self, start_time, func_call):
 class TestNoStats(AbstractTestFixture):
     def setUp(self):
         """
-         change the persist stat method of the stat manager with a mock function that always fail
+        change the persist stat method of the stat manager with a mock function that always fail
         """
         self.real_persist_stat_method = StatManager._manage_stat
         self.real_save_stat_val = stat_manager.save_stat

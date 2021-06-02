@@ -1,11 +1,13 @@
+default_language_version:
+    python: python3.8
 repos:
 -   repo: https://github.com/ambv/black
-    rev: 18.9b0
+    rev: 21.5b1
     hooks:
     - id: black
-      language_version: python3.6
+      language_version: python3.8
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v1.4.0  # Use the ref you want to point at
+    rev: v4.0.1  # Use the ref you want to point at
     hooks:
     -   id: trailing-whitespace
         exclude: ^source/tests/chaos/chaos_loading.sql # Otherwise, Sql commands get corrupted
@@ -13,8 +15,11 @@ repos:
     -   id: check-merge-conflict
     -   id: check-yaml
         args: [--allow-multiple-documents]
+        language_version: python3.8
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 3.9.2
+    hooks:
     -   id: flake8
-        language_version: python2.7
 -   repo: https://github.com/CanalTP/navitia-pre-commit
     rev: master
     hooks:
@@ -24,10 +29,10 @@ repos:
         files: \.(c|cc|cxx|cpp|h|hpp|hxx)$
         args: [-i]
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.670
+    rev: v0.812
     hooks:
     -   id: mypy
-        args: [--ignore-missing-imports, --py2]
+        args: [--ignore-missing-imports]
         files: source
-        language_version: python3.6
+        language_version: python3.8
         exclude: /monitor/|/third_party/|/tests/|/sql/|env\.py$|setup\.py$
