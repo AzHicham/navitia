@@ -40,7 +40,8 @@ jobs:
 
     container:
         image: ${{matrix.docker_image}}
-
+        volumes:
+          - /usr/share/dotnet:/usr/share/dotnet
     services:
       rabbitmq:
         image: rabbitmq:3-alpine
@@ -48,9 +49,12 @@ jobs:
           - 5672:5672
 
     steps:
+    - name: test
+      run: df -h
     - name: Make some space (>20GB)
       run: rm -rf /usr/share/dotnet
-      target: host
+    - name: test
+      run: df -h
     - uses: actions/checkout@v2
       with:
           submodules: 'recursive'
