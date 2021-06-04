@@ -48,6 +48,9 @@ jobs:
           - 5672:5672
 
     steps:
+    - name: Make some space (>20GB)
+      run: rm -rf /usr/share/dotnet
+      target: host
     - uses: actions/checkout@v2
       with:
           submodules: 'recursive'
