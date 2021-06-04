@@ -52,7 +52,7 @@ jobs:
     - name: test
       run: df -h
     - name: Make some space (>20GB)
-      run: rm -rf /usr/share/dotnet
+      run: rm -rf /usr/share/dotnet/*
     - name: test
       run: df -h
     - uses: actions/checkout@v2
