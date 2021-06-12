@@ -30,8 +30,10 @@ if( NOT CLANG_TIDY_BIN STREQUAL "CLANG_TIDY_BIN-NOTFOUND"
     # From utils and /third_party
     file(GLOB_RECURSE FILES_TO_SCAN "${CMAKE_SOURCE_DIR}/*.cpp" "${CMAKE_SOURCE_DIR}/*.h")
     list(FILTER FILES_TO_SCAN EXCLUDE REGEX "(third_party|utils)")
-    list(APPEND RUN_CLANG_TIDY_BIN_ARGS -clang-tidy-binary ${CLANG_TIDY_BIN} "${FILES_TO_SCAN}")
+    list(APPEND RUN_CLANG_TIDY_BIN_ARGS -clang-tidy-binary ${CLANG_TIDY_BIN} "${FILES_TO_SCAN}" --header-filter="${FILES_TO_SCAN}")
 
+
+    message(${FILES_TO_SCAN})
     add_custom_target(
         tidy
         COMMAND ${RUN_CLANG_TIDY_BIN} ${RUN_CLANG_TIDY_BIN_ARGS}
