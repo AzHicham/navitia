@@ -40,7 +40,7 @@ www.navitia.io
 namespace ed {
 namespace connectors {
 
-PoiParserException::~PoiParserException() noexcept {}
+PoiParserException::~PoiParserException() noexcept = default;
 
 PoiParser::PoiParser(std::string path) : path(std::move(path)) {
     logger = log4cplus::Logger::getInstance("log");

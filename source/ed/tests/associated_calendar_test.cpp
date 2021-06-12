@@ -60,7 +60,7 @@ struct calendar_fixture {
         cal->uri = "cal1";
         boost::gregorian::date start = boost::gregorian::from_undelimited_string("20140210");
         boost::gregorian::date end = boost::gregorian::from_undelimited_string("20140214");  // end is not in the period
-        cal->period_list.push_back({start, end});
+        cal->period_list.emplace_back(start, end);
         cal->week_pattern = std::bitset<7>("1111111");
         // b.data->pt_data->calendars.push_back(cal);
     }
