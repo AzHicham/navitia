@@ -48,7 +48,6 @@ jobs:
 
           [#clang-tidy documentation](https://clang.llvm.org/extra/clang-tidy/)
         labels: not_in_changelog
-        team-reviewers: CanalTP/coreteam
         branch: auto/clang-tidy
     - name: Check outputs
       run: |
