@@ -137,7 +137,8 @@ navitia::type::GeographicalCoord ConvCoord::convert_to(navitia::type::Geographic
 }
 void ConvCoord::init_proj_for_gis() {
 #ifdef PROJ_API_VERSION_MAJOR_6
-    PJ* prj = proj_create_crs_to_crs(0, this->origin.definition.c_str(), this->destination.definition.c_str(), 0);
+    PJ* prj =
+        proj_create_crs_to_crs(nullptr, this->origin.definition.c_str(), this->destination.definition.c_str(), nullptr);
     if (!prj) {
         throw navitia::exception("invalid projection system");
     }

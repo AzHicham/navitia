@@ -168,7 +168,7 @@ ed::types::Company* GtfsData::get_or_create_default_company(Data& data) {
 }
 
 int time_to_int(const std::string& time) {
-    typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+    using tokenizer = boost::tokenizer<boost::char_separator<char> >;
     boost::char_separator<char> sep(":");
     tokenizer tokens(time, sep);
     std::vector<std::string> elts(tokens.begin(), tokens.end());
@@ -744,8 +744,7 @@ static boost::gregorian::date_period compute_smallest_active_period(const nt::Va
         return boost::gregorian::date_period(vp.beginning_date, vp.beginning_date);  // return null period
     }
 
-    return boost::gregorian::date_period(vp.beginning_date + boost::gregorian::days(beg),
-                                         vp.beginning_date + boost::gregorian::days(end + 1));
+    return {vp.beginning_date + boost::gregorian::days(beg), vp.beginning_date + boost::gregorian::days(end + 1)};
 }
 
 /*
@@ -1155,7 +1154,7 @@ void FrequenciesGtfsHandler::handle_line(Data& data, const csv_row& row, bool) {
 GenericGtfsParser::GenericGtfsParser(std::string path) : path(std::move(path)) {
     logger = log4cplus::Logger::getInstance("log");
 }
-GenericGtfsParser::~GenericGtfsParser() {}
+GenericGtfsParser::~GenericGtfsParser() = default;
 
 void GenericGtfsParser::fill(Data& data, const std::string& beginning_date) {
     parse_files(data, beginning_date);
@@ -1270,7 +1269,7 @@ boost::gregorian::date_period GenericGtfsParser::basic_production_date(const std
         boost::gregorian::date b_date(boost::gregorian::from_undelimited_string(beginning_date)),
             e_date(b_date + boost::gregorian::days(365 + 1));
 
-        return boost::gregorian::date_period(b_date, e_date);
+        return {b_date, e_date};
     }
 }
 
@@ -1441,7 +1440,7 @@ boost::gregorian::date_period GenericGtfsParser::complete_production_date(const 
                                + boost::gregorian::to_simple_string(end));
     // the end of a boost::gregorian::date_period is not in the period
     // since end_date is the last day is the data, we want the end to be the next day
-    return boost::gregorian::date_period(beginning, end + boost::gregorian::days(1));
+    return {beginning, end + boost::gregorian::days(1)};
 }
 
 void GtfsParser::parse_files(Data& data, const std::string& beginning_date) {
