@@ -1026,7 +1026,7 @@ BOOST_FIXTURE_TEST_CASE(test_calendar_with_exception, calendar_fixture) {
     // we add a new calendar that nearly match a vj
     auto nearly_cal = new navitia::type::Calendar(b.data->meta->production_date.begin());
     nearly_cal->uri = "nearly_cal";
-    nearly_cal->active_periods.push_back({beg, end_of_year});
+    nearly_cal->active_periods.emplace_back(beg, end_of_year);
     nearly_cal->week_pattern = std::bitset<7>{"1111100"};
     // we add 2 exceptions (2 add), one by week
     navitia::type::ExceptionDate exception_date;
@@ -1513,7 +1513,7 @@ BOOST_AUTO_TEST_CASE(route_schedule_with_boarding_time_frequency_and_calendar) {
                 "stop3", "18:10"_t, "18:10"_t, std::numeric_limits<uint16_t>::max(), true, false, 300, 0);
 
         c->uri = "C1";
-        c->active_periods.push_back({begin, end});
+        c->active_periods.emplace_back(begin, end);
         c->week_pattern = std::bitset<7>("1111111");
         b.data->pt_data->calendars.push_back(c);
         b.data->pt_data->calendars_map[c->uri] = c;

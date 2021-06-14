@@ -98,7 +98,7 @@ struct Autocomplete {
     };
 
     Autocomplete(navitia::type::Type_e otype) : object_type(otype) {}
-    Autocomplete() {}
+    Autocomplete() = default;
 
     /// Type of object
     navitia::type::Type_e object_type;
