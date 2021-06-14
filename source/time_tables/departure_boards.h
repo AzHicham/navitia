@@ -37,7 +37,7 @@ www.navitia.io
 namespace navitia {
 namespace timetables {
 
-typedef std::vector<DateTime> vector_datetime;
+using vector_datetime = std::vector<DateTime>;
 using vector_dt_st = std::vector<routing::datetime_stop_time>;
 using first_and_last_stop_time =
     std::pair<boost::optional<routing::datetime_stop_time>, boost::optional<routing::datetime_stop_time> >;
