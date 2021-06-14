@@ -909,8 +909,8 @@ BOOST_AUTO_TEST_CASE(numero_impair) {
 
     boost::add_edge(debut, fin, e1, graph);
     boost::add_edge(fin, debut, e1, graph);
-    way.edges.push_back(std::make_pair(debut, fin));
-    way.edges.push_back(std::make_pair(fin, debut));
+    way.edges.emplace_back(debut, fin);
+    way.edges.emplace_back(fin, debut);
 
     hn.coord.set_lon(1.0);
     hn.coord.set_lat(17.0);
@@ -921,8 +921,8 @@ BOOST_AUTO_TEST_CASE(numero_impair) {
 
     boost::add_edge(fin, debut, e1, graph);
     boost::add_edge(debut, fin, e1, graph);
-    way.edges.push_back(std::make_pair(fin, debut));
-    way.edges.push_back(std::make_pair(debut, fin));
+    way.edges.emplace_back(fin, debut);
+    way.edges.emplace_back(debut, fin);
 
     hn.coord = upper;
     hn.number = 53;
@@ -932,8 +932,8 @@ BOOST_AUTO_TEST_CASE(numero_impair) {
 
     boost::add_edge(debut, fin, e1, graph);
     boost::add_edge(fin, debut, e1, graph);
-    way.edges.push_back(std::make_pair(debut, fin));
-    way.edges.push_back(std::make_pair(fin, debut));
+    way.edges.emplace_back(debut, fin);
+    way.edges.emplace_back(fin, debut);
 
     // Numéro recherché est > au plus grand numéro dans la rue
     nt::GeographicalCoord result = way.nearest_coord(55, graph);
@@ -994,8 +994,8 @@ BOOST_AUTO_TEST_CASE(numero_pair) {
 
     boost::add_edge(debut, fin, e1, graph);
     boost::add_edge(fin, debut, e1, graph);
-    way.edges.push_back(std::make_pair(debut, fin));
-    way.edges.push_back(std::make_pair(fin, debut));
+    way.edges.emplace_back(debut, fin);
+    way.edges.emplace_back(fin, debut);
 
     hn.coord.set_lon(2.0);
     hn.coord.set_lat(18.0);
@@ -1006,8 +1006,8 @@ BOOST_AUTO_TEST_CASE(numero_pair) {
 
     boost::add_edge(fin, debut, e1, graph);
     boost::add_edge(debut, fin, e1, graph);
-    way.edges.push_back(std::make_pair(fin, debut));
-    way.edges.push_back(std::make_pair(debut, fin));
+    way.edges.emplace_back(fin, debut);
+    way.edges.emplace_back(debut, fin);
 
     hn.coord = upper;
     hn.number = 54;
@@ -1017,8 +1017,8 @@ BOOST_AUTO_TEST_CASE(numero_pair) {
 
     boost::add_edge(debut, fin, e1, graph);
     boost::add_edge(fin, debut, e1, graph);
-    way.edges.push_back(std::make_pair(debut, fin));
-    way.edges.push_back(std::make_pair(fin, debut));
+    way.edges.emplace_back(debut, fin);
+    way.edges.emplace_back(fin, debut);
 
     // Numéro recherché est > au plus grand numéro dans la rue
     nt::GeographicalCoord result = way.nearest_coord(56, graph);
@@ -1142,8 +1142,8 @@ BOOST_AUTO_TEST_CASE(build_autocomplete_test) {
 
     boost::add_edge(debut, fin, navitia::georef::Edge{way->idx, 1_s}, b.data->geo_ref->graph);
     boost::add_edge(fin, debut, navitia::georef::Edge{way->idx, 1_s}, b.data->geo_ref->graph);
-    way->edges.push_back(std::make_pair(debut, fin));
-    way->edges.push_back(std::make_pair(fin, debut));
+    way->edges.emplace_back(debut, fin);
+    way->edges.emplace_back(fin, debut);
 
     hn.coord.set_lon(2.0);
     hn.coord.set_lat(18.0);
@@ -1154,8 +1154,8 @@ BOOST_AUTO_TEST_CASE(build_autocomplete_test) {
 
     boost::add_edge(fin, debut, navitia::georef::Edge{way->idx, 1_s}, b.data->geo_ref->graph);
     boost::add_edge(debut, fin, navitia::georef::Edge{way->idx, 1_s}, b.data->geo_ref->graph);
-    way->edges.push_back(std::make_pair(fin, debut));
-    way->edges.push_back(std::make_pair(debut, fin));
+    way->edges.emplace_back(fin, debut);
+    way->edges.emplace_back(debut, fin);
 
     hn.coord = upper;
     hn.number = 54;
@@ -1165,8 +1165,8 @@ BOOST_AUTO_TEST_CASE(build_autocomplete_test) {
 
     boost::add_edge(debut, fin, navitia::georef::Edge{way->idx, 1_s}, b.data->geo_ref->graph);
     boost::add_edge(fin, debut, navitia::georef::Edge{way->idx, 1_s}, b.data->geo_ref->graph);
-    way->edges.push_back(std::make_pair(debut, fin));
-    way->edges.push_back(std::make_pair(fin, debut));
+    way->edges.emplace_back(debut, fin);
+    way->edges.emplace_back(fin, debut);
     b.data->geo_ref->ways.push_back(way);
 
     Admin* ad = new Admin;
@@ -1253,9 +1253,9 @@ BOOST_AUTO_TEST_CASE(angle_computation) {
      *=> 90
      */
     Path p;
-    p.path_items.push_back(PathItem());
-    p.path_items.back().coordinates.push_back({1, 1});
-    p.path_items.back().coordinates.push_back({1, 2});
+    p.path_items.emplace_back();
+    p.path_items.back().coordinates.emplace_back(1, 1);
+    p.path_items.back().coordinates.emplace_back(1, 2);
 
     int angle = compute_directions(p, {2, 2});
 
@@ -1264,9 +1264,9 @@ BOOST_AUTO_TEST_CASE(angle_computation) {
 
 BOOST_AUTO_TEST_CASE(angle_computation_2) {
     Path p;
-    p.path_items.push_back(PathItem());
-    p.path_items.back().coordinates.push_back({2, -3});
-    p.path_items.back().coordinates.push_back({3, 1});
+    p.path_items.emplace_back();
+    p.path_items.back().coordinates.emplace_back(2, -3);
+    p.path_items.back().coordinates.emplace_back(3, 1);
 
     int angle = compute_directions(p, {-1, 4});
 
@@ -1275,7 +1275,7 @@ BOOST_AUTO_TEST_CASE(angle_computation_2) {
 
 BOOST_AUTO_TEST_CASE(angle_computation_lon_lat) {
     Path p;
-    p.path_items.push_back(PathItem());
+    p.path_items.emplace_back();
 
     nt::GeographicalCoord a{48.849143, 2.391776};
     nt::GeographicalCoord b{48.850456, 2.390596};
@@ -1289,7 +1289,7 @@ BOOST_AUTO_TEST_CASE(angle_computation_lon_lat) {
     BOOST_CHECK_CLOSE(1.0 * angle, val, 1);
 
     Path p2;
-    p2.path_items.push_back(PathItem());
+    p2.path_items.emplace_back();
 
     p2.path_items.back().coordinates.push_back(c);
     p2.path_items.back().coordinates.push_back(b);
@@ -1384,7 +1384,7 @@ BOOST_AUTO_TEST_CASE(geolocalization) {
     ab->name = "rue AB";
     ab->idx = 0;
     ab->way_type = "rue";
-    ab->house_number_right.push_back(HouseNumber(D.lon(), D.lat(), 2));
+    ab->house_number_right.emplace_back(D.lon(), D.lat(), 2);
     ab->admin_list.push_back(admin);
     b.data->geo_ref->ways.push_back(ab);
 
@@ -1392,21 +1392,21 @@ BOOST_AUTO_TEST_CASE(geolocalization) {
     ac->name = "rue AC";
     ac->idx = 1;
     ac->way_type = "rue";
-    ac->house_number_left.push_back(HouseNumber(E.lon(), E.lat(), 3));
+    ac->house_number_left.emplace_back(E.lon(), E.lat(), 3);
     ac->admin_list.push_back(admin);
     b.data->geo_ref->ways.push_back(ac);
 
     // A->B
     add_edge(AA, BB, Edge(0, 42_s), b.data->geo_ref->graph);
     add_edge(BB, AA, Edge(0, 42_s), b.data->geo_ref->graph);
-    ab->edges.push_back(std::make_pair(AA, BB));
-    ab->edges.push_back(std::make_pair(BB, AA));
+    ab->edges.emplace_back(AA, BB);
+    ab->edges.emplace_back(BB, AA);
 
     // A->C
     add_edge(AA, CC, Edge(1, 42_s), b.data->geo_ref->graph);
     add_edge(CC, AA, Edge(1, 42_s), b.data->geo_ref->graph);
-    ac->edges.push_back(std::make_pair(AA, CC));
-    ac->edges.push_back(std::make_pair(CC, AA));
+    ac->edges.emplace_back(AA, CC);
+    ac->edges.emplace_back(CC, AA);
 
     b.data->build_uri();
     b.data->build_proximity_list();
