@@ -38,7 +38,7 @@ www.navitia.io
 namespace ed {
 namespace connectors {
 
-GeopalParserException::~GeopalParserException() noexcept {}
+GeopalParserException::~GeopalParserException() noexcept = default;
 
 GeopalParser::GeopalParser(std::string path) : path(std::move(path)) {
     logger = log4cplus::Logger::getInstance("log");
@@ -177,7 +177,7 @@ namespace {
 //     2       4       8
 struct HouseNumberFromEdgesFiller {
     typedef navitia::type::GeographicalCoord Coord;
-    typedef ed::types::Way Way;
+    using Way = ed::types::Way;
 
     HouseNumberFromEdgesFiller(const CsvReader& r, GeopalParser& p)
         : reader(r),
