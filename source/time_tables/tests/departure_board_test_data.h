@@ -333,7 +333,7 @@ struct calendar_fixture {
                 // Check partial terminus for calendar
                 auto cal_partial_terminus = new navitia::type::Calendar(b.data->meta->production_date.begin());
                 cal_partial_terminus->uri = "cal_partial_terminus";
-                cal_partial_terminus->active_periods.push_back({beg, end_of_year});
+                cal_partial_terminus->active_periods.emplace_back(beg, end_of_year);
                 cal_partial_terminus->week_pattern = std::bitset<7>{"1111111"};
                 pt_data.calendars.push_back(cal_partial_terminus);
                 b.lines["A"]->calendar_list.push_back(cal_partial_terminus);
@@ -341,20 +341,20 @@ struct calendar_fixture {
                 // we now add 2 similar calendars
                 auto week_cal = new navitia::type::Calendar(b.data->meta->production_date.begin());
                 week_cal->uri = "week_cal";
-                week_cal->active_periods.push_back({beg, end_of_year});
+                week_cal->active_periods.emplace_back(beg, end_of_year);
                 week_cal->week_pattern = std::bitset<7>{"1111100"};
                 pt_data.calendars.push_back(week_cal);
                 b.lines["A"]->calendar_list.push_back(week_cal);
 
                 auto weekend_cal = new navitia::type::Calendar(b.data->meta->production_date.begin());
                 weekend_cal->uri = "weekend_cal";
-                weekend_cal->active_periods.push_back({beg, end_of_year});
+                weekend_cal->active_periods.emplace_back(beg, end_of_year);
                 weekend_cal->week_pattern = std::bitset<7>{"0000011"};
                 pt_data.calendars.push_back(weekend_cal);
 
                 auto not_associated_cal = new navitia::type::Calendar(b.data->meta->production_date.begin());
                 not_associated_cal->uri = "not_associated_cal";
-                not_associated_cal->active_periods.push_back({beg, end_of_year});
+                not_associated_cal->active_periods.emplace_back(beg, end_of_year);
                 not_associated_cal->week_pattern = std::bitset<7>{"0010000"};
                 pt_data.calendars.push_back(not_associated_cal);  // not associated to the line
 
