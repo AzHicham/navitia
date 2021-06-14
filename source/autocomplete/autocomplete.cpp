@@ -194,6 +194,7 @@ std::pair<size_t, size_t> longest_common_substring(const std::string& str1, cons
 // https://isocpp.org/wiki/faq/templates#separate-template-class-defn-from-decl
 // http://stackoverflow.com/a/32593884/1614576
 template struct Autocomplete<nt::idx_t>;
+template struct Autocomplete<unsigned int>;
 
 }  // namespace autocomplete
 }  // namespace navitia
