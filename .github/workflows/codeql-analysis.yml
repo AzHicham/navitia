@@ -24,6 +24,8 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    container:
+        image: navitia/debian10_dev
     permissions:
       actions: read
       contents: read
