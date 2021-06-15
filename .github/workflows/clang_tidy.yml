@@ -1,10 +1,10 @@
 name: Clang-tidy
 
 on:
+  pull_request:
   push:
     branches:
-    - clang-tidy
-    - release
+    - dev
 
 jobs:
   info:
