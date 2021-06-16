@@ -26,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
         image: navitia/debian10_dev
+        volumes:
+          - /usr/share/dotnet:/usr/share/dotnet
     permissions:
       actions: read
       contents: read
@@ -40,6 +42,9 @@ jobs:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
 
     steps:
+    - name: Free up space
+      run: rm -rf /usr/share/dotnet/*
+      
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
