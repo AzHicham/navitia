@@ -28,7 +28,7 @@ urllib3==1.24.2
 numpy==1.9.0
 pybreaker==0.2.3
 requests==2.20
-amqp==1.4.9
+amqp==2.6.1
 anyjson==0.3.3
 future==0.15.2
 zeep==1.1.0
