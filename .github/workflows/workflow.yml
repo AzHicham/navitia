@@ -36,7 +36,7 @@ jobs:
 
     strategy:
         matrix:
-            docker_image: [navitia/debian8_dev, navitia/debian9_dev, navitia/debian10_dev]
+            docker_image: [navitia/debian8_dev, navitia/debian9_dev, navitia/debian10_dev, azhicham/debian11_dev]
 
     container:
         image: ${{matrix.docker_image}}
@@ -57,15 +57,10 @@ jobs:
       run: cmake -DSTRIP_SYMBOLS=ON source
     - name: run
       run: make -j $(nproc)
-    - name: Tests python2
-      run: |
-        export JORMUNGANDR_BROKER_URL='amqp://guest:guest@rabbitmq:5672//'
-        export KRAKEN_RABBITMQ_HOST='rabbitmq'
-        ctest --output-on-failure
     - name: Tests python3
       run: |
         pip install virtualenv -U
-        virtualenv -p /usr/local/bin/python3.6 navitia_py3
+        virtualenv -p /usr/local/bin/python3 navitia_py3
         . navitia_py3/bin/activate
         python -V
         pip install -r source/jormungandr/requirements_dev.txt
@@ -78,19 +73,6 @@ jobs:
         rm -rf tests/mock_kraken kraken/tests ed/tests fare/tests routing/tests calendar/tests
         rm -rf georef/tests proximity_list/tests time_tables/tests equipment/tests
         rm -rf ptreferential/tests
-    - name: install Tyr dependencies for python2
-      run: |
-        pip install -r source/tyr/requirements_dev.txt
-        pip install -r source/sql/requirements.txt
-    - name: docker_test for python2
-      run: |
-        python -V
-        export NAVITIA_CHAOS_DUMP_PATH=$(echo $GITHUB_WORKSPACE/source/tests/chaos/chaos_loading.sql.gz | sed -e 's#__w#home/runner/work#')
-        echo $NAVITIA_CHAOS_DUMP_PATH
-        make docker_test
-      env:
-        NAVITIA_DOCKER_NETWORK: ${{ job.container.network }}
-        TYR_CELERY_BROKER_URL: 'amqp://guest:guest@rabbitmq:5672//'
     - name: docker_test for python3
       run: |
         . navitia_py3/bin/activate
