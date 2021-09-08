@@ -36,7 +36,7 @@ jobs:
 
     strategy:
         matrix:
-            docker_image: [navitia/debian8_dev, navitia/debian9_dev, navitia/debian10_dev, azhicham/debian11_dev]
+            docker_image: [navitia/debian8_dev,navitia/debian9_dev,navitia/debian10_dev,azhicham/debian11_dev]
 
     container:
         image: ${{matrix.docker_image}}
@@ -52,13 +52,14 @@ jobs:
       with:
           submodules: 'recursive'
     - name: Install dependencies for python2
+      if: matrix.docker_image != 'azhicham/debian11_dev'
       run: pip install -r source/jormungandr/requirements_dev.txt
     - name: configure for Release
       run: cmake -DSTRIP_SYMBOLS=ON source
     - name: run
       run: make -j $(nproc)
     - name: Tests python2
-      if: ${{matrix.docker_image != 'azhicham/debian11_dev'}}
+      if: matrix.docker_image != 'azhicham/debian11_dev'
       run: |
         export JORMUNGANDR_BROKER_URL='amqp://guest:guest@rabbitmq:5672//'
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
