@@ -24,10 +24,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: checkout submodules
-      shell: bash
-      run: |
-        sed -i 's,git\@github.com:\([^/]*\)/\(.*\).git,https://github.com/\1/\2,' .gitmodules
-        git submodule update --init --recursive
+      with:
+        submodules: 'recursive'
     - name: check submodules
       run: ./source/scripts/check_submodules.sh
 
@@ -36,7 +34,7 @@ jobs:
 
     strategy:
         matrix:
-            docker_image: [navitia/debian8_dev, navitia/debian9_dev, navitia/debian10_dev]
+            docker_image: [navitia/debian8_dev, navitia/debian9_dev, navitia/debian10_dev, azhicham/debian11_dev]
 
     container:
         image: ${{matrix.docker_image}}
@@ -58,6 +56,7 @@ jobs:
     - name: run
       run: make -j $(nproc)
     - name: Tests python2
+      if: ${{matrix.docker_image != 'azhicham/debian11_dev'}}
       run: |
         export JORMUNGANDR_BROKER_URL='amqp://guest:guest@rabbitmq:5672//'
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
@@ -65,7 +64,7 @@ jobs:
     - name: Tests python3
       run: |
         pip install virtualenv -U
-        virtualenv -p /usr/local/bin/python3.6 navitia_py3
+        virtualenv -p /usr/local/bin/python3 navitia_py3
         . navitia_py3/bin/activate
         python -V
         pip install -r source/jormungandr/requirements_dev.txt
@@ -79,10 +78,12 @@ jobs:
         rm -rf georef/tests proximity_list/tests time_tables/tests equipment/tests
         rm -rf ptreferential/tests
     - name: install Tyr dependencies for python2
+      if: ${{matrix.docker_image != 'azhicham/debian11_dev'}}
       run: |
         pip install -r source/tyr/requirements_dev.txt
         pip install -r source/sql/requirements.txt
     - name: docker_test for python2
+      if: ${{matrix.docker_image != 'azhicham/debian11_dev'}}
       run: |
         python -V
         export NAVITIA_CHAOS_DUMP_PATH=$(echo $GITHUB_WORKSPACE/source/tests/chaos/chaos_loading.sql.gz | sed -e 's#__w#home/runner/work#')
@@ -112,15 +113,13 @@ jobs:
       # we should be able to use no container once https://github.com/actions/virtual-environments/issues/46 is
       # resolved
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+          submodules: 'recursive'
     - name: install dependencies
       run: |
         apt update && apt install -y protobuf-compiler python python-pip python3  python3-pip clang-format-6.0 git 2to3
         pip install -r requirements_pre-commit.txt --upgrade
-    - name: get submodule
-      run: |
-        sed -i 's,git\@github.com:\([^/]*\)/\(.*\).git,https://github.com/\1/\2,' .gitmodules
-        git submodule update --init --recursive
     - name: Build Protobuf
       run: bash source/scripts/build_protobuf.sh
     - name: Pre-commit Run
