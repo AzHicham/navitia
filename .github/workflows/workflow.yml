@@ -22,10 +22,12 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-    - name: checkout
-      uses: actions/checkout@v2
-      with:
-        submodules: 'recursive'
+    - uses: actions/checkout@v2
+    - name: checkout submodules
+      shell: bash
+      run: |
+        sed -i 's,git\@github.com:\([^/]*\)/\(.*\).git,https://github.com/\1/\2,' .gitmodules
+        git submodule update --init --recursive
     - name: check submodules
       run: ./source/scripts/check_submodules.sh
 
@@ -78,12 +80,12 @@ jobs:
         rm -rf georef/tests proximity_list/tests time_tables/tests equipment/tests
         rm -rf ptreferential/tests
     - name: install Tyr dependencies for python2
-      if: ${{matrix.docker_image != 'azhicham/debian11_dev'}}
+      if: matrix.docker_image != 'azhicham/debian11_dev'
       run: |
         pip install -r source/tyr/requirements_dev.txt
         pip install -r source/sql/requirements.txt
     - name: docker_test for python2
-      if: ${{matrix.docker_image != 'azhicham/debian11_dev'}}
+      if: matrix.docker_image != 'azhicham/debian11_dev'
       run: |
         python -V
         export NAVITIA_CHAOS_DUMP_PATH=$(echo $GITHUB_WORKSPACE/source/tests/chaos/chaos_loading.sql.gz | sed -e 's#__w#home/runner/work#')
@@ -113,13 +115,15 @@ jobs:
       # we should be able to use no container once https://github.com/actions/virtual-environments/issues/46 is
       # resolved
     steps:
-    - uses: actions/checkout@v2
-      with:
-          submodules: 'recursive'
+    - uses: actions/checkout@v1
     - name: install dependencies
       run: |
         apt update && apt install -y protobuf-compiler python python-pip python3  python3-pip clang-format-6.0 git 2to3
         pip install -r requirements_pre-commit.txt --upgrade
+    - name: get submodule
+      run: |
+        sed -i 's,git\@github.com:\([^/]*\)/\(.*\).git,https://github.com/\1/\2,' .gitmodules
+        git submodule update --init --recursive
     - name: Build Protobuf
       run: bash source/scripts/build_protobuf.sh
     - name: Pre-commit Run
@@ -129,6 +133,7 @@ jobs:
       run: |
         pre-commit install --install-hooks
         pre-commit run --all --show-diff-on-failure
+
   release_script_tests:
     runs-on: ubuntu-latest
     steps:
