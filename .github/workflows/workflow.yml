@@ -81,12 +81,6 @@ jobs:
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
         ctest --output-on-failure
         deactivate
-    - name: remove useless tests
-      working-directory: ./build
-      run: |
-        rm -rf tests/mock_kraken kraken/tests ed/tests fare/tests routing/tests calendar/tests
-        rm -rf georef/tests proximity_list/tests time_tables/tests equipment/tests
-        rm -rf ptreferential/tests
     - name: docker_test for python2
       working-directory: ./build
       run: |
