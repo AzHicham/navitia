@@ -143,9 +143,6 @@ namespace endian = boost::spirit::detail;
 namespace endian = boost::endian;
 #endif
 
-#include <iostream>
-
-
 #ifndef BOOST_NO_STD_WSTRING
 // used for wstring to utf8 conversion
 #include <boost/program_options/config.hpp>
@@ -365,7 +362,6 @@ namespace eos {
                 #else
                 t = endian::load_little_endian<T, sizeof(T)>(&temp);
                 #endif
-                std::cout << " load " << t << " " << temp << std::endl;;
             }
 
             else t = 0; // zero optimization
