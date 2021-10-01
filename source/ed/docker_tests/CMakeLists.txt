@@ -53,8 +53,16 @@ target_link_libraries(ed_integration_test ed ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY
 add_custom_target(run_test DEPENDS datanav_files ed_integration_test)
 
 SET(BOOST_TEST_SEPARATOR "")
-if(NOT ${Boost_VERSION} LESS 106000) #if boost version newer or equal 1.60, passing cli_params new way
-    SET(BOOST_TEST_SEPARATOR "--")
+
+# Starting Cmake 3.15 ${Boost_VERSION} is in X.Y.Z format
+if (${CMAKE_VERSION} VERSION_LESS "3.15.0")
+    if(NOT ${Boost_VERSION} LESS 106000) #if boost version newer or equal 1.60, passing cli_params new way
+        SET(BOOST_TEST_SEPARATOR "--")
+    endif()
+else()
+    if(NOT ${Boost_VERSION_MACRO} LESS 106000) #if boost version newer or equal 1.60, passing cli_params new way
+        SET(BOOST_TEST_SEPARATOR "--")
+    endif()
 endif()
 
 BUILD_BOOST_TEST_ARGS(ed_integration_test)
