@@ -62,7 +62,7 @@ jobs:
     - name: Tests python2
       continue-on-error: true
       run: |
-        pip install virtualenv -U
+        pip install virtualenv==20.4.7 -U
         virtualenv -p /usr/bin/python navitia_py2
         . navitia_py2/bin/activate
         pip install -r source/jormungandr/requirements_dev.txt
