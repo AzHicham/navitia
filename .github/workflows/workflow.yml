@@ -56,7 +56,7 @@ jobs:
       with:
           submodules: 'recursive'
     - name: configure for Release
-      run: mkdir build && cd ./build cmake -DSTRIP_SYMBOLS=ON ../source .
+      run: mkdir build && cd ./build && cmake -DSTRIP_SYMBOLS=ON ../source .
     - name: run
       working-directory: ./build
       run: make -j $(nproc)
