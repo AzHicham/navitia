@@ -70,9 +70,11 @@ jobs:
         export KRAKEN_RABBITMQ_HOST='rabbitmq'
         ctest --output-on-failure
     - name: configure python3 virtualenv
+      continue-on-error: true
       if: matrix.docker_image != 'navitia/debian11_dev'
       run: virtualenv -p /usr/local/bin/python3.6 navitia_py3
     - name: configure python3 virtualenv debian11
+      continue-on-error: true
       if: matrix.docker_image == 'navitia/debian11_dev'
       run: virtualenv -p /usr/bin/python3 navitia_py3
     - name: Tests python3
