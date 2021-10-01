@@ -20,10 +20,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: install zip dependency
-      run: apt update && apt install -y zip httpie
+      run: apt update && apt install -y zip httpie dh-python
     - name: dkpg-buildpackage
       run: |
-        apt update && apt install dh-python
         sed -i 's,git\@github.com:\([^/]*\)/\(.*\).git,https://github.com/\1/\2,' .gitmodules
         git submodule update --init --recursive
         DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -b
