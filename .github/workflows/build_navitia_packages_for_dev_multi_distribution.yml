@@ -16,8 +16,13 @@ jobs:
 
     container:
       image: navitia/${{matrix.distribution}}_dev
+      volumes:
+          - /usr/share/dotnet:/usr/share/dotnet
+        # Mount /dotnet so we can delete files from docker and free up space (>20GB)
 
     steps:
+    - name: Free up space
+      run: rm -rf /usr/share/dotnet/*
     - uses: actions/checkout@v1
     - name: install zip dependency
       run: apt update && apt install -y zip httpie dh-python
