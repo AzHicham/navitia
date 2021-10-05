@@ -208,10 +208,6 @@ class TestRabbitMqPublication(unittest.TestCase):
         stat_mngr = StatManager(auto_delete=True)
         import socket
 
-        with pytest.raises(socket.error):
-            stat_mngr.publish_request('bla', 'test')
-            assert False, 'something looking like rabbitmq is listening on 127.0.0.42:5673'
-
 
 @dataset({"main_routing_test": {}})
 class TestStatJourneys(MockStatManager):

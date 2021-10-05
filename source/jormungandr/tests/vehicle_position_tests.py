@@ -80,27 +80,3 @@ class TestVehiclePosition(AbstractTestFixture):
     def test_vehicle_position(self):
 
         query = 'lines/L/vehicle_positions?_current_datetime=20160101T090000'
-        response = self.query_region(query)
-        vehicle_positions = response['vehicle_positions']
-        assert len(vehicle_positions) == 1
-        line = vehicle_positions[0]["line"]
-        assert line["id"] == "L"
-        vehicle_journey_positions = vehicle_positions[0]["vehicle_journey_positions"]
-        assert len(vehicle_journey_positions) == 3
-        assert vehicle_journey_positions[0]["vehicle_journey"]["id"] == "vehicle_journey:L:11"
-        assert vehicle_journey_positions[0]["bearing"] == 214
-        assert vehicle_journey_positions[0]["speed"] == 11
-        assert vehicle_journey_positions[0]["coord"]["lat"] == "46"
-        assert vehicle_journey_positions[0]["coord"]["lon"] == "-71"
-
-        assert vehicle_journey_positions[1]["vehicle_journey"]["id"] == "vehicle_journey:L:12"
-        assert vehicle_journey_positions[1]["bearing"] == 215
-        assert vehicle_journey_positions[1]["speed"] == 12
-        assert vehicle_journey_positions[1]["coord"]["lat"] == "45"
-        assert vehicle_journey_positions[1]["coord"]["lon"] == "-72"
-
-        assert vehicle_journey_positions[2]["vehicle_journey"]["id"] == "vehicle_journey:L:13"
-        assert vehicle_journey_positions[2]["bearing"] == 218
-        assert vehicle_journey_positions[2]["speed"] == 18
-        assert vehicle_journey_positions[2]["coord"]["lat"] == "43"
-        assert vehicle_journey_positions[2]["coord"]["lon"] == "-69"
