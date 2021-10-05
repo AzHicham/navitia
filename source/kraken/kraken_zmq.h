@@ -57,8 +57,8 @@ static void respond(zmq::socket_t& socket, const std::string& address, const pbn
         reply.rebuild(error_response.ByteSize());
         error_response.SerializeToArray(reply.data(), error_response.ByteSize());
     }
-    z_send(socket, address, ZMQ_SNDMORE);
-    z_send(socket, "", ZMQ_SNDMORE);
+    z_send(socket, address, zmq::send_flags::sndmore);
+    z_send(socket, "", zmq::send_flags::sndmore);
     socket.send(reply);
 }
 
@@ -88,7 +88,7 @@ inline void doWork(zmq::context_t& context,
         zmq::message_t request;
         try {
             // Wait for next request from client
-            socket.recv(&request);
+            socket.recv(request);
         } catch (const zmq::error_t&) {
             // on gére le cas du sighup durant un recv
             continue;

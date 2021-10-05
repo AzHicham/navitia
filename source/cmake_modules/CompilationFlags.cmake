@@ -79,6 +79,8 @@ if(USE_SANITIZER)
     set(NAVITIA_ALLOCATOR "")
 endif(USE_SANITIZER)
 
+add_definitions("-DBOOST_MATH_DISABLE_DEPRECATED_03_WARNING")
+
 find_file(PROJ_FILE_NAME NAMES proj_api.h)
 if(NOT PROJ_FILE_NAME)
     message(FATAL_ERROR "-- proj_api.h not found")
