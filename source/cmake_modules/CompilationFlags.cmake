@@ -78,6 +78,7 @@ if(USE_SANITIZER)
     add_definitions("-DNO_FORCE_MEMORY_RELEASE")
     set(NAVITIA_ALLOCATOR "")
 endif(USE_SANITIZER)
+
 add_definitions("-DBOOST_MATH_DISABLE_DEPRECATED_03_WARNING")
 
 find_file(PROJ_FILE_NAME NAMES proj_api.h)
