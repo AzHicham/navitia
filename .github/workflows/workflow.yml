@@ -35,6 +35,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+        fail-fast: false
         matrix:
             docker_image: [azhicham/debian8_dev, azhicham/debian9_dev, azhicham/debian10_dev, navitia/debian11_dev]
 
