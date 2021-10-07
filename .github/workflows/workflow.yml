@@ -134,6 +134,7 @@ jobs:
       run: |
         pre-commit install --install-hooks
         pre-commit run --all --show-diff-on-failure
+
   release_script_tests:
     runs-on: ubuntu-latest
     steps:
