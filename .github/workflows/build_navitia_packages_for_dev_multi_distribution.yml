@@ -107,10 +107,10 @@ jobs:
           params["event"] = "pull_request"
           params["navitia_branch"] = github_dict['pull_request']['head']['ref']
           params["commit_message"] = sanitize(github_dict['pull_request']['title'])
-          params["commit_timestamp"] = github_dict['pull_request']['head_commit']['head']['repo']['updated_at']
-          params["commit_url"] = github_dict['pull_request']['repository']['html_url']
-          params["commit_id"] = github_dict['pull_request']['head_commit']['sha']
-          params["commit_username"] = github_dict['pull_request']['head_commit']['head']['user']['login']
+          params["commit_timestamp"] = github_dict['pull_request']['updated_at']
+          params["commit_url"] = github_dict['pull_request']['html_url']
+          params["commit_id"] = github_dict['pull_request']['head']['sha']
+          params["commit_username"] = github_dict['pull_request']['user']['login']
 
           secret = "${{secrets.JENKINS_NG_TOKEN}}"
 
