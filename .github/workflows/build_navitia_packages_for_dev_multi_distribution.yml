@@ -102,7 +102,7 @@ jobs:
         with open('${{ github.event_path }}') as file:
 
           github_dict = json.load(file)
-
+          print(github_dict)
           params = {}
           params["event"] = "pull_request"
           params["navitia_branch"] = github_dict['pull_request']['head']['ref']
