@@ -102,7 +102,6 @@ jobs:
         with open('${{ github.event_path }}') as file:
 
           github_dict = json.load(file)
-          print(github_dict)
           params = {}
           params["event"] = "pull_request"
           params["navitia_branch"] = github_dict['pull_request']['head']['ref']
@@ -111,6 +110,7 @@ jobs:
           params["commit_url"] = github_dict['pull_request']['html_url']
           params["commit_id"] = github_dict['pull_request']['head']['sha']
           params["commit_username"] = github_dict['pull_request']['user']['login']
+          print(params)
 
           secret = "${{secrets.JENKINS_NG_TOKEN}}"
 
