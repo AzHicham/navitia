@@ -88,7 +88,7 @@ jobs:
           print(request.text)
     - name: run artemis NG on pull_request
       shell: python3 {0}
-      if: ${{ github.event_name == 'pull_request' }} && contains(github.event.pull_request.labels.*.name, 'run_artemis')
+      if: ${{ github.event_name == 'pull_request' }} && github.event.label.name == 'run_artemis'
       run: |
         import json
         import requests
