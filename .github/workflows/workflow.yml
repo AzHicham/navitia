@@ -56,6 +56,13 @@ jobs:
     - uses: actions/checkout@v2
       with:
           submodules: 'recursive'
+    - name: Install ccache
+      run: apt update & apt install ccache
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1
+      with:
+        key: ci-${{matrix.os.docker_image}}
+        max-size: 4000M
     - name: configure for Release
       run: mkdir build && cd ./build && cmake -DSTRIP_SYMBOLS=ON ../source
     - name: run
